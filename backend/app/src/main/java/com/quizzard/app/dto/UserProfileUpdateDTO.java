@@ -8,5 +8,5 @@ import org.springframework.web.multipart.MultipartFile;
 @Setter
 public class UserProfileUpdateDTO {
 
-    private MultipartFile avatarFile;
+    private MultipartFile avatar;
 }

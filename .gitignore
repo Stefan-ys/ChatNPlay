@@ -4,4 +4,10 @@
 
 # Backend
 /backend/node_modules
-/backend/target  
+/backend/target 
+
+### ENV ###
+.env
+
+firebase-admin-sdk.json
+ 
