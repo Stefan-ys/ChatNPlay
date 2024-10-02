@@ -48,7 +48,7 @@ public class AuthServiceImpl implements AuthService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         Set<Role> roles = new HashSet<>();
-        Optional<Role> userRole = roleRepository.findByRole(UserRoleEnum.USER.toString());
+        Optional<Role> userRole = roleRepository.findByRole(UserRoleEnum.USER);
         userRole.ifPresent(roles::add);
 
         user.setRoles(roles);

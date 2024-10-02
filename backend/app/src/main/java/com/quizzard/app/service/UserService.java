@@ -20,4 +20,8 @@ public interface UserService {
     String uploadAvatar(MultipartFile file) throws IOException;
 
     void updateProfile(Long userId, UserProfileUpdateDTO userProfileUpdateDTO) throws Exception;
+
+    void addRole(Long userId, String role);
+
+    void removeRole(Long userId, String role);
 }

@@ -5,13 +5,15 @@ import com.google.cloud.storage.Bucket;
 import com.google.firebase.cloud.StorageClient;
 import com.quizzard.app.dto.UserProfileUpdateDTO;
 import com.quizzard.app.dto.UserResponseDTO;
+import com.quizzard.app.entity.Role;
 import com.quizzard.app.entity.User;
+import com.quizzard.app.enums.UserRoleEnum;
 import com.quizzard.app.exception.InvalidFileTypeException;
 import com.quizzard.app.exception.UserNotFoundException;
+import com.quizzard.app.repository.RoleRepository;
 import com.quizzard.app.repository.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,6 +29,10 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private RoleRepository roleRepository;
+
 
     @Autowired
     private ModelMapper modelMapper;
@@ -89,5 +95,35 @@ public class UserServiceImpl implements UserService {
         }
 
         userRepository.save(user);
+    }
+
+    @Override
+    public void addRole(Long userId, String role) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found!"));
+
+        UserRoleEnum roleEnum = UserRoleEnum.valueOf(role.toUpperCase());
+        Role roleToAdd = roleRepository.findByRole(roleEnum).orElseThrow(() -> new RuntimeException("Role not found!"));
+
+        if (!user.getRoles().contains(roleToAdd)) {
+            user.getRoles().add(roleToAdd);
+            userRepository.save(user);
+        } else {
+            throw new RuntimeException("User already has the role: " + role);
+        }
+    }
+
+    @Override
+    public void removeRole(Long userId, String role) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found!"));
+
+        UserRoleEnum roleEnum = UserRoleEnum.valueOf(role.toUpperCase());
+        Role roleToRemove = roleRepository.findByRole(roleEnum).orElseThrow(() -> new RuntimeException("Role not found!"));
+
+        if (user.getRoles().contains(roleToRemove)) {
+            user.getRoles().remove(roleToRemove);
+            userRepository.save(user);
+        } else {
+            throw new RuntimeException("User does not have the role: " + role);
+        }
     }
 }

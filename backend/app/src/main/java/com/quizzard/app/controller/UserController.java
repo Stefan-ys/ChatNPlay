@@ -32,4 +32,16 @@ public class UserController {
             return ResponseEntity.status(500).body("Failed to update profile");
         }
     }
+
+    @PostMapping("/{userId}/roles/add")
+    public ResponseEntity<String> addRoleToUser(@PathVariable Long userId, @RequestParam String role) {
+        userService.addRole(userId, role);
+        return ResponseEntity.ok("Role " + role + " added to user " + userId);
+    }
+
+    @PostMapping("/{userId}/roles/remove")
+    public ResponseEntity<String> removeRoleFromUser(@PathVariable Long userId, @RequestParam String role) {
+        userService.removeRole(userId, role);
+        return ResponseEntity.ok("Role " + role + " removed from user " + userId);
+    }
 }
