@@ -4,10 +4,6 @@
 
 # Backend
 /backend/node_modules
-/backend/target 
-
-### ENV ###
-.env
-
 firebase-admin-sdk.json
- 
+/backend/target  
+backend/app/src/main/resources/.env
