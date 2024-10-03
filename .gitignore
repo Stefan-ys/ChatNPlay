@@ -5,3 +5,4 @@
 # Backend
 /backend/node_modules
 /backend/target  
+backend/app/src/main/resources/.env
