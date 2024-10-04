@@ -33,7 +33,6 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private RoleRepository roleRepository;
 
-
     @Autowired
     private ModelMapper modelMapper;
 
