@@ -20,6 +20,7 @@
     "process": "^0.11.10",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-router-dom": "^6.26.2",
     "semantic-ui-css": "^2.5.0",
     "semantic-ui-react": "^2.1.5",
     "vite": "^5.4.8",
@@ -45,6 +46,7 @@
   },
   "devDependencies": {
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
+    "@types/react-router-dom": "^5.3.3",
     "typescript": "^4.9.5"
   }
 }
