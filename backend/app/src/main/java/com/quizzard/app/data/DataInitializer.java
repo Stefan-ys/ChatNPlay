@@ -5,7 +5,6 @@ import com.quizzard.app.dto.RegisterDTO;
 import com.quizzard.app.entity.Role;
 import com.quizzard.app.entity.User;
 import com.quizzard.app.enums.UserRoleEnum;
-import com.quizzard.app.exception.UserNotFoundException;
 import com.quizzard.app.repository.RoleRepository;
 import com.quizzard.app.repository.UserRepository;
 import com.quizzard.app.service.AuthService;
@@ -25,7 +24,7 @@ public class DataInitializer implements CommandLineRunner {
     private final RoleRepository roleRepository;
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args)  {
 
         if (roleRepository.count() == 0) {
             Role adminRole = new Role();

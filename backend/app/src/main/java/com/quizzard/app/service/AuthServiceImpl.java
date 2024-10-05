@@ -60,6 +60,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public UserResponseDTO loginUser(LoginDTO loginDTO) {
+        System.out.println("service method - " + loginDTO.getUsername());
         User user = userRepository.findByUsername(loginDTO.getUsername())
                 .orElseThrow(() -> new RuntimeException("Invalid username or password"));
 
