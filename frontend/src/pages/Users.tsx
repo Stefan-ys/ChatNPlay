@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getAllUsers } from '../services/userService';
-import { List, Header, Container } from 'semantic-ui-react';
+import { List, Typography, Container, Paper } from '@mui/material';
 
 const Users: React.FC = () => {
     const [users, setUsers] = useState([]);
@@ -20,19 +20,16 @@ const Users: React.FC = () => {
 
     return (
         <Container>
-            <Header as="h2">All Users</Header>
-            <List divided relaxed>
-                {users.map((user: any) => (
-                    <List.Item key={user.id}>
-                        <List.Content>
-                            <List.Header>{user.username}</List.Header>
-                            <List.Description>{user.email}</List.Description>
-                            <List.Description>Role: {user.role}</List.Description>
-                            <List.Description>Score: {user.score}</List.Description>
-                        </List.Content>
-                    </List.Item>
-                ))}
-            </List>
+            <Paper elevation={3} style={{ padding: '20px' }}>
+                <Typography variant="h5" gutterBottom>All Users</Typography>
+                <List>
+                    {users.map((user: any) => (
+                        <Typography key={user.id}>
+                            {user.username} - {user.email}
+                        </Typography>
+                    ))}
+                </List>
+            </Paper>
         </Container>
     );
 };

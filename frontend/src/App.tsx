@@ -5,10 +5,10 @@ import UsersPage from './pages/Users';
 import ProfilePage from './pages/MyProfile';
 import Home from './pages/Home';
 import Navbar from './components/Navbar';
-
-
 import './App.css';
 import { AuthProvider } from './context/AuthProvider';
+
+
 
 const App: React.FC = () => {
   return (

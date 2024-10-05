@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getUserProfile, updateAvatar } from '../services/userService';
-import { Button, Container, Form, Image, Header } from 'semantic-ui-react';
+import { Button, Container, TextField, Avatar, Typography, Box, Paper } from '@mui/material';
 
 const MyProfile: React.FC = () => {
     const [user, setUser] = useState<any>(null);
@@ -42,25 +42,30 @@ const MyProfile: React.FC = () => {
 
     return (
         <Container>
-            <Header as="h2">My Profile</Header>
-            <Form>
-                <Form.Field>
-                    <label>Username</label>
-                    <input value={user.username} readOnly />
-                </Form.Field>
-                <Form.Field>
-                    <label>Email</label>
-                    <input value={user.email} readOnly />
-                </Form.Field>
-                <Form.Field>
-                    <label>Avatar</label>
-                    <Image src={user.avatarUrl} size="small" />
-                    <input type="file" onChange={handleAvatarChange} />
-                </Form.Field>
-                <Button type="button" onClick={handleAvatarUpload}>
+            <Paper elevation={3} style={{ padding: '20px' }}>
+                <Typography variant="h5" gutterBottom>My Profile</Typography>
+                <TextField
+                    fullWidth
+                    label="Username"
+                    value={user.username}
+                    InputProps={{ readOnly: true }}
+                    margin="normal"
+                />
+                <TextField
+                    fullWidth
+                    label="Email"
+                    value={user.email}
+                    InputProps={{ readOnly: true }}
+                    margin="normal"
+                />
+                <Box display="flex" alignItems="center" marginTop="20px">
+                    <Avatar src={user.avatarUrl} alt="avatar" sx={{ width: 100, height: 100 }} />
+                    <input type="file" onChange={handleAvatarChange} style={{ marginLeft: '20px' }} />
+                </Box>
+                <Button variant="contained" color="primary" onClick={handleAvatarUpload} style={{ marginTop: '20px' }}>
                     Upload Avatar
                 </Button>
-            </Form>
+            </Paper>
         </Container>
     );
 };
