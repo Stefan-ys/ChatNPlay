@@ -1,9 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { getAllUsers } from '../services/userService';
-import { List, Typography, Container, Paper } from '@mui/material';
+import { List, ListItem, Typography, Container, Paper, Box } from '@mui/material';
+import UserAvatar from '../components/UserAvatar';
+
+interface User {
+    id: number;
+    username: string;
+    email: string;
+    avatarUrl: string;
+    online: boolean;
+}
 
 const Users: React.FC = () => {
-    const [users, setUsers] = useState([]);
+    const [users, setUsers] = useState<User[]>([]);
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -23,10 +32,14 @@ const Users: React.FC = () => {
             <Paper elevation={3} style={{ padding: '20px' }}>
                 <Typography variant="h5" gutterBottom>All Users</Typography>
                 <List>
-                    {users.map((user: any) => (
-                        <Typography key={user.id}>
-                            {user.username} - {user.email}
-                        </Typography>
+                    {users.map((user) => (
+                        <ListItem key={user.id} style={{ display: 'flex', alignItems: 'center' }}>
+                            <UserAvatar avatarUrl={user.avatarUrl} isOnline={user.online} />
+                            <Box ml={2}>
+                                <Typography>{user.username}</Typography>
+                                <Typography variant="body2" color="textSecondary">{user.email}</Typography>
+                            </Box>
+                        </ListItem>
                     ))}
                 </List>
             </Paper>

@@ -1,25 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { getUserProfile, updateAvatar } from '../services/userService';
+import React, { useContext, useState } from 'react';
+import { AuthContext } from '../context/AuthProvider';
+import { updateAvatar } from '../services/userService';
 import { Button, Container, TextField, Avatar, Typography, Box, Paper } from '@mui/material';
 
 const MyProfile: React.FC = () => {
-    const [user, setUser] = useState<any>(null);
+    const { user, setUser } = useContext(AuthContext) ?? {};
     const [avatar, setAvatar] = useState<File | null>(null);
-
-    const userId = 1; 
-
-    useEffect(() => {
-        const fetchProfile = async () => {
-            try {
-                const userProfile = await getUserProfile(userId);
-                setUser(userProfile);
-            } catch (error: any) {
-                console.error('Error fetching profile:', error.message);
-            }
-        };
-
-        fetchProfile();
-    }, [userId]);
 
     const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
@@ -28,10 +14,11 @@ const MyProfile: React.FC = () => {
     };
 
     const handleAvatarUpload = async () => {
-        if (avatar) {
+        if (avatar && user) {
             try {
-                await updateAvatar(userId, avatar);
+                const updatedUser = await updateAvatar(user.id, avatar);
                 alert('Avatar updated successfully!');
+                setUser && setUser(updatedUser);
             } catch (error: any) {
                 console.error('Error updating avatar:', error.message);
             }
