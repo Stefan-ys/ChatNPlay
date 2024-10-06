@@ -10,4 +10,6 @@ public interface AuthService {
     public UserResponseDTO registerUser(RegisterDTO registerDTO);
 
     UserResponseDTO loginUser(LoginDTO loginDTO);
+
+    void onlineStatus(Long userId, boolean isOnline);
 }

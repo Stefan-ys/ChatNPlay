@@ -6,6 +6,7 @@ import com.quizzard.app.dto.UserResponseDTO;
 import com.quizzard.app.entity.Role;
 import com.quizzard.app.entity.User;
 import com.quizzard.app.enums.UserRoleEnum;
+import com.quizzard.app.exception.UserNotFoundException;
 import com.quizzard.app.repository.RoleRepository;
 import com.quizzard.app.repository.UserRepository;
 import org.modelmapper.ModelMapper;
@@ -60,14 +61,21 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public UserResponseDTO loginUser(LoginDTO loginDTO) {
-        System.out.println("service method - " + loginDTO.getUsername());
         User user = userRepository.findByUsername(loginDTO.getUsername())
                 .orElseThrow(() -> new RuntimeException("Invalid username or password"));
 
         if(!passwordEncoder.matches(loginDTO.getPassword(), user.getPassword())) {
             throw new RuntimeException("Invalid username or password");
         }
-
+        onlineStatus(user.getId(), true);
         return modelMapper.map(user, UserResponseDTO.class);
     }
+
+    @Override
+    public void onlineStatus(Long userId, boolean isOnline) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found!"));
+        user.setOnline(isOnline);
+        userRepository.save(user);
+    }
+
 }

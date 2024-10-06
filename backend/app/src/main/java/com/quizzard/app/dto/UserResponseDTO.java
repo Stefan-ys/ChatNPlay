@@ -9,8 +9,10 @@ import lombok.Setter;
 public class UserResponseDTO {
 
     private Long id;
+    private String avatarUrl;
     private String username;
     private String email;
     private String role;
     private int score;
+    private boolean isOnline;
 }

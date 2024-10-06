@@ -2,6 +2,7 @@ package com.quizzard.app.controller;
 
 import com.quizzard.app.config.jwt.JwtUtil;
 import com.quizzard.app.dto.LoginResponseDTO;
+import com.quizzard.app.security.CustomUserDetails;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -34,7 +35,7 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterDTO registerDTO) {
-        if(!registerDTO.getPassword().equals(registerDTO.getConfirmPassword())) {
+        if (!registerDTO.getPassword().equals(registerDTO.getConfirmPassword())) {
             return ResponseEntity.badRequest().body("Passwords and Confirm Password do not match");
         }
 
@@ -59,6 +60,11 @@ public class AuthController {
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         new SecurityContextLogoutHandler().logout(request, response, authentication);
+        if (authentication != null && authentication.getPrincipal() instanceof CustomUserDetails userDetails) {
+            Long userId = userDetails.getId();
+            authService.onlineStatus(userId, false);
+        }
+        assert authentication != null;
         return ResponseEntity.ok("User " + authentication.getName() + " successfully logged out!");
     }
 }

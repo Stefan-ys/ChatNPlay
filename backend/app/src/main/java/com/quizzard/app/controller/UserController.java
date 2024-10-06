@@ -25,10 +25,10 @@ public class UserController {
     }
 
     @PostMapping("/{id}/avatar")
-    public ResponseEntity<String> updateUserProfile(@PathVariable Long id, @ModelAttribute UserProfileUpdateDTO userProfileUpdateDTO) {
+    public ResponseEntity<?> updateUserProfile(@PathVariable Long id, @ModelAttribute UserProfileUpdateDTO userProfileUpdateDTO) {
         try {
-            userService.updateProfile(id, userProfileUpdateDTO);
-            return ResponseEntity.ok("Profile updated successfully");
+            UserResponseDTO userResponseDTO =  userService.updateProfile(id, userProfileUpdateDTO);
+            return ResponseEntity.ok(userResponseDTO);
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Failed to update profile");
         }

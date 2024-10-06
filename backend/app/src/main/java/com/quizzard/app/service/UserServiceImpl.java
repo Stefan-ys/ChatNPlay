@@ -1,6 +1,5 @@
 package com.quizzard.app.service;
 
-import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.Bucket;
 import com.google.firebase.cloud.StorageClient;
 import com.quizzard.app.dto.UserProfileUpdateDTO;
@@ -18,6 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -63,19 +64,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String uploadAvatar(MultipartFile avatarFile) throws IOException {
+
         if (!isValidImageFile(avatarFile)) {
             throw new InvalidFileTypeException("Invalid image file");
         }
-
-        Bucket bucket = StorageClient.getInstance().bucket();
-
-        String fileName = UUID.randomUUID() + "_" + avatarFile.getOriginalFilename();
-
-        Blob blob = bucket.create(fileName, avatarFile.getBytes(), avatarFile.getContentType());
-
-        return blob.getMediaLink();
+        try {
+            Bucket bucket = StorageClient.getInstance().bucket();
+            String fileName = "avatars/" + UUID.randomUUID() + "_" + avatarFile.getOriginalFilename();
+            String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8);
+            return "https://firebasestorage.googleapis.com/v0/b/" + bucket.getName() + "/o/" + encodedFileName + "?alt=media";
+        } catch (Exception e) {
+            System.err.println("Error: " + e.getMessage());
+            throw e;
+        }
     }
-
 
     private boolean isValidImageFile(MultipartFile avatarFile) {
         String contentType = avatarFile.getContentType();
@@ -84,16 +86,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateProfile(Long userId, UserProfileUpdateDTO userProfileUpdateDTO) throws UserNotFoundException, IOException {
+    public UserResponseDTO updateProfile(Long userId, UserProfileUpdateDTO userProfileUpdateDTO) throws UserNotFoundException, IOException {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found!"));
-
         if (userProfileUpdateDTO.getAvatar() != null && !userProfileUpdateDTO.getAvatar().isEmpty()) {
             MultipartFile avatarFile = userProfileUpdateDTO.getAvatar();
+            System.out.println("B1");
             String avatarUrl = uploadAvatar(avatarFile);
+            System.out.println("B2");
             user.setAvatarUrl(avatarUrl);
         }
-
         userRepository.save(user);
+        return modelMapper.map(user, UserResponseDTO.class);
     }
 
     @Override
