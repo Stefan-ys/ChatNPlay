@@ -1,11 +1,11 @@
 package com.quizzard.app.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 
-@Getter
-@Setter
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserResponseDTO {
 
     private Long id;

@@ -1,11 +1,11 @@
 package com.quizzard.app.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
-@Getter
-@Setter
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserProfileUpdateDTO {
 
     private MultipartFile avatar;
