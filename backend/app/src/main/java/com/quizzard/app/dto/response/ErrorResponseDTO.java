@@ -1,4 +1,4 @@
-package com.quizzard.app.dto;
+package com.quizzard.app.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

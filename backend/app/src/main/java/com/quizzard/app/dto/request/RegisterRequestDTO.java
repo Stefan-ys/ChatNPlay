@@ -1,4 +1,4 @@
-package com.quizzard.app.dto;
+package com.quizzard.app.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -8,7 +8,7 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RegisterDTO {
+public class RegisterRequestDTO {
 
     @NotBlank
     private String username;

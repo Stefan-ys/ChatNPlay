@@ -1,4 +1,4 @@
-package com.quizzard.app.dto;
+package com.quizzard.app.dto.request;
 
 import lombok.*;
 
@@ -6,7 +6,7 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginDTO {
+public class LoginRequestDTO {
 
     private String username;
     private String password;

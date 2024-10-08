@@ -1,4 +1,4 @@
-package com.quizzard.app.dto;
+package com.quizzard.app.dto.request;
 
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -6,7 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserProfileUpdateDTO {
+public class MyProfileRequestDTO {
 
     private MultipartFile avatar;
 }
