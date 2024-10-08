@@ -2,20 +2,19 @@ import React, { useState } from 'react';
 import { Button, TextField, Grid, Paper, Typography, Alert } from '@mui/material';
 import { useAuth } from '../hooks/useAuth';
 
-const Register: React.FC = () => {
-    const { register } = useAuth();
+
+const LoginPage: React.FC = () => {
+    const { login } = useAuth();
     const [username, setUsername] = useState('');
-    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState<string | null>(null);
 
     const handleSubmit = async () => {
         try {
-            await register(username, email, password, confirmPassword);
+            await login({username, password});
             setError(null);
         } catch (err) {
-            setError('Registration failed. Please check your details.');
+            setError('Invalid credentials. Please try again.');
         }
     };
 
@@ -24,7 +23,7 @@ const Register: React.FC = () => {
             <Grid item xs={12} sm={8} md={5}>
                 <Paper elevation={3} style={{ padding: '20px' }}>
                     <Typography variant="h5" gutterBottom>
-                        Register
+                        Login
                     </Typography>
                     <TextField
                         fullWidth
@@ -36,34 +35,19 @@ const Register: React.FC = () => {
                     <TextField
                         fullWidth
                         margin="normal"
-                        label="Email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
-                    <TextField
-                        fullWidth
-                        margin="normal"
                         label="Password"
                         type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                     />
-                    <TextField
-                        fullWidth
-                        margin="normal"
-                        label="Confirm Password"
-                        type="password"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                    />
                     <Button
                         fullWidth
                         variant="contained"
-                        color="success"
+                        color="primary"
                         onClick={handleSubmit}
                         style={{ marginTop: '20px' }}
                     >
-                        Register
+                        Login
                     </Button>
                     {error && <Alert severity="error" style={{ marginTop: '20px' }}>{error}</Alert>}
                 </Paper>
@@ -72,4 +56,4 @@ const Register: React.FC = () => {
     );
 };
 
-export default Register;
+export default LoginPage;

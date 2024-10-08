@@ -5,7 +5,8 @@ import SchoolIcon from '@mui/icons-material/School';
 import LoginIcon from '@mui/icons-material/Login';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 
-const Home: React.FC = () => {
+
+const HomePage: React.FC = () => {
     return (
         <Container maxWidth="md" style={{ padding: '50px 0' }}>
             <Paper elevation={3} style={{ padding: '20px', textAlign: 'center' }}>
@@ -47,4 +48,4 @@ const Home: React.FC = () => {
     );
 };
 
-export default Home;
+export default HomePage;

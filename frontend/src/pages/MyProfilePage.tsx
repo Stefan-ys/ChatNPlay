@@ -1,9 +1,10 @@
 import React, { useContext, useState } from 'react';
 import { AuthContext } from '../context/AuthProvider';
-import { updateAvatar } from '../services/userService';
+import { updateAvatar } from '../services/user.service';
 import { Button, Container, TextField, Avatar, Typography, Box, Paper } from '@mui/material';
 
-const MyProfile: React.FC = () => {
+
+const MyProfilePage: React.FC = () => {
     const { user, setUser } = useContext(AuthContext) ?? {};
     const [avatar, setAvatar] = useState<File | null>(null);
 
@@ -57,4 +58,4 @@ const MyProfile: React.FC = () => {
     );
 };
 
-export default MyProfile;
+export default MyProfilePage;

@@ -1,18 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { getAllUsers } from '../services/userService';
+import { getAllUsers } from '../services/user.service';
 import { List, ListItem, Typography, Container, Paper, Box } from '@mui/material';
 import UserAvatar from '../components/UserAvatar';
+import { UserResponse } from '../types/user.types';
 
-interface User {
-    id: number;
-    username: string;
-    email: string;
-    avatarUrl: string;
-    online: boolean;
-}
 
-const Users: React.FC = () => {
-    const [users, setUsers] = useState<User[]>([]);
+const UsersPage: React.FC = () => {
+    const [users, setUsers] = useState<UserResponse[]>([]);
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -25,6 +19,7 @@ const Users: React.FC = () => {
         };
 
         fetchUsers();
+
     }, []);
 
     return (
@@ -34,7 +29,7 @@ const Users: React.FC = () => {
                 <List>
                     {users.map((user) => (
                         <ListItem key={user.id} style={{ display: 'flex', alignItems: 'center' }}>
-                            <UserAvatar avatarUrl={user.avatarUrl} isOnline={user.online} />
+                            <UserAvatar avatarUrl={user.avatarUrl} isOnline={user.isOnline} />
                             <Box ml={2}>
                                 <Typography>{user.username}</Typography>
                                 <Typography variant="body2" color="textSecondary">{user.email}</Typography>
@@ -47,4 +42,4 @@ const Users: React.FC = () => {
     );
 };
 
-export default Users;
+export default UsersPage;

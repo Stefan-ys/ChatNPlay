@@ -46,6 +46,9 @@ const Navbar: React.FC = () => {
                             <Button color="inherit">
                                 <Link to="/profile" style={{ color: 'white', textDecoration: 'none' }}>Profile</Link>
                             </Button>
+                            <Button color="inherit">
+                                <Link to="/lobby" style={{ color: 'white', textDecoration: 'none' }}>Lobby</Link>
+                            </Button>
                             <Button color="inherit" onClick={handleLogout}>
                                 Logout
                             </Button>
