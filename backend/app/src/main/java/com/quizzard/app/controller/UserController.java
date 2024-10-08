@@ -1,8 +1,8 @@
 package com.quizzard.app.controller;
 
 
-import com.quizzard.app.dto.UserProfileUpdateDTO;
-import com.quizzard.app.dto.UserResponseDTO;
+import com.quizzard.app.dto.request.MyProfileRequestDTO;
+import com.quizzard.app.dto.response.UserResponseDTO;
 import com.quizzard.app.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,10 +24,10 @@ public class UserController {
         return ResponseEntity.ok(users);
     }
 
-    @PostMapping("/{id}/avatar")
-    public ResponseEntity<?> updateUserProfile(@PathVariable Long id, @ModelAttribute UserProfileUpdateDTO userProfileUpdateDTO) {
+    @PostMapping("/{userId}/avatar")
+    public ResponseEntity<?> updateUserProfile(@PathVariable Long userId, @ModelAttribute MyProfileRequestDTO myProfileRequestDTO) {
         try {
-            UserResponseDTO userResponseDTO =  userService.updateProfile(id, userProfileUpdateDTO);
+            UserResponseDTO userResponseDTO =  userService.updateProfile(userId, myProfileRequestDTO);
             return ResponseEntity.ok(userResponseDTO);
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Failed to update profile");

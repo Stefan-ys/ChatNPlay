@@ -1,15 +1,15 @@
 package com.quizzard.app.controller;
 
 import com.quizzard.app.config.jwt.JwtUtil;
-import com.quizzard.app.dto.LoginResponseDTO;
+import com.quizzard.app.dto.response.LoginResponseDTO;
 import com.quizzard.app.security.CustomUserDetails;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import com.quizzard.app.dto.LoginDTO;
-import com.quizzard.app.dto.RegisterDTO;
-import com.quizzard.app.dto.UserResponseDTO;
+import com.quizzard.app.dto.request.LoginRequestDTO;
+import com.quizzard.app.dto.request.RegisterRequestDTO;
+import com.quizzard.app.dto.response.UserResponseDTO;
 import com.quizzard.app.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -34,23 +34,23 @@ public class AuthController {
     private AuthenticationManager authenticationManager;
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterDTO registerDTO) {
-        if (!registerDTO.getPassword().equals(registerDTO.getConfirmPassword())) {
+    public ResponseEntity<?> register(@RequestBody RegisterRequestDTO registerRequestDTO) {
+        if (!registerRequestDTO.getPassword().equals(registerRequestDTO.getConfirmPassword())) {
             return ResponseEntity.badRequest().body("Passwords and Confirm Password do not match");
         }
 
-        UserResponseDTO userResponseDTO = authService.registerUser(registerDTO);
+        UserResponseDTO userResponseDTO = authService.registerUser(registerRequestDTO);
         return ResponseEntity.ok(userResponseDTO);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginDTO loginDTO) {
+    public ResponseEntity<?> login(@RequestBody LoginRequestDTO loginRequestDTO) {
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword())
+                new UsernamePasswordAuthenticationToken(loginRequestDTO.getUsername(), loginRequestDTO.getPassword())
         );
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String token = jwtUtil.generateToken(userDetails);
-        UserResponseDTO userResponseDTO = authService.loginUser(loginDTO);
+        UserResponseDTO userResponseDTO = authService.loginUser(loginRequestDTO);
         if (userResponseDTO == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }

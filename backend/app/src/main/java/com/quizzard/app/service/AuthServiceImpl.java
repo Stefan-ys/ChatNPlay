@@ -1,8 +1,8 @@
 package com.quizzard.app.service;
 
-import com.quizzard.app.dto.LoginDTO;
-import com.quizzard.app.dto.RegisterDTO;
-import com.quizzard.app.dto.UserResponseDTO;
+import com.quizzard.app.dto.request.LoginRequestDTO;
+import com.quizzard.app.dto.request.RegisterRequestDTO;
+import com.quizzard.app.dto.response.UserResponseDTO;
 import com.quizzard.app.entity.Role;
 import com.quizzard.app.entity.User;
 import com.quizzard.app.enums.UserRoleEnum;
@@ -34,17 +34,18 @@ public class AuthServiceImpl implements AuthService {
     @Autowired
     private ModelMapper modelMapper;
 
+
     @Override
-    public UserResponseDTO registerUser(RegisterDTO registerDTO) {
-        if (userRepository.existsByUsername(registerDTO.getUsername())) {
+    public UserResponseDTO registerUser(RegisterRequestDTO registerRequestDTO) {
+        if (userRepository.existsByUsername(registerRequestDTO.getUsername())) {
             throw new RuntimeException("Username already exists");
         }
 
-        if (userRepository.existsByEmail(registerDTO.getEmail())) {
+        if (userRepository.existsByEmail(registerRequestDTO.getEmail())) {
             throw new RuntimeException("Email already exists");
         }
 
-        User user = modelMapper.map(registerDTO, User.class);
+        User user = modelMapper.map(registerRequestDTO, User.class);
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
@@ -60,7 +61,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public UserResponseDTO loginUser(LoginDTO loginDTO) {
+    public UserResponseDTO loginUser(LoginRequestDTO loginDTO) {
         User user = userRepository.findByUsername(loginDTO.getUsername())
                 .orElseThrow(() -> new RuntimeException("Invalid username or password"));
 
@@ -77,5 +78,4 @@ public class AuthServiceImpl implements AuthService {
         user.setOnline(isOnline);
         userRepository.save(user);
     }
-
 }

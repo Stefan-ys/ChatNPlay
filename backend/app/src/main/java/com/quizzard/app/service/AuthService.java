@@ -1,15 +1,15 @@
 package com.quizzard.app.service;
 
-import com.quizzard.app.dto.LoginDTO;
-import com.quizzard.app.dto.RegisterDTO;
-import com.quizzard.app.dto.UserResponseDTO;
+import com.quizzard.app.dto.request.LoginRequestDTO;
+import com.quizzard.app.dto.request.RegisterRequestDTO;
+import com.quizzard.app.dto.response.UserResponseDTO;
 
 
 public interface AuthService {
 
-    public UserResponseDTO registerUser(RegisterDTO registerDTO);
+    public UserResponseDTO registerUser(RegisterRequestDTO registerRequestDTO);
 
-    UserResponseDTO loginUser(LoginDTO loginDTO);
+    UserResponseDTO loginUser(LoginRequestDTO loginDTO);
 
     void onlineStatus(Long userId, boolean isOnline);
 }
