@@ -2,8 +2,8 @@ package com.quizzard.app.service;
 
 import com.google.cloud.storage.Bucket;
 import com.google.firebase.cloud.StorageClient;
-import com.quizzard.app.dto.UserProfileUpdateDTO;
-import com.quizzard.app.dto.UserResponseDTO;
+import com.quizzard.app.dto.request.MyProfileRequestDTO;
+import com.quizzard.app.dto.response.UserResponseDTO;
 import com.quizzard.app.entity.Role;
 import com.quizzard.app.entity.User;
 import com.quizzard.app.enums.UserRoleEnum;
@@ -86,13 +86,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponseDTO updateProfile(Long userId, UserProfileUpdateDTO userProfileUpdateDTO) throws UserNotFoundException, IOException {
+    public UserResponseDTO updateProfile(Long userId, MyProfileRequestDTO myProfileRequestDTO) throws UserNotFoundException, IOException {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found!"));
-        if (userProfileUpdateDTO.getAvatar() != null && !userProfileUpdateDTO.getAvatar().isEmpty()) {
-            MultipartFile avatarFile = userProfileUpdateDTO.getAvatar();
-            System.out.println("B1");
+
+        if (myProfileRequestDTO.getAvatar() != null && !myProfileRequestDTO.getAvatar().isEmpty()) {
+            MultipartFile avatarFile = myProfileRequestDTO.getAvatar();
             String avatarUrl = uploadAvatar(avatarFile);
-            System.out.println("B2");
             user.setAvatarUrl(avatarUrl);
         }
         userRepository.save(user);

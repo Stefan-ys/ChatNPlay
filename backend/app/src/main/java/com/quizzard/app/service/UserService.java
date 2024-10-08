@@ -1,8 +1,8 @@
 package com.quizzard.app.service;
 
 
-import com.quizzard.app.dto.UserProfileUpdateDTO;
-import com.quizzard.app.dto.UserResponseDTO;
+import com.quizzard.app.dto.request.MyProfileRequestDTO;
+import com.quizzard.app.dto.response.UserResponseDTO;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -19,7 +19,7 @@ public interface UserService {
 
     String uploadAvatar(MultipartFile file) throws IOException;
 
-    UserResponseDTO updateProfile(Long userId, UserProfileUpdateDTO userProfileUpdateDTO) throws Exception;
+    UserResponseDTO updateProfile(Long userId, MyProfileRequestDTO myProfileRequestDTO) throws Exception;
 
     void addRole(Long userId, String role);
 
