@@ -1,16 +1,13 @@
 package com.quizzard.app.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Set;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
@@ -21,9 +18,12 @@ import java.util.HashSet;
 @Table(name = "lobbies")
 public class Lobby extends BaseEntity {
 
+    @Column()
+    private String name;
+
     @OneToOne
     private Chat chat;
 
-    @OneToMany(mappedBy = "lobby")
-    private Set<User> users = new HashSet<>();
+    @OneToMany(mappedBy = "lobby", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<User> users = new ArrayList<>();
 }

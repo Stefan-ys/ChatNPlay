@@ -1,10 +1,14 @@
 package com.quizzard.app.data;
 
 
-import com.quizzard.app.dto.RegisterDTO;
+import com.quizzard.app.dto.request.RegisterRequestDTO;
+import com.quizzard.app.entity.Chat;
+import com.quizzard.app.entity.Lobby;
 import com.quizzard.app.entity.Role;
 import com.quizzard.app.entity.User;
 import com.quizzard.app.enums.UserRoleEnum;
+import com.quizzard.app.repository.ChatRepository;
+import com.quizzard.app.repository.LobbyRepository;
 import com.quizzard.app.repository.RoleRepository;
 import com.quizzard.app.repository.UserRepository;
 import com.quizzard.app.service.AuthService;
@@ -22,9 +26,11 @@ public class DataInitializer implements CommandLineRunner {
     private final UserService userService;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final LobbyRepository lobbyRepository;
+    private final ChatRepository chatRepository;
 
     @Override
-    public void run(String... args)  {
+    public void run(String... args) {
 
         if (roleRepository.count() == 0) {
             Role adminRole = new Role();
@@ -41,7 +47,7 @@ public class DataInitializer implements CommandLineRunner {
         }
 
         if (!userService.existsByUsername("admin")) {
-            RegisterDTO adminUser = new RegisterDTO();
+            RegisterRequestDTO adminUser = new RegisterRequestDTO();
             adminUser.setUsername("admin");
             adminUser.setEmail("admin@example.com");
             adminUser.setPassword("admin123");
@@ -53,6 +59,17 @@ public class DataInitializer implements CommandLineRunner {
                     .orElseThrow();
 
             userService.addRole(user.getId(), "admin");
+        }
+
+        if (lobbyRepository.count() == 0) {
+            Lobby lobby = new Lobby();
+            lobby.setName("General Lobby");
+
+            Chat chat = new Chat();
+            lobby.setChat(chat);
+
+            chatRepository.save(chat);
+            lobbyRepository.save(lobby);
         }
     }
 }
