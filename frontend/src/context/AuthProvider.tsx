@@ -1,29 +1,21 @@
 import { createContext, useState, ReactNode } from "react";
-import { login, logout, register } from '../services/authServices';
+import { UserResponse } from '../types/user.types'
+import { login, logout, register } from '../services/auth.service';
 import axios from 'axios';
+import { LoginRequest, RegisterRequest } from "../types/auth.types";
 
 interface AuthContextType {
-    user: User | null;
-    setUser: React.Dispatch<React.SetStateAction<User | null>>;
-    login: (username: string, password: string) => Promise<void>;
-    register: (username: string, email: string, password: string, confirmPassword: string) => Promise<void>;
+    user: UserResponse | null;
+    setUser: React.Dispatch<React.SetStateAction<UserResponse | null>>;
+    login: (loginData: LoginRequest) => Promise<void>;
+    register: (registerData: RegisterRequest) => Promise<void>;
     logout: () => Promise<void>;
-}
-
-interface User {
-    id: number;
-    username: string;
-    email: string;
-    avatarUrl: string;
-    role: string;
-    score: number;
-    isOnline: boolean;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const [user, setUser] = useState<User | null>(() => {
+    const [user, setUser] = useState<UserResponse | null>(() => {
         const token = localStorage.getItem('token');
         if (token) {
             try {
@@ -46,17 +38,17 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         return null;
     });
 
-    const handleLogin = async (username: string, password: string) => {
-        const response = await login(username, password);
+    const handleLogin = async (loginData: LoginRequest) => {
+        const response = await login(loginData);
         const { token, user } = response;
         localStorage.setItem('token', token);
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         setUser(user);
     };
 
-    const handleRegister = async (username: string, email: string, password: string, confirmPassword: string) => {
-        const response = await register(username, email, password, confirmPassword);
-        handleLogin(username, password);
+    const handleRegister = async (registerData: RegisterRequest) => {
+        const response = await register(registerData);
+        handleLogin({username: registerData.username, password: registerData.password});
     };
 
     const handleLogout = async () => {

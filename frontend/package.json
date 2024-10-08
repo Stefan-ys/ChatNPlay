@@ -14,10 +14,12 @@
     "@emotion/styled": "^11.13.0",
     "@mui/icons-material": "^6.1.2",
     "@mui/material": "^6.1.2",
+    "@stomp/stompjs": "^7.0.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "@types/axios": "^0.14.0",
+    "@types/sockjs-client": "^1.5.4",
     "@vitejs/plugin-react": "^4.3.2",
     "axios": "^1.7.7",
     "buffer": "^6.0.3",
@@ -26,6 +28,8 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.26.2",
+    "sockjs-client": "^1.6.1",
+    "stompjs": "^2.3.3",
     "vite": "^5.4.8",
     "web-vitals": "^2.1.4"
   },
@@ -51,6 +55,7 @@
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
     "@types/jwt-decode": "^3.1.0",
     "@types/react-router-dom": "^5.3.3",
+    "@types/stompjs": "^2.3.9",
     "typescript": "^4.9.5"
   }
 }
