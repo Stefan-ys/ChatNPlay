@@ -4,6 +4,7 @@ import com.quizzard.app.dto.request.CommentRequestDTO;
 import com.quizzard.app.dto.response.CommentResponseDTO;
 import com.quizzard.app.entity.Comment;
 import com.quizzard.app.entity.User;
+import com.quizzard.app.repository.ChatRepository;
 import com.quizzard.app.repository.CommentRepository;
 import com.quizzard.app.repository.UserRepository;
 import org.modelmapper.ModelMapper;
@@ -22,22 +23,27 @@ public class CommentServiceImpl implements CommentService {
 
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private ChatRepository chatRepository;
 
     @Override
     public CommentResponseDTO getCommentById(Long commentId) {
-       Comment comment = commentRepository.findById(commentId)
-               .orElseThrow(() -> new IllegalArgumentException("Comment not found with id: " + commentId));
-       return modelMapper.map(comment, CommentResponseDTO.class);
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new IllegalArgumentException("Comment not found with id: " + commentId));
+        return modelMapper.map(comment, CommentResponseDTO.class);
     }
 
     @Override
     public CommentResponseDTO createComment(CommentRequestDTO commentRequestDTO) {
-        Comment comment = modelMapper.map(commentRequestDTO, Comment.class);
+        Comment comment = new Comment();
 
         User user = userRepository.findById(commentRequestDTO.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + commentRequestDTO.getUserId()));
+        comment.setChat(chatRepository.getChatsById(commentRequestDTO.getChatId()));
 
         comment.setUser(user);
+
+        comment.setContent(commentRequestDTO.getContent());
 
         Comment savedComment = commentRepository.save(comment);
         return modelMapper.map(savedComment, CommentResponseDTO.class);
@@ -56,7 +62,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public void deleteComment(Long commentId) {
-        if(!commentRepository.existsById(commentId)) {
+        if (!commentRepository.existsById(commentId)) {
             throw new IllegalArgumentException("Comment not found with id: " + commentId);
         }
         commentRepository.deleteById(commentId);
