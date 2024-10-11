@@ -16,6 +16,11 @@ export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [user, setUser] = useState<UserResponse | null>(() => {
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+            return JSON.parse(storedUser);
+        }
+
         const token = localStorage.getItem('token');
         if (token) {
             try {
@@ -38,22 +43,25 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         return null;
     });
 
+
     const handleLogin = async (loginData: LoginRequest) => {
         const response = await login(loginData);
         const { token, user } = response;
         localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(user));
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         setUser(user);
     };
 
     const handleRegister = async (registerData: RegisterRequest) => {
         const response = await register(registerData);
-        handleLogin({username: registerData.username, password: registerData.password});
+        handleLogin({ username: registerData.username, password: registerData.password });
     };
 
     const handleLogout = async () => {
         await logout();
         localStorage.removeItem('token');
+        localStorage.removeItem('user');
         delete axios.defaults.headers.common['Authorization'];
         setUser(null);
     };
