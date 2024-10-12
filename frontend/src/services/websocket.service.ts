@@ -1,4 +1,3 @@
-// websocketService.ts
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { SOCKET_URL } from '../common/urls';

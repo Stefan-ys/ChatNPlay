@@ -11,6 +11,8 @@ export const API_REGISTER_URL = `${API_URL}/auth/register`;
 
 export const API_LOGOUT_URL = `${API_URL}/auth/logout`;
 
+export const API_REFRESH_TOKEN_URL = `${API_URL}/auth/refresh-token`
+
 
 // USERS
 

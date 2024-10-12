@@ -9,7 +9,7 @@ export interface CommentResponse {
     updatedAt: Date;
 }
 
-export interface CommentBinding {
+export interface CommentRequest {
     userId: number;
     chatId: number;
     content: string;

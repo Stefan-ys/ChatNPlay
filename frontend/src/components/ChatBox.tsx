@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ChatResponse } from '../types/chat.types';
-import { CommentBinding, CommentResponse } from '../types/comment.types';
+import { CommentRequest, CommentResponse } from '../types/comment.types';
 import { createComment } from '../services/comment.service';
 import { useAuth } from '../hooks/useAuth';
 import Comment from './Comment';
@@ -26,7 +26,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chat }) => {
 
     const handleAddComment = async () => {
         if (newComment.trim() && user) {
-            const newCommentData: CommentBinding = {
+            const newCommentData: CommentRequest = {
                 content: newComment,
                 userId: user.id,
                 chatId: chat?.id,
