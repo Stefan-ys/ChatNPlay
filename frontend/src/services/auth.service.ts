@@ -14,7 +14,6 @@ export const register = async (registerData: RegisterRequest) => {
 export const login = async (loginData: LoginRequest) => {
     try {
         const response = await axiosInstance.post(API_LOGIN_URL, loginData);
-        // Save tokens on successful login
         localStorage.setItem('token', response.data.accessToken);
         localStorage.setItem('refreshToken', response.data.refreshToken);
         return response.data;

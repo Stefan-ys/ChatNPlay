@@ -12,8 +12,17 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('token');
+        
         if (token) {
             config.headers['Authorization'] = `Bearer ${token}`;
+        } else {
+            const currentPath = window.location.pathname;
+            if (currentPath !== '/login') {
+                console.error('Token is missing. Redirecting to login...');
+                localStorage.removeItem('token');
+                localStorage.removeItem('refreshToken');
+                window.location.href = '/login';
+            }
         }
         return config;
     },
@@ -33,24 +42,19 @@ axiosInstance.interceptors.response.use(
             if (error.response.status === 401 && !originalRequest._retry) {
                 originalRequest._retry = true;
 
-                // Attempt to refresh the token
                 const newToken = await refreshToken();
 
                 if (newToken) {
-                    // Save new token to localStorage
                     localStorage.setItem('token', newToken);
                     axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
                     originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
 
-                    // Retry the original request with the new token
                     return axiosInstance(originalRequest);
                 } else {
-                    // Handle the case where refresh token fails, log out user
-                    // Optionally redirect to login page
                     console.error('Failed to refresh token. Logging out...');
                     localStorage.removeItem('token');
                     localStorage.removeItem('refreshToken');
-                    window.location.href = '/login'; // Redirect to login
+                    window.location.href = '/login';
                 }
             }
 

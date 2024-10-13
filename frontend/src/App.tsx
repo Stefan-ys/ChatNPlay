@@ -1,5 +1,5 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import React, { useContext } from 'react';
+import { BrowserRouter as Router, Routes, Route, Outlet, Navigate } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import RegisterPage from './pages/RegisterPage';
 import LoginPage from './pages/LoginPage';
@@ -8,11 +8,21 @@ import ProfilePage from './pages/MyProfilePage';
 import HomePage from './pages/HomePage';
 import Navbar from './components/Navbar';
 import './App.css';
-import { AuthProvider } from './context/AuthProvider';
+import { AuthProvider, AuthContext } from './context/AuthProvider';
 import { themeOptions } from './themes/themeOptions';
 import LobbyPage from './pages/LobbyPage';
 
 const theme = createTheme(themeOptions);
+
+const PrivateRoute = () => {
+  console.log(1)
+  const authContext = useContext(AuthContext);
+  if (!authContext) {
+    return <Navigate to="/login" />;
+  }
+  const { user } = authContext;
+  return user ? <Outlet /> : <Navigate to="/login" />;
+};
 
 const App: React.FC = () => {
   return (
@@ -24,9 +34,11 @@ const App: React.FC = () => {
             <Route path="/" element={<HomePage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/login" element={<LoginPage />} />
-            <Route path="/users" element={<UsersPage />} />
-            <Route path="/profile" element={<ProfilePage />} />
-            <Route path="/lobby" element={<LobbyPage lobbyId={1}/>} />
+            <Route path="/" element={<PrivateRoute />}>
+              <Route path="/users" element={<UsersPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/lobby" element={<LobbyPage lobbyId={1} />} />
+            </Route>
           </Routes>
         </Router>
       </ThemeProvider>
