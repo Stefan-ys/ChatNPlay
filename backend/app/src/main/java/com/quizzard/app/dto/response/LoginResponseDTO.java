@@ -8,5 +8,6 @@ import lombok.*;
 public class LoginResponseDTO {
 
     private String token;
+    private String refreshToken;
     private UserResponseDTO user;
 }

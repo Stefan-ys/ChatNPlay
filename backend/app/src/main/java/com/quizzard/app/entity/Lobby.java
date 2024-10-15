@@ -24,6 +24,6 @@ public class Lobby extends BaseEntity {
     @OneToOne
     private Chat chat;
 
-    @OneToMany(mappedBy = "lobby", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "lobby", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<User> users = new ArrayList<>();
 }

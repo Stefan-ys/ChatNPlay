@@ -21,18 +21,27 @@ public class JwtUtil {
     private long jwtExpiration;
 
 
+    @Value("${security.jwt.refresh-expiration-time}")
+    private long jwtRefreshExpiration;
+
+
     public String generateToken(UserDetails userDetails) {
-        Map<String , Object> claims = new HashMap<>();
-        return createToken(claims, userDetails.getUsername());
+        Map<String, Object> claims = new HashMap<>();
+        return createToken(claims, userDetails.getUsername(), false);
     }
 
-    private String createToken(Map<String , Object> claims, String subject) {
+    public String generateRefreshToken(UserDetails userDetails) {
+        Map<String, Object> claims = new HashMap<>();
+        return createToken(claims, userDetails.getUsername(), true);
+    }
 
+    private String createToken(Map<String, Object> claims, String subject, boolean isRefresh) {
+        long expirationTime = isRefresh ? jwtRefreshExpiration : jwtExpiration;
         return Jwts.builder()
                 .claims(claims)
                 .subject(subject)
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + jwtExpiration)) // 10 hours
+                .expiration(new Date(System.currentTimeMillis() + expirationTime))
                 .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()), Jwts.SIG.HS256)
                 .compact();
     }
@@ -49,12 +58,20 @@ public class JwtUtil {
                 .getPayload();
     }
 
-    public Boolean validateToken(String token, UserDetails userDetails) {
-        final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    public Boolean validateToken(String token) {
+        return !isTokenExpired(token) && isTokenIntegrityValid(token);
     }
 
     private Boolean isTokenExpired(String token) {
         return extractAllClaims(token).getExpiration().before(new Date());
+    }
+
+    private Boolean isTokenIntegrityValid(String token) {
+        try {
+            extractAllClaims(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }
