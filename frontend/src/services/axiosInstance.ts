@@ -9,18 +9,23 @@ const axiosInstance = axios.create({
     },
 });
 
+const clearStorage = () => {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('user')
+}
+
 axiosInstance.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem('token');
-        
+        const token = localStorage.getItem('accessToken');
+
         if (token) {
             config.headers['Authorization'] = `Bearer ${token}`;
         } else {
             const currentPath = window.location.pathname;
             if (currentPath !== '/login') {
                 console.error('Token is missing. Redirecting to login...');
-                localStorage.removeItem('token');
-                localStorage.removeItem('refreshToken');
+                clearStorage();
                 window.location.href = '/login';
             }
         }
@@ -32,39 +37,54 @@ axiosInstance.interceptors.request.use(
 );
 
 axiosInstance.interceptors.response.use(
-    (response) => {
-        return response;
-    },
+    (response) => response,
     async (error) => {
         const originalRequest = error.config;
 
-        if (error.response) {
-            if (error.response.status === 401 && !originalRequest._retry) {
-                originalRequest._retry = true;
+        if (!error.response) {
+            console.error("Network or CORS error:", error.message);
+            window.location.href = '/login';
+            return Promise.reject(error);
+        }
 
-                const newToken = await refreshToken();
+        if (error.response.status === 401 && !originalRequest._retry) {
+            originalRequest._retry = true;
 
-                if (newToken) {
-                    localStorage.setItem('token', newToken);
-                    axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
-                    originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
-
-                    return axiosInstance(originalRequest);
-                } else {
-                    console.error('Failed to refresh token. Logging out...');
-                    localStorage.removeItem('token');
-                    localStorage.removeItem('refreshToken');
+            const errorCode = error.response.data?.errorCode;
+            if (errorCode === 'TOKEN_EXPIRED') {
+                try {
+                    const response = await refreshToken();
+                    if (response) {
+                        const { accessToken: newToken, refreshToken: newRefreshToken } = response;
+                        localStorage.setItem('accessToken', newToken);
+                        localStorage.setItem('refreshToken', newRefreshToken);
+                        axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
+                        originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
+                        return axiosInstance(originalRequest);
+                    } else {
+                        console.error('Failed to refresh token. Logging out...');
+                        clearStorage();
+                        window.location.href = '/login';
+                    }
+                } catch (refreshError) {
+                    console.error('Error refreshing token:', refreshError);
+                    clearStorage();
                     window.location.href = '/login';
                 }
+            } else {
+                console.error('Authentication error:', error.response.data?.error);
+                clearStorage();
+                window.location.href = '/login';
             }
+        }
 
-            if (error.response.status === 403) {
-                console.error('Access denied');
-            }
+        if (error.response.status === 403) {
+            console.error('Access denied - insufficient permissions');
         }
 
         return Promise.reject(error);
     }
 );
+
 
 export default axiosInstance;

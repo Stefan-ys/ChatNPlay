@@ -15,7 +15,6 @@ import LobbyPage from './pages/LobbyPage';
 const theme = createTheme(themeOptions);
 
 const PrivateRoute = () => {
-  console.log(1)
   const authContext = useContext(AuthContext);
   if (!authContext) {
     return <Navigate to="/login" />;

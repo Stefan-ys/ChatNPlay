@@ -1,5 +1,5 @@
 import { createContext, useState, ReactNode } from "react";
-import { UserResponse } from '../types/user.types'
+import { UserResponse } from '../types/user.types';
 import { login, logout, register } from '../services/auth.service';
 import axios from 'axios';
 import { LoginRequest, RegisterRequest } from "../types/auth.types";
@@ -21,7 +21,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             return JSON.parse(storedUser);
         }
 
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('accessToken');
         if (token) {
             try {
                 const base64Url = token.split('.')[1];
@@ -43,11 +43,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         return null;
     });
 
-
     const handleLogin = async (loginData: LoginRequest) => {
         const response = await login(loginData);
         const { token, refreshToken, user } = response;
-        localStorage.setItem('token', token);
+        localStorage.setItem('accessToken', token);
         localStorage.setItem('refreshToken', refreshToken);
         localStorage.setItem('user', JSON.stringify(user));
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
@@ -55,18 +54,20 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     };
 
     const handleRegister = async (registerData: RegisterRequest) => {
-        const response = await register(registerData);
-        handleLogin({ username: registerData.username, password: registerData.password });
+        await register(registerData);
+        await handleLogin({ username: registerData.username, password: registerData.password });
     };
 
     const handleLogout = async () => {
         await logout();
-        localStorage.removeItem('token');
+        localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
         localStorage.removeItem('user');
         delete axios.defaults.headers.common['Authorization'];
         setUser(null);
     };
+
+    // MAYBE ADD REFRESH TOKEN LOGIC HERE WITH AXIOS THROUGH THE SERVICE 
 
     return (
         <AuthContext.Provider value={{ user, setUser, login: handleLogin, register: handleRegister, logout: handleLogout }}>
