@@ -85,17 +85,16 @@ public class AuthController {
         String requestRefreshToken = request.get("requestRefreshToken");
 
         System.out.println("REFRESH !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-
+        System.out.println(requestRefreshToken);
         if (requestRefreshToken != null && jwtUtil.validateToken(requestRefreshToken)) {
             String username = jwtUtil.extractUsername(requestRefreshToken);
 
             UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
 
             String newAccessToken = jwtUtil.generateToken(userDetails);
-            // Optionally generate a new refresh token as well
+
             String newRefreshToken = jwtUtil.generateRefreshToken(userDetails);
 
-            // Return both tokens
             Map<String, String> tokens = new HashMap<>();
             tokens.put("accessToken", newAccessToken);
             tokens.put("refreshToken", newRefreshToken);
@@ -104,7 +103,5 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token");
         }
     }
-
-
 }
 

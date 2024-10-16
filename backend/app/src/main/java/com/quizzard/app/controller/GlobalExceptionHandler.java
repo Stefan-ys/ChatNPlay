@@ -36,6 +36,7 @@ public class GlobalExceptionHandler {
         Map<String, String> response = new HashMap<>();
         response.put("error", "JWT token is expired");
         response.put("message", ex.getMessage());
+        System.out.println("HELLO1");
         return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
     }
 
@@ -44,6 +45,7 @@ public class GlobalExceptionHandler {
         Map<String, String> response = new HashMap<>();
         response.put("error", "Invalid JWT token");
         response.put("message", ex.getMessage());
+        System.out.println("HELLO2");
         return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
     }
 
@@ -52,6 +54,7 @@ public class GlobalExceptionHandler {
         Map<String, String> response = new HashMap<>();
         response.put("error", "An error occurred");
         response.put("message", ex.getMessage());
+        System.out.println("HELLO3");
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
