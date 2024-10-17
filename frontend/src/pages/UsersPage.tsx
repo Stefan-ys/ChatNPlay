@@ -3,7 +3,7 @@ import { getAllUsers } from '../services/user.service';
 import { List, ListItem, Typography, Container, Paper, Box } from '@mui/material';
 import UserAvatar from '../components/UserAvatar';
 import { UserResponse } from '../types/user.types';
-
+import { userStatusWebSocket } from '../utils/userStatusWebSocket';
 
 const UsersPage: React.FC = () => {
     const [users, setUsers] = useState<UserResponse[]>([]);
@@ -20,6 +20,17 @@ const UsersPage: React.FC = () => {
 
         fetchUsers();
 
+        userStatusWebSocket.initWebSocket((userId, isOnline) => {
+            setUsers((prevUsers) =>
+                prevUsers.map((user) =>
+                    user.id === userId ? { ...user, isOnline } : user
+                )
+            );
+        });
+
+        return () => {
+            userStatusWebSocket.closeWebSocket();
+        };
     }, []);
 
     return (

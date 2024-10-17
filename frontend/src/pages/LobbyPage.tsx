@@ -4,6 +4,7 @@ import UserList from '../components/UserList';
 import { LobbyResponse } from '../types/lobby.types';
 import { getLobbyById } from '../services/lobby.service';
 import { Container, Box, Typography } from '@mui/material';
+import { createLobbyUpdateWebSocket  } from '../utils/lobbyWebSocket';
 
 
 const LobbyPage: React.FC<{ lobbyId: number }> = ({ lobbyId }) => {
@@ -14,7 +15,16 @@ const LobbyPage: React.FC<{ lobbyId: number }> = ({ lobbyId }) => {
             const lobbyData = await getLobbyById(lobbyId);
             setLobby(lobbyData);
         };
+
         fetchLobby();
+
+        const client = createLobbyUpdateWebSocket (lobbyId, (updatedLobby: LobbyResponse) => {
+            setLobby(updatedLobby);
+        });
+
+        return () => {
+            client.deactivate();
+        };
     }, [lobbyId]);
 
     return (
