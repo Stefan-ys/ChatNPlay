@@ -68,14 +68,8 @@ public class AuthServiceImpl implements AuthService {
         if(!passwordEncoder.matches(loginDTO.getPassword(), user.getPassword())) {
             throw new RuntimeException("Invalid username or password");
         }
-        onlineStatus(user.getId(), true);
+
         return modelMapper.map(user, UserResponseDTO.class);
     }
 
-    @Override
-    public void onlineStatus(Long userId, boolean isOnline) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found!"));
-        user.setOnline(isOnline);
-        userRepository.save(user);
-    }
 }

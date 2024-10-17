@@ -7,9 +7,7 @@ import com.quizzard.app.dto.response.UserResponseDTO;
 
 public interface AuthService {
 
-    public UserResponseDTO registerUser(RegisterRequestDTO registerRequestDTO);
+    UserResponseDTO registerUser(RegisterRequestDTO registerRequestDTO);
 
     UserResponseDTO loginUser(LoginRequestDTO loginDTO);
-
-    void onlineStatus(Long userId, boolean isOnline);
 }

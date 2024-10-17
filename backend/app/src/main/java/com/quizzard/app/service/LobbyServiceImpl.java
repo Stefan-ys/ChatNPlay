@@ -71,5 +71,4 @@ public class LobbyServiceImpl implements LobbyService {
     private CommentResponseDTO mapToCommentDTO(Comment comment) {
         return modelMapper.map(comment, CommentResponseDTO.class);
     }
-
 }

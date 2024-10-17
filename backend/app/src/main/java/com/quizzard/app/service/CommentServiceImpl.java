@@ -23,6 +23,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Autowired
     private ModelMapper modelMapper;
+
     @Autowired
     private ChatRepository chatRepository;
 
@@ -46,6 +47,7 @@ public class CommentServiceImpl implements CommentService {
         comment.setContent(commentRequestDTO.getContent());
 
         Comment savedComment = commentRepository.save(comment);
+
         return modelMapper.map(savedComment, CommentResponseDTO.class);
     }
 

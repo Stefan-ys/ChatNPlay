@@ -4,6 +4,7 @@ import com.quizzard.app.config.jwt.JwtUtil;
 import com.quizzard.app.dto.response.LoginResponseDTO;
 import com.quizzard.app.security.CustomUserDetails;
 import com.quizzard.app.service.CustomUserDetailsService;
+import com.quizzard.app.service.UserStatusService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,6 +31,9 @@ public class AuthController {
 
     @Autowired
     private AuthService authService;
+
+    @Autowired
+    private UserStatusService userStatusService;
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -66,6 +70,9 @@ public class AuthController {
         if (userResponseDTO == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
+
+        userStatusService.updateUserStatus(userResponseDTO.getId(), true);
+
         return ResponseEntity.ok(new LoginResponseDTO(accessToken, refreshToken, userResponseDTO));
     }
 
@@ -74,7 +81,7 @@ public class AuthController {
         new SecurityContextLogoutHandler().logout(request, response, authentication);
         if (authentication != null && authentication.getPrincipal() instanceof CustomUserDetails userDetails) {
             Long userId = userDetails.getId();
-            authService.onlineStatus(userId, false);
+            userStatusService.updateUserStatus(userId, false);
         }
         assert authentication != null;
         return ResponseEntity.ok("User " + authentication.getName() + " successfully logged out!");
@@ -84,8 +91,6 @@ public class AuthController {
     public ResponseEntity<?> refreshToken(@RequestBody Map<String, String> request) {
         String requestRefreshToken = request.get("requestRefreshToken");
 
-        System.out.println("REFRESH !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        System.out.println(requestRefreshToken);
         if (requestRefreshToken != null && jwtUtil.validateToken(requestRefreshToken)) {
             String username = jwtUtil.extractUsername(requestRefreshToken);
 

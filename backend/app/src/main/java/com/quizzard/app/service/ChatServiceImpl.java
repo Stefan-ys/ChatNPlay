@@ -19,4 +19,5 @@ public class ChatServiceImpl implements ChatService {
     @Autowired
     private ChatRepository chatRepository;
 
+
 }

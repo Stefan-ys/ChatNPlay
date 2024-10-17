@@ -38,7 +38,7 @@ public class User extends BaseEntity {
     private int score = 0;
 
     @Column
-    String avatarUrl;
+    private String avatarUrl;
 
     @Column(nullable = false)
     private boolean isOnline = false;
