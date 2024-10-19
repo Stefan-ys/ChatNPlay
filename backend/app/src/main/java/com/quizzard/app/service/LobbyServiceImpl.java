@@ -1,10 +1,8 @@
 package com.quizzard.app.service;
 
-import com.quizzard.app.dto.response.ChatResponseDTO;
 import com.quizzard.app.dto.response.CommentResponseDTO;
 import com.quizzard.app.dto.response.LobbyResponseDTO;
 import com.quizzard.app.dto.response.UserResponseDTO;
-import com.quizzard.app.entity.Chat;
 import com.quizzard.app.entity.Comment;
 import com.quizzard.app.entity.Lobby;
 import com.quizzard.app.entity.User;
@@ -25,10 +23,25 @@ public class LobbyServiceImpl implements LobbyService {
     @Autowired
     private ModelMapper modelMapper;
 
+
     @Override
     public LobbyResponseDTO createLobby() {
         Lobby lobby = new Lobby();
         return modelMapper.map(lobbyRepository.save(lobby), LobbyResponseDTO.class);
+    }
+
+    @Override
+    public LobbyResponseDTO addCommentToLobby(Long lobbyId, CommentResponseDTO savedComment) {
+        Lobby lobby = lobbyRepository.findById(lobbyId)
+                .orElseThrow(() -> new IllegalArgumentException("Lobby not found with id: " + lobbyId));
+
+        Comment comment = modelMapper.map(savedComment, Comment.class);
+
+        lobby.getChat().add(comment);
+
+        lobbyRepository.save(lobby);
+
+        return modelMapper.map(lobby, LobbyResponseDTO.class);
     }
 
     @Override
@@ -41,7 +54,12 @@ public class LobbyServiceImpl implements LobbyService {
 
     private LobbyResponseDTO mapToLobbyDTO(Lobby lobby) {
         LobbyResponseDTO lobbyResponseDTO = modelMapper.map(lobby, LobbyResponseDTO.class);
-        lobbyResponseDTO.setChat(mapToChatDTO(lobby.getChat()));
+
+        lobbyResponseDTO.setChat(
+                lobby.getChat().stream()
+                        .map(comment -> modelMapper.map(comment, CommentResponseDTO.class))
+                        .collect(Collectors.toList())
+        );
 
         lobbyResponseDTO.setUsers(
                 lobby.getUsers().stream()
@@ -52,23 +70,7 @@ public class LobbyServiceImpl implements LobbyService {
         return lobbyResponseDTO;
     }
 
-    private ChatResponseDTO mapToChatDTO(Chat chat) {
-        ChatResponseDTO chatDTO = modelMapper.map(chat, ChatResponseDTO.class);
-
-        chatDTO.setComments(
-                chat.getComments().stream()
-                        .map(this::mapToCommentDTO)
-                        .collect(Collectors.toList())
-        );
-
-        return chatDTO;
-    }
-
     private UserResponseDTO mapToUserResponseDTO(User user) {
         return modelMapper.map(user, UserResponseDTO.class);
-    }
-
-    private CommentResponseDTO mapToCommentDTO(Comment comment) {
-        return modelMapper.map(comment, CommentResponseDTO.class);
     }
 }

@@ -1,5 +1,6 @@
 package com.quizzard.app.entity;
 
+import com.quizzard.app.dto.response.CommentResponseDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,9 +20,10 @@ public class Comment extends BaseEntity{
     private User user;
 
     @ManyToOne
-    @JoinColumn(name= "chat_id")
-    private Chat chat;
+    @JoinColumn(name= "lobby_id")
+    private Lobby lobby;
 
     @Column(nullable = false)
     private String content;
+
 }

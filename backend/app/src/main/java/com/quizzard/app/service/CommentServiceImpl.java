@@ -4,8 +4,8 @@ import com.quizzard.app.dto.request.CommentRequestDTO;
 import com.quizzard.app.dto.response.CommentResponseDTO;
 import com.quizzard.app.entity.Comment;
 import com.quizzard.app.entity.User;
-import com.quizzard.app.repository.ChatRepository;
 import com.quizzard.app.repository.CommentRepository;
+import com.quizzard.app.repository.LobbyRepository;
 import com.quizzard.app.repository.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +24,6 @@ public class CommentServiceImpl implements CommentService {
     @Autowired
     private ModelMapper modelMapper;
 
-    @Autowired
-    private ChatRepository chatRepository;
 
     @Override
     public CommentResponseDTO getCommentById(Long commentId) {
@@ -40,7 +38,6 @@ public class CommentServiceImpl implements CommentService {
 
         User user = userRepository.findById(commentRequestDTO.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + commentRequestDTO.getUserId()));
-        comment.setChat(chatRepository.getChatsById(commentRequestDTO.getChatId()));
 
         comment.setUser(user);
 
