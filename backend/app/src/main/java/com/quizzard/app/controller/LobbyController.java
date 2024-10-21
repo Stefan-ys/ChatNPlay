@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/lobbies")
-@CrossOrigin(origins = "http://localhost:5173")
 public class LobbyController {
 
     @Autowired
@@ -28,19 +27,53 @@ public class LobbyController {
 
     @GetMapping("/{lobbyId}")
     public LobbyResponseDTO getLobby(@PathVariable Long lobbyId) {
-        LobbyResponseDTO lobby = lobbyService.getLobbyById(lobbyId);
-
-        messagingTemplate.convertAndSend("/lobby/" + lobbyId, lobby);
-
-        return lobby;
+        return lobbyService.getLobbyById(lobbyId);
     }
 
-    @MessageMapping("/lobbies/{lobbyId}/comments")
-    public CommentResponseDTO postComment(@PathVariable Long lobbyId, @RequestBody CommentRequestDTO commentRequestDTO) {
+    @GetMapping("/name/{lobbyName}")
+    public LobbyResponseDTO getLobbyByName(@PathVariable String lobbyName) {
+        return lobbyService.getLobbyByName(lobbyName);
+    }
+
+    @MessageMapping("/lobby/{lobbyId}/comment")  // Client sends message here
+    @SendTo("/topic/lobby/{lobbyId}/chat")       // Broadcast to subscribers on this topic
+    public CommentResponseDTO postComment(@PathVariable Long lobbyId, CommentRequestDTO commentRequestDTO) {
+        // Create the comment and update the lobby
         CommentResponseDTO createdComment = commentService.createComment(commentRequestDTO);
         lobbyService.addCommentToLobby(lobbyId, createdComment);
 
-        messagingTemplate.convertAndSend("/lobby/" + lobbyId + "/comments", createdComment);
+        // Return the created comment (this will be sent to the "/topic/lobby/{lobbyId}/chat" topic)
         return createdComment;
+    }
+
+    @PutMapping("/{lobbyId}/comments/{commentId}")
+    public LobbyResponseDTO editComment(@PathVariable Long lobbyId, @PathVariable Long commentId,
+                                        @RequestBody CommentRequestDTO commentRequestDTO) {
+        CommentResponseDTO updatedComment = commentService.updateComment(commentId, commentRequestDTO);
+        LobbyResponseDTO lobbyResponse = lobbyService.updateCommentInLobby(lobbyId, updatedComment);
+
+//        messagingTemplate.convertAndSend("/topic/lobby/" + lobbyId + "/chat", updatedComment);
+
+        return lobbyResponse;
+    }
+
+    @DeleteMapping("/{lobbyId}/comments/{commentId}")
+    public LobbyResponseDTO deleteComment(@PathVariable Long lobbyId, @PathVariable Long commentId) {
+        commentService.deleteComment(commentId);
+        LobbyResponseDTO lobbyResponse = lobbyService.removeCommentFromLobby(lobbyId, commentId);
+
+//        messagingTemplate.convertAndSend("/topic/lobby/" + lobbyId + "/chat", "Comment with ID " + commentId + " was deleted.");
+
+        return lobbyResponse;
+    }
+
+    @PostMapping("/{lobbyId}/users/{userId}")
+    public LobbyResponseDTO addUserToLobby(@PathVariable Long lobbyId, @PathVariable Long userId) {
+        return lobbyService.addUserToLobby(lobbyId, userId);
+    }
+
+    @DeleteMapping("/{lobbyId}/users/{userId}")
+    public LobbyResponseDTO removeUserFromLobby(@PathVariable Long lobbyId, @PathVariable Long userId) {
+        return lobbyService.removeUserFromLobby(lobbyId, userId);
     }
 }

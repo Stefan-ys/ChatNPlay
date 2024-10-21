@@ -10,4 +10,14 @@ public interface LobbyService {
     LobbyResponseDTO getLobbyById(Long id);
 
     LobbyResponseDTO addCommentToLobby(Long lobbyId, CommentResponseDTO savedComment);
+
+    LobbyResponseDTO getLobbyByName(String lobbyName);
+
+    LobbyResponseDTO addUserToLobby(Long lobbyId, Long userId);
+
+    LobbyResponseDTO removeUserFromLobby(Long lobbyId, Long userId);
+
+    LobbyResponseDTO removeCommentFromLobby(Long lobbyId, Long commentId);
+
+    LobbyResponseDTO updateCommentInLobby(Long lobbyId, CommentResponseDTO updatedComment);
 }

@@ -1,36 +1,39 @@
-// Comment.tsx
 import React, { useState } from 'react';
-import { CommentResponse } from '../types/comment.types';
-import { updateComment, deleteComment } from '../services/comment.service';
-import {
-    ListItem,
-    ListItemText,
-    IconButton,
-    TextField,
-    Button,
-    Box,
-    Card,
-    CardContent,
-} from '@mui/material';
+import { CommentResponse } from '../types/comment.type';
+import { updateComment, deleteComment } from '../services/lobby.service';
+import { ListItem, ListItemText, IconButton, TextField, Button, Box, Card, CardContent } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { LobbyResponse } from '../types/lobby.type';
 
 interface CommentProps {
     comment: CommentResponse;
+    lobbyId: number;
+    onCommentUpdated: (updatedLobby: LobbyResponse) => void;
 }
 
-const Comment: React.FC<CommentProps> = ({ comment }) => {
+const Comment: React.FC<CommentProps> = ({ comment, lobbyId, onCommentUpdated }) => {
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [editedContent, setEditedContent] = useState<string>(comment.content);
 
     const handleEdit = async () => {
-        const updatedComment = { ...comment, content: editedContent };
-        await updateComment(comment.id, updatedComment); 
-        setIsEditing(false);
+        const updatedComment = { content: editedContent, userId: comment.user.id };
+        try {
+            const updatedLobby = await updateComment(lobbyId, comment.id, updatedComment);
+            onCommentUpdated(updatedLobby);
+            setIsEditing(false);
+        } catch (error) {
+            console.error('Error updating comment:', error);
+        }
     };
 
-    const handleDelete = async (id: number) => {
-        await deleteComment(id);
+    const handleDelete = async () => {
+        try {
+            const updatedLobby = await deleteComment(lobbyId, comment.id);
+            onCommentUpdated(updatedLobby);
+        } catch (error) {
+            console.error('Error deleting comment:', error);
+        }
     };
 
     return (
@@ -57,7 +60,7 @@ const Comment: React.FC<CommentProps> = ({ comment }) => {
                             <IconButton onClick={() => setIsEditing(true)} aria-label="edit">
                                 <EditIcon />
                             </IconButton>
-                            <IconButton onClick={() => handleDelete(comment.id)} aria-label="delete">
+                            <IconButton onClick={handleDelete} aria-label="delete">
                                 <DeleteIcon />
                             </IconButton>
                         </>

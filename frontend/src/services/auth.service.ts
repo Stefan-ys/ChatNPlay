@@ -1,6 +1,6 @@
 import axiosInstance from './axiosInstance';
 import { API_LOGIN_URL, API_LOGOUT_URL, API_REFRESH_TOKEN_URL, API_REGISTER_URL } from '../common/urls';
-import { LoginRequest, RegisterRequest } from '../types/auth.types';
+import { LoginRequest, RegisterRequest } from '../types/auth.type';
 import axios from 'axios';
 
 export const register = async (registerData: RegisterRequest) => {

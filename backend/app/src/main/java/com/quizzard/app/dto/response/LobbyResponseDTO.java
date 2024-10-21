@@ -13,6 +13,7 @@ import java.util.List;
 public class LobbyResponseDTO {
 
     private Long id;
+    private String name;
     private List<CommentResponseDTO> chat = new ArrayList<>();
     private List<UserResponseDTO> users = new ArrayList<>();
 }

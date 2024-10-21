@@ -1,8 +1,8 @@
 import { createContext, useState, ReactNode } from "react";
-import { UserResponse } from '../types/user.types';
+import { UserResponse } from '../types/user.type';
 import { login, logout, register } from '../services/auth.service';
 import axios from 'axios';
-import { LoginRequest, RegisterRequest } from "../types/auth.types";
+import { LoginRequest, RegisterRequest } from "../types/auth.type";
 
 interface AuthContextType {
     user: UserResponse | null;
@@ -66,8 +66,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         delete axios.defaults.headers.common['Authorization'];
         setUser(null);
     };
-
-    // MAYBE ADD REFRESH TOKEN LOGIC HERE WITH AXIOS THROUGH THE SERVICE 
 
     return (
         <AuthContext.Provider value={{ user, setUser, login: handleLogin, register: handleRegister, logout: handleLogout }}>

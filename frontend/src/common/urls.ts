@@ -28,10 +28,6 @@ export const API_UPDATE_PROFILE_URL = `${API_URL}/users`;
 export const API_LOBBY_URL = `${API_URL}/lobbies`;
 
 
-// CHAT
-
-export const API_CHAT_URL = `${API_URL}/chats`
-
 // COMMENT
 
 export const API_COMMENT_URL = `${API_URL}/comments`; 

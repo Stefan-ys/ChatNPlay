@@ -1,24 +1,53 @@
-import { SOCKET_URL } from './../common/urls';
-import { Client } from '@stomp/stompjs';
-import SockJS from 'sockjs-client';
+// import { Stomp } from '@stomp/stompjs';
+// import { LobbyResponse } from '../types/lobby.type';
+// import { CommentResponse } from '../types/comment.type';
 
+// export const createLobbyUpdateWebSocket = (
+//     lobbyId: number,
+//     onLobbyUpdate: (updatedLobby: LobbyResponse) => void,
+//     onNewComment: (comment: CommentResponse) => void
+// ) => {
+//     let client: any;
 
-export const createLobbyUpdateWebSocket  = (lobbyId: number, onMessage: (message: any) => void) => {
-    const client = new Client({
-        webSocketFactory: () => new SockJS(SOCKET_URL),
-        onConnect: () => {
-            client.subscribe(`/topic/lobbies/${lobbyId}`, (message) => {
-                const lobbyData = JSON.parse(message.body);
-                onMessage(lobbyData);
-            });
-        },
-        onStompError: (frame) => {
-            console.error('Broker reported error: ' + frame.headers['message']);
-            console.error('Additional details: ' + frame.body);
-        },
-    });
+//     const connect = () => {
+//         console.log('Attempting to connect to WebSocket...');
+//         const socket = new WebSocket('ws://localhost:8080/ws'); 
+//         client = Stomp.over(socket);
 
-    client.activate();
+//         client.connect({}, () => {
+//             console.log('Connected to WebSocket!');
+//             const token = localStorage.getItem('accessToken');
 
-    return client;
-}
+//             const headers = {
+//                 Authorization: `Bearer ${token}`,
+//                 'Content-Type': 'application/json',
+//             };
+
+//             client.subscribe(`/topic/lobby/${lobbyId}`, (message: any) => {
+//                 const updatedLobby = JSON.parse(message.body);
+//                 onLobbyUpdate(updatedLobby);
+//             });
+
+//             client.subscribe(`/topic/lobby/${lobbyId}/comments`, (message: any) => {
+//                 const newComment = JSON.parse(message.body);
+//                 onNewComment(newComment);
+//             });
+//         }, (error: any) => {
+//             console.error('WebSocket error:', error);
+//             console.log('WebSocket error, reconnecting in 5 seconds...', error);
+//             setTimeout(connect, 5000);  
+//         });
+//     };
+
+//     connect();
+
+//     return {
+//         disconnect: () => {
+//             if (client && client.connected) {
+//                 client.disconnect(() => {
+//                     console.log('Disconnected from WebSocket');
+//                 });
+//             }
+//         }
+//     };
+// };

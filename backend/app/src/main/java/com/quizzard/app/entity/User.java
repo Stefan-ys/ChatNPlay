@@ -42,8 +42,4 @@ public class User extends BaseEntity {
 
     @Column(nullable = false)
     private boolean isOnline = false;
-
-    @ManyToOne
-    @JoinColumn(name = "lobby_id")
-    private Lobby lobby;
 }

@@ -3,6 +3,7 @@ package com.quizzard.app.service;
 import com.quizzard.app.dto.request.CommentRequestDTO;
 import com.quizzard.app.dto.response.CommentResponseDTO;
 import com.quizzard.app.entity.Comment;
+import com.quizzard.app.entity.Lobby;
 import com.quizzard.app.entity.User;
 import com.quizzard.app.repository.CommentRepository;
 import com.quizzard.app.repository.LobbyRepository;
@@ -20,6 +21,9 @@ public class CommentServiceImpl implements CommentService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private LobbyRepository lobbyRepository;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -40,6 +44,11 @@ public class CommentServiceImpl implements CommentService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + commentRequestDTO.getUserId()));
 
         comment.setUser(user);
+
+        Lobby lobby = lobbyRepository.findById(commentRequestDTO.getLobbyId())
+                        .orElseThrow(() -> new IllegalArgumentException("Lobby not found with id: " + commentRequestDTO.getLobbyId()));
+
+        comment.setLobby(lobby);
 
         comment.setContent(commentRequestDTO.getContent());
 

@@ -36,7 +36,7 @@ const App: React.FC = () => {
             <Route path="/" element={<PrivateRoute />}>
               <Route path="/users" element={<UsersPage />} />
               <Route path="/profile" element={<ProfilePage />} />
-              <Route path="/lobby" element={<LobbyPage lobbyId={1} />} />
+              <Route path="/lobby" element={<LobbyPage lobbyName={'Quiz Maze Lobby'} />} />
             </Route>
           </Routes>
         </Router>

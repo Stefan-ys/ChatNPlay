@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { ChatResponse } from '../types/chat.types';
-import { CommentRequest, CommentResponse } from '../types/comment.types';
-import { createComment } from '../services/comment.service';
+import { CommentRequest, CommentResponse } from '../types/comment.type';
+import { createComment } from '../services/lobby.service';
 import { useAuth } from '../hooks/useAuth';
 import Comment from './Comment';
 import {
@@ -13,28 +12,34 @@ import {
     Button,
     List,
 } from '@mui/material';
-
+import { LobbyResponse } from '../types/lobby.type';
 
 interface ChatBoxProps {
-    chat: ChatResponse;
+    lobbyId: number;
+    chat: CommentResponse[];
+    onCommentUpdated: (updatedLobby: LobbyResponse) => void; 
 }
 
-
-const ChatBox: React.FC<ChatBoxProps> = ({ chat }) => {
+const ChatBox: React.FC<ChatBoxProps> = ({ lobbyId, chat, onCommentUpdated }) => {
     const [newComment, setNewComment] = useState<string>('');
     const { user } = useAuth();
 
     const handleAddComment = async () => {
+        console.log("Attempting to add comment:", newComment);
         if (newComment.trim() && user) {
             const newCommentData: CommentRequest = {
                 content: newComment,
                 userId: user.id,
-                chatId: chat?.id,
+                lobbyId: lobbyId,
             };
 
-            await createComment(newCommentData);
-            setNewComment('');
-
+            try {
+                const updatedLobby = await createComment(lobbyId, newCommentData);
+                setNewComment('');
+                onCommentUpdated(updatedLobby);
+            } catch (error) {
+                console.error("Error creating comment:", error);
+            }
         } else {
             console.error("User is not authenticated or comment is empty.");
         }
@@ -45,12 +50,18 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chat }) => {
             <CardContent>
                 <Typography variant="h6">Chat</Typography>
                 <List>
-                    {chat?.comments?.map((comment: CommentResponse) => (
-                        <Comment
-                            key={comment.id}
-                            comment={comment}
-                        />
-                    ))}
+                    {chat.length > 0 ? (
+                        chat.map((comment: CommentResponse) => (
+                            <Comment
+                                key={comment.id}
+                                comment={comment}
+                                lobbyId={lobbyId}
+                                onCommentUpdated={onCommentUpdated}
+                            />
+                        ))
+                    ) : (
+                        <Typography variant="body1">No comments yet. Be the first to comment!</Typography>
+                    )}
                 </List>
                 <Box mt={2} display="flex">
                     <TextField

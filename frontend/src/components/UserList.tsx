@@ -1,5 +1,5 @@
 import React from 'react';
-import { UserResponse } from '../types/user.types';
+import { UserResponse } from '../types/user.type';
 import {
   Card,
   CardContent,

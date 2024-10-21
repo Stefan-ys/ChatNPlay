@@ -1,5 +1,5 @@
 import { API_COMMENT_URL } from '../common/urls';
-import { CommentRequest, CommentResponse } from '../types/comment.types';
+import { CommentRequest, CommentResponse } from '../types/comment.type';
 import axiosInstance from './axiosInstance';
 
 
