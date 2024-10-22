@@ -35,36 +35,32 @@ public class LobbyController {
         return lobbyService.getLobbyByName(lobbyName);
     }
 
-    @MessageMapping("/lobby/{lobbyId}/comment")  // Client sends message here
-    @SendTo("/topic/lobby/{lobbyId}/chat")       // Broadcast to subscribers on this topic
+    @MessageMapping("/lobby/{lobbyId}/comment")
+    @SendTo("/topic/lobby/{lobbyId}/chat")
     public CommentResponseDTO postComment(@PathVariable Long lobbyId, CommentRequestDTO commentRequestDTO) {
-        // Create the comment and update the lobby
         CommentResponseDTO createdComment = commentService.createComment(commentRequestDTO);
         lobbyService.addCommentToLobby(lobbyId, createdComment);
 
-        // Return the created comment (this will be sent to the "/topic/lobby/{lobbyId}/chat" topic)
         return createdComment;
     }
 
-    @PutMapping("/{lobbyId}/comments/{commentId}")
-    public LobbyResponseDTO editComment(@PathVariable Long lobbyId, @PathVariable Long commentId,
+    @MessageMapping("/lobby/{lobbyId}/editComment")
+    @SendTo("/topic/lobby/{lobbyId}/chat")
+    public CommentResponseDTO editComment(@PathVariable Long lobbyId, @PathVariable Long commentId,
                                         @RequestBody CommentRequestDTO commentRequestDTO) {
         CommentResponseDTO updatedComment = commentService.updateComment(commentId, commentRequestDTO);
-        LobbyResponseDTO lobbyResponse = lobbyService.updateCommentInLobby(lobbyId, updatedComment);
+        lobbyService.updateCommentInLobby(lobbyId, updatedComment);
 
-//        messagingTemplate.convertAndSend("/topic/lobby/" + lobbyId + "/chat", updatedComment);
-
-        return lobbyResponse;
+        return updatedComment;
     }
 
-    @DeleteMapping("/{lobbyId}/comments/{commentId}")
-    public LobbyResponseDTO deleteComment(@PathVariable Long lobbyId, @PathVariable Long commentId) {
+    @MessageMapping("/lobby/{lobbyId}/deleteComment")
+    @SendTo("/topic/lobby/{lobbyId}/chat")
+    public Long deleteComment(@PathVariable Long lobbyId, @PathVariable Long commentId) {
         commentService.deleteComment(commentId);
-        LobbyResponseDTO lobbyResponse = lobbyService.removeCommentFromLobby(lobbyId, commentId);
+        lobbyService.removeCommentFromLobby(lobbyId, commentId);
 
-//        messagingTemplate.convertAndSend("/topic/lobby/" + lobbyId + "/chat", "Comment with ID " + commentId + " was deleted.");
-
-        return lobbyResponse;
+        return commentId;
     }
 
     @PostMapping("/{lobbyId}/users/{userId}")
