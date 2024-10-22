@@ -1,47 +1,51 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CommentRequest, CommentResponse } from '../types/comment.type';
-import { createComment } from '../services/lobby.service';
 import { useAuth } from '../hooks/useAuth';
 import Comment from './Comment';
-import {
-    Box,
-    Card,
-    CardContent,
-    Typography,
-    TextField,
-    Button,
-    List,
-} from '@mui/material';
+import { Box, Card, CardContent, Typography, TextField, Button, List } from '@mui/material';
 import { LobbyResponse } from '../types/lobby.type';
+import { createLobbyWebSocket, closeLobbyWebSocket } from '../utils/lobby-websocket.util';
 
 interface ChatBoxProps {
     lobbyId: number;
     chat: CommentResponse[];
-    onCommentUpdated: (updatedLobby: LobbyResponse) => void; 
+    onCommentUpdated: (updatedLobby: LobbyResponse) => void;
 }
 
 const ChatBox: React.FC<ChatBoxProps> = ({ lobbyId, chat, onCommentUpdated }) => {
     const [newComment, setNewComment] = useState<string>('');
     const { user } = useAuth();
+    const [client, setClient] = useState<any>(null);
 
-    const handleAddComment = async () => {
-        console.log("Attempting to add comment:", newComment);
-        if (newComment.trim() && user) {
+    useEffect(() => {
+        const clientInstance = createLobbyWebSocket(lobbyId, handleNewMessage, () => setIsConnected(true), () => setIsConnected(false));
+        setClient(clientInstance);
+
+        return () => {
+            closeLobbyWebSocket(clientInstance);
+        };
+    }, [lobbyId]);
+
+    const handleNewMessage = (comment: CommentResponse | string) => {
+        console.log('New message received:', comment);
+    };
+
+    const handleAddComment = () => {
+        if (newComment.trim() && user && client) {
             const newCommentData: CommentRequest = {
                 content: newComment,
                 userId: user.id,
                 lobbyId: lobbyId,
             };
 
-            try {
-                const updatedLobby = await createComment(lobbyId, newCommentData);
-                setNewComment('');
-                onCommentUpdated(updatedLobby);
-            } catch (error) {
-                console.error("Error creating comment:", error);
-            }
+            client.publish({
+                destination: `/app/lobby/${lobbyId}/comment`,
+                body: JSON.stringify(newCommentData),
+            });
+
+            setNewComment('');
         } else {
-            console.error("User is not authenticated or comment is empty.");
+            console.error('Cannot send comment: WebSocket connection not established.');
         }
     };
 
@@ -57,6 +61,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ lobbyId, chat, onCommentUpdated }) =>
                                 comment={comment}
                                 lobbyId={lobbyId}
                                 onCommentUpdated={onCommentUpdated}
+                                client={client}
                             />
                         ))
                     ) : (

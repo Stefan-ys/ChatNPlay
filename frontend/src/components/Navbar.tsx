@@ -2,6 +2,7 @@ import React from 'react';
 import { AppBar, Toolbar, Typography, Button, Container } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import ToggleFlag from './ToggleFlag';
 
 const Navbar: React.FC = () => {
     const { user, logout } = useAuth();
@@ -23,6 +24,7 @@ const Navbar: React.FC = () => {
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                         <Link to="/" style={{ color: 'white', textDecoration: 'none' }}>Home</Link>
                     </Typography>
+                    <ToggleFlag />
 
                     {!user && (
                         <>

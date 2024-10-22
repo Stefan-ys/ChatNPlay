@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { CommentResponse } from '../types/comment.type';
-import { updateComment, deleteComment } from '../services/lobby.service';
 import { ListItem, ListItemText, IconButton, TextField, Button, Box, Card, CardContent } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -10,29 +9,30 @@ interface CommentProps {
     comment: CommentResponse;
     lobbyId: number;
     onCommentUpdated: (updatedLobby: LobbyResponse) => void;
+    client: any;
 }
 
-const Comment: React.FC<CommentProps> = ({ comment, lobbyId, onCommentUpdated }) => {
+const Comment: React.FC<CommentProps> = ({ comment, lobbyId, onCommentUpdated, client }) => {
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [editedContent, setEditedContent] = useState<string>(comment.content);
 
-    const handleEdit = async () => {
+    const handleEdit = () => {
         const updatedComment = { content: editedContent, userId: comment.user.id };
-        try {
-            const updatedLobby = await updateComment(lobbyId, comment.id, updatedComment);
-            onCommentUpdated(updatedLobby);
+        if (client) {
+            client.publish({
+                destination: `/app/lobby/${lobbyId}/editComment`,
+                body: JSON.stringify({ commentId: comment.id, ...updatedComment }),
+            });
             setIsEditing(false);
-        } catch (error) {
-            console.error('Error updating comment:', error);
         }
     };
 
-    const handleDelete = async () => {
-        try {
-            const updatedLobby = await deleteComment(lobbyId, comment.id);
-            onCommentUpdated(updatedLobby);
-        } catch (error) {
-            console.error('Error deleting comment:', error);
+    const handleDelete = () => {
+        if (client) {
+            client.publish({
+                destination: `/app/lobby/${lobbyId}/deleteComment`,
+                body: JSON.stringify({ commentId: comment.id }),
+            });
         }
     };
 

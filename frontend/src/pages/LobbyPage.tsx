@@ -38,32 +38,6 @@ const LobbyPage: React.FC<{ lobbyName: string }> = ({ lobbyName }) => {
         };
     }, [lobbyName, user]);
 
-    useEffect(() => {
-        if (!lobby) return;
-
-        client = createLobbyWebSocket(
-            lobby.id,
-            (comment) => {
-                if (typeof comment === 'string') {
-                    console.log(comment);
-                } else {
-                    setChat((prevChat) => [...prevChat, comment]);
-                }
-            },
-            () => {
-                console.log('WebSocket connected');
-            },
-            (error) => {
-                console.error('WebSocket error:', error);
-            }
-        );
-
-        return () => {
-            if (client) {
-                closeLobbyWebSocket(client);
-            }
-        };
-    }, [lobby?.id]);
 
     const handleAddUser = async (userId: number) => {
         if (!lobby) return;
