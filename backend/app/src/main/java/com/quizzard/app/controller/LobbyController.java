@@ -37,9 +37,9 @@ public class LobbyController {
 
     @MessageMapping("/lobby/{lobbyId}/comment")
     @SendTo("/topic/lobby/{lobbyId}/chat")
-    public CommentResponseDTO postComment(@PathVariable Long lobbyId, CommentRequestDTO commentRequestDTO) {
+    public CommentResponseDTO postComment( CommentRequestDTO commentRequestDTO) {
         CommentResponseDTO createdComment = commentService.createComment(commentRequestDTO);
-        lobbyService.addCommentToLobby(lobbyId, createdComment);
+        lobbyService.addCommentToLobby(commentRequestDTO.getLobbyId(), createdComment);
 
         return createdComment;
     }
