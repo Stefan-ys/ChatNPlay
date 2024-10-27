@@ -3,12 +3,11 @@ import { CommentResponse } from '../types/comment.type';
 import { ListItem, ListItemText, IconButton, TextField, Button, Box, Card, CardContent } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { LobbyResponse } from '../types/lobby.type';
 
 interface CommentProps {
     comment: CommentResponse;
     lobbyId: number;
-    onCommentUpdated: (updatedLobby: LobbyResponse) => void;
+    onCommentUpdated: (updatedComment: CommentResponse) => void;
     client: any;
 }
 
@@ -17,8 +16,8 @@ const Comment: React.FC<CommentProps> = ({ comment, lobbyId, onCommentUpdated, c
     const [editedContent, setEditedContent] = useState<string>(comment.content);
 
     const handleEdit = () => {
-        const updatedComment = { content: editedContent, userId: comment.user.id };
         if (client) {
+            const updatedComment = { content: editedContent, userId: comment.user.id };
             client.publish({
                 destination: `/app/lobby/${lobbyId}/editComment`,
                 body: JSON.stringify({ commentId: comment.id, ...updatedComment }),

@@ -24,7 +24,7 @@ const Navbar: React.FC = () => {
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                         <Link to="/" style={{ color: 'white', textDecoration: 'none' }}>Home</Link>
                     </Typography>
-                    <ToggleFlag />
+
 
                     {!user && (
                         <>
@@ -39,6 +39,7 @@ const Navbar: React.FC = () => {
 
                     {user && (
                         <>
+                            <ToggleFlag />
                             <Typography variant="h6" component="div" sx={{ marginLeft: 'auto' }}>
                                 Welcome, {user.username}!
                             </Typography>

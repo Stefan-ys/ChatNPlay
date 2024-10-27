@@ -4,7 +4,7 @@ import { useAuth } from '../hooks/useAuth';
 import Comment from './Comment';
 import { Box, Card, CardContent, Typography, TextField, Button, List } from '@mui/material';
 import { LobbyResponse } from '../types/lobby.type';
-import { createLobbyWebSocket, closeLobbyWebSocket } from '../utils/lobby-websocket.util';
+import { Client } from '@stomp/stompjs'; // Import Client directly
 
 interface ChatBoxProps {
     lobbyId: number;
@@ -14,24 +14,39 @@ interface ChatBoxProps {
 
 const ChatBox: React.FC<ChatBoxProps> = ({ lobbyId, chat, onCommentUpdated }) => {
     const [newComment, setNewComment] = useState<string>('');
+    const [client, setClient] = useState<Client | null>(null);
+    const [isConnected, setIsConnected] = useState(false);
     const { user } = useAuth();
-    const [client, setClient] = useState<any>(null);
 
     useEffect(() => {
-        const clientInstance = createLobbyWebSocket(lobbyId, handleNewMessage, () => setIsConnected(true), () => setIsConnected(false));
-        setClient(clientInstance);
+        const stompClient = new Client({
+            brokerURL: 'ws://localhost:8080/ws',
+            connectHeaders: {
+                Authorization: `Bearer ${localStorage.accessToken}`, 
+            },
+            onConnect: () => {
+                setIsConnected(true);
+                stompClient.subscribe(`/topic/lobby/${lobbyId}/chat`, (message) => {
+                    const newMessage: CommentResponse = JSON.parse(message.body);
+                    onCommentUpdated(newMessage);
+                });
+            },
+            onStompError: (error) => {
+                console.error('WebSocket connection error:', error);
+                setIsConnected(false);
+            },
+        });
+
+        stompClient.activate(); 
+        setClient(stompClient);
 
         return () => {
-            closeLobbyWebSocket(clientInstance);
+            stompClient.deactivate();
         };
-    }, [lobbyId]);
-
-    const handleNewMessage = (comment: CommentResponse | string) => {
-        console.log('New message received:', comment);
-    };
+    }, [lobbyId, user]);
 
     const handleAddComment = () => {
-        if (newComment.trim() && user && client) {
+        if (newComment.trim() && client && isConnected) {
             const newCommentData: CommentRequest = {
                 content: newComment,
                 userId: user.id,

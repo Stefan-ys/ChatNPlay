@@ -1,38 +1,51 @@
 import React, { useEffect, useState } from 'react';
-import { Client } from '@stomp/stompjs';
 import { Button } from '@mui/material';
+import Stomp from 'stompjs';
 
 const ToggleFlag: React.FC = () => {
-    const [client, setClient] = useState<any>(null);
     const [toggleStatus, setToggleStatus] = useState<boolean>(false);
+    const [stompClient, setStompClient] = useState<any>(null);
+    const [isConnected, setIsConnected] = useState<boolean>(false);
 
     useEffect(() => {
-        const stompClient = new Client({
-            brokerURL: 'ws://localhost:8080/ws',
-            onConnect: () => {
+        const accessToken = localStorage.getItem('accessToken');
+        const socketUrl = `ws://localhost:8080/ws`;  // Direct WebSocket URL
+        const client = Stomp.client(socketUrl);
+
+        client.connect(
+            {
+                Authorization: `Bearer ${accessToken}`,
+                'Content-Type': 'application/json',
+            },
+            () => {
                 console.log('Connected to WebSocket');
-                stompClient.subscribe('/topic/toggleStatus', (message) => {
-                    setToggleStatus(JSON.parse(message.body));
+                setIsConnected(true);
+
+                client.subscribe('/topic/toggleStatus', (message) => {
+                    const receivedValue = JSON.parse(message.body);
+                    setToggleStatus(receivedValue);
                 });
             },
-            debug: (str) => {
-                console.log('STOMP Debug:', str);
-            },
-        });
+            (error) => {
+                console.error('WebSocket connection error:', error);
+            }
+        );
 
-        stompClient.activate();
-        setClient(stompClient);
+        setStompClient(client);
 
         return () => {
-            stompClient.deactivate();
+            if (client && client.connected) {
+                client.disconnect(() => {
+                    console.log('Disconnected from WebSocket');
+                    setIsConnected(false);
+                });
+            }
         };
     }, []);
 
     const handleToggle = () => {
-        if (client) {
-            client.publish({
-                destination: '/app/toggle',
-            });
+        if (stompClient && isConnected) { 
+            stompClient.send('/app/toggle', {}, JSON.stringify(toggleStatus));
         }
     };
 
