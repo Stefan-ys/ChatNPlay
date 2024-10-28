@@ -9,7 +9,7 @@ const ToggleFlag: React.FC = () => {
 
     useEffect(() => {
         const accessToken = localStorage.getItem('accessToken');
-        const socketUrl = `ws://localhost:8080/ws`;  // Direct WebSocket URL
+        const socketUrl = `ws://localhost:8080/ws`;
         const client = Stomp.client(socketUrl);
 
         client.connect(
@@ -18,7 +18,6 @@ const ToggleFlag: React.FC = () => {
                 'Content-Type': 'application/json',
             },
             () => {
-                console.log('Connected to WebSocket');
                 setIsConnected(true);
 
                 client.subscribe('/topic/toggleStatus', (message) => {

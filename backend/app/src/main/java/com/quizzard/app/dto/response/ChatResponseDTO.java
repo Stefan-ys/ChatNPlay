@@ -10,10 +10,8 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class LobbyResponseDTO {
+public class ChatResponseDTO {
 
     private Long id;
-    private String name;
-    private Long chatId;
-    private List<UserResponseDTO> users = new ArrayList<>();
+    private List<CommentResponseDTO> comments = new ArrayList<>();
 }

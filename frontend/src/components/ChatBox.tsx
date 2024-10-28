@@ -19,10 +19,12 @@ const ChatBox: React.FC<ChatBoxProps> = ({ lobbyId, chat, onCommentUpdated }) =>
     const { user } = useAuth();
 
     useEffect(() => {
+        const accessToken = localStorage.getItem('accessToken');
         const stompClient = new Client({
             brokerURL: 'ws://localhost:8080/ws',
             connectHeaders: {
-                Authorization: `Bearer ${localStorage.accessToken}`, 
+                Authorization: `Bearer ${accessToken}`,
+                'Content-Type': 'application/json',
             },
             onConnect: () => {
                 setIsConnected(true);
@@ -37,7 +39,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ lobbyId, chat, onCommentUpdated }) =>
             },
         });
 
-        stompClient.activate(); 
+        stompClient.activate();
         setClient(stompClient);
 
         return () => {

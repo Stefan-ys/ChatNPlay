@@ -3,7 +3,6 @@ package com.quizzard.app.service;
 import com.quizzard.app.dto.request.CommentRequestDTO;
 import com.quizzard.app.dto.response.CommentResponseDTO;
 import com.quizzard.app.entity.Comment;
-import com.quizzard.app.entity.Lobby;
 import com.quizzard.app.entity.User;
 import com.quizzard.app.repository.CommentRepository;
 import com.quizzard.app.repository.LobbyRepository;
@@ -33,11 +32,12 @@ public class CommentServiceImpl implements CommentService {
     public CommentResponseDTO getCommentById(Long commentId) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("Comment not found with id: " + commentId));
+
         return modelMapper.map(comment, CommentResponseDTO.class);
     }
 
     @Override
-    public CommentResponseDTO createComment(CommentRequestDTO commentRequestDTO) {
+    public Comment createComment(CommentRequestDTO commentRequestDTO) {
         Comment comment = new Comment();
 
         User user = userRepository.findById(commentRequestDTO.getUserId())
@@ -45,16 +45,9 @@ public class CommentServiceImpl implements CommentService {
 
         comment.setUser(user);
 
-        Lobby lobby = lobbyRepository.findById(commentRequestDTO.getLobbyId())
-                        .orElseThrow(() -> new IllegalArgumentException("Lobby not found with id: " + commentRequestDTO.getLobbyId()));
-
-        comment.setLobby(lobby);
-
         comment.setContent(commentRequestDTO.getContent());
 
-        Comment savedComment = commentRepository.save(comment);
-
-        return modelMapper.map(savedComment, CommentResponseDTO.class);
+        return commentRepository.save(comment);
     }
 
     @Override
@@ -64,8 +57,9 @@ public class CommentServiceImpl implements CommentService {
 
         existingComment.setContent(commentRequestDTO.getContent());
 
-        Comment updatedComment = commentRepository.save(existingComment);
-        return modelMapper.map(updatedComment, CommentResponseDTO.class);
+        commentRepository.save(existingComment);
+
+        return modelMapper.map(existingComment, CommentResponseDTO.class);
     }
 
     @Override

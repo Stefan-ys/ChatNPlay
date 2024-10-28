@@ -1,6 +1,5 @@
 package com.quizzard.app.controller;
 
-
 import com.quizzard.app.dto.request.MyProfileRequestDTO;
 import com.quizzard.app.dto.response.UserResponseDTO;
 import com.quizzard.app.service.UserService;
@@ -9,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 
 @CrossOrigin(origins = "http://localhost:5173")
 @RestController

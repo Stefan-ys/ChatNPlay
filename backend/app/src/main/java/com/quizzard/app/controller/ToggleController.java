@@ -8,6 +8,7 @@ import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
+
 @Slf4j
 @Controller
 @CrossOrigin("http://localhost:5173")
@@ -18,7 +19,6 @@ public class ToggleController {
     @MessageMapping("/toggle")
     @SendTo("/topic/toggleStatus")
     public boolean ToggleFlag(){
-        log.info("Flag received!");
         this.toggleFlag = !this.toggleFlag;
         return this.toggleFlag;
     }

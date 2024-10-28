@@ -34,19 +34,7 @@ public class LobbyServiceImpl implements LobbyService {
         return modelMapper.map(lobbyRepository.save(lobby), LobbyResponseDTO.class);
     }
 
-    @Override
-    public LobbyResponseDTO addCommentToLobby(Long lobbyId, CommentResponseDTO savedComment) {
-        Lobby lobby = lobbyRepository.findById(lobbyId)
-                .orElseThrow(() -> new IllegalArgumentException("Lobby not found with id: " + lobbyId));
 
-        Comment comment = modelMapper.map(savedComment, Comment.class);
-
-        lobby.getChat().add(comment);
-
-        lobbyRepository.save(lobby);
-
-        return modelMapper.map(lobby, LobbyResponseDTO.class);
-    }
 
     @Override
     public LobbyResponseDTO getLobbyByName(String name) {
@@ -84,32 +72,6 @@ public class LobbyServiceImpl implements LobbyService {
         return mapToLobbyDTO(lobby);
     }
 
-    @Override
-    public LobbyResponseDTO removeCommentFromLobby(Long lobbyId, Long commentId) {
-        Lobby lobby = lobbyRepository.findById(lobbyId)
-                .orElseThrow(() -> new IllegalArgumentException("Lobby not found with id: " + lobbyId));
-
-        lobby.getChat().removeIf(comment -> comment.getId().equals(commentId));
-
-        lobbyRepository.save(lobby);
-
-        return mapToLobbyDTO(lobby);
-    }
-
-    @Override
-    public LobbyResponseDTO updateCommentInLobby(Long lobbyId, CommentResponseDTO updatedComment) {
-        Lobby lobby = lobbyRepository.findById(lobbyId)
-                .orElseThrow(() -> new IllegalArgumentException("Lobby not found with id: " + lobbyId));
-
-        lobby.getChat().stream()
-                .filter(comment -> comment.getId().equals(updatedComment.getId()))
-                .forEach(comment -> comment.setContent(updatedComment.getContent()));
-
-        lobbyRepository.save(lobby);
-
-        return mapToLobbyDTO(lobby);
-    }
-
 
     @Override
     public LobbyResponseDTO getLobbyById(Long id) {
@@ -121,12 +83,6 @@ public class LobbyServiceImpl implements LobbyService {
 
     private LobbyResponseDTO mapToLobbyDTO(Lobby lobby) {
         LobbyResponseDTO lobbyResponseDTO = modelMapper.map(lobby, LobbyResponseDTO.class);
-
-        lobbyResponseDTO.setChat(
-                lobby.getChat().stream()
-                        .map(comment -> modelMapper.map(comment, CommentResponseDTO.class))
-                        .collect(Collectors.toList())
-        );
 
         lobbyResponseDTO.setUsers(
                 lobby.getUsers().stream()
