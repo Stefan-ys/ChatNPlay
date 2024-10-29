@@ -30,4 +30,8 @@ export const API_LOBBY_URL = `${API_URL}/lobbies`;
 
 // COMMENT
 
-export const API_COMMENT_URL = `${API_URL}/comments`; 
+export const API_COMMENT_URL = `${API_URL}/comments`;
+
+// CHAT
+
+export const API_CHAT_URL = `${API_URL}/chats`;

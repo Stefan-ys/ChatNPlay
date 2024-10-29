@@ -3,66 +3,88 @@ import { CommentRequest, CommentResponse } from '../types/comment.type';
 import { useAuth } from '../hooks/useAuth';
 import Comment from './Comment';
 import { Box, Card, CardContent, Typography, TextField, Button, List } from '@mui/material';
-import { LobbyResponse } from '../types/lobby.type';
-import { Client } from '@stomp/stompjs'; // Import Client directly
+import Stomp from 'stompjs';
+import { getChatById } from '../services/chat.service';
 
 interface ChatBoxProps {
-    lobbyId: number;
-    chat: CommentResponse[];
-    onCommentUpdated: (updatedLobby: LobbyResponse) => void;
+    chatId: number;
 }
 
-const ChatBox: React.FC<ChatBoxProps> = ({ lobbyId, chat, onCommentUpdated }) => {
+const ChatBox: React.FC<ChatBoxProps> = ({ chatId }) => {
+    const [comments, setComments] = useState<CommentResponse[]>([]);
     const [newComment, setNewComment] = useState<string>('');
-    const [client, setClient] = useState<Client | null>(null);
-    const [isConnected, setIsConnected] = useState(false);
+    const [stompClient, setStompClient] = useState<any>(null);
     const { user } = useAuth();
 
     useEffect(() => {
+        const fetchChat = async () => {
+            try {
+                const chatData = await getChatById(chatId);
+                setComments(chatData.comments);
+            } catch (error) {
+                console.error('Error fetching chat:', error);
+            }
+        };
+        fetchChat();
+    }, [chatId]);
+
+    useEffect(() => {
         const accessToken = localStorage.getItem('accessToken');
-        const stompClient = new Client({
-            brokerURL: 'ws://localhost:8080/ws',
-            connectHeaders: {
+        const socketUrl = 'ws://localhost:8080/ws';
+        const client = Stomp.client(socketUrl);
+    
+        client.connect(
+            {
                 Authorization: `Bearer ${accessToken}`,
                 'Content-Type': 'application/json',
             },
-            onConnect: () => {
-                setIsConnected(true);
-                stompClient.subscribe(`/topic/lobby/${lobbyId}/chat`, (message) => {
-                    const newMessage: CommentResponse = JSON.parse(message.body);
-                    onCommentUpdated(newMessage);
+            () => {
+                client.subscribe(`/topic/chat/${chatId}`, (message) => {
+                    const receivedData = JSON.parse(message.body);
+    
+                     if (typeof receivedData === 'number') {
+                        setComments((prevComments) => prevComments.filter(comment => comment.id !== receivedData));
+                    } else {
+                        const receivedComment: CommentResponse = receivedData;
+    
+                        setComments((prevComments) => {
+                            const existingIndex = prevComments.findIndex((comment) => comment.id === receivedComment.id);
+                            
+                            if (existingIndex > -1) {
+                                return prevComments.map((comment) =>
+                                    comment.id === receivedComment.id ? receivedComment : comment
+                                );
+                            } else {
+                                return [...prevComments, receivedComment];
+                            }
+                        });
+                    }
                 });
             },
-            onStompError: (error) => {
+            (error) => {
                 console.error('WebSocket connection error:', error);
-                setIsConnected(false);
-            },
-        });
-
-        stompClient.activate();
-        setClient(stompClient);
-
+            }
+        );
+    
+        setStompClient(client);
+    
         return () => {
-            stompClient.deactivate();
+            client.disconnect(() => console.log('Disconnected WebSocket'));
         };
-    }, [lobbyId, user]);
+    }, [chatId]);
+    
 
     const handleAddComment = () => {
-        if (newComment.trim() && client && isConnected) {
-            const newCommentData: CommentRequest = {
-                content: newComment,
+        if (newComment.trim() && stompClient) {
+            const commentData: CommentRequest = {
+                id: -1,
+                chatId: chatId,
                 userId: user.id,
-                lobbyId: lobbyId,
+                content: newComment,
             };
 
-            client.publish({
-                destination: `/app/lobby/${lobbyId}/comment`,
-                body: JSON.stringify(newCommentData),
-            });
-
+            stompClient.send(`/app/chat/${chatId}/comment`, {}, JSON.stringify(commentData));
             setNewComment('');
-        } else {
-            console.error('Cannot send comment: WebSocket connection not established.');
         }
     };
 
@@ -71,18 +93,17 @@ const ChatBox: React.FC<ChatBoxProps> = ({ lobbyId, chat, onCommentUpdated }) =>
             <CardContent>
                 <Typography variant="h6">Chat</Typography>
                 <List>
-                    {chat.length > 0 ? (
-                        chat.map((comment: CommentResponse) => (
+                    {comments.length > 0 ? (
+                        comments.map((comment) => (
                             <Comment
                                 key={comment.id}
                                 comment={comment}
-                                lobbyId={lobbyId}
-                                onCommentUpdated={onCommentUpdated}
-                                client={client}
+                                chatId={chatId}
+                                client={stompClient}
                             />
                         ))
                     ) : (
-                        <Typography variant="body1">No comments yet. Be the first to comment!</Typography>
+                        <Typography>No comments yet.</Typography>
                     )}
                 </List>
                 <Box mt={2} display="flex">
@@ -95,11 +116,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ lobbyId, chat, onCommentUpdated }) =>
                         size="small"
                         sx={{ marginRight: 1 }}
                     />
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={handleAddComment}
-                    >
+                    <Button variant="contained" color="primary" onClick={handleAddComment}>
                         Send
                     </Button>
                 </Box>

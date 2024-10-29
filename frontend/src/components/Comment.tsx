@@ -1,37 +1,35 @@
 import React, { useState } from 'react';
-import { CommentResponse } from '../types/comment.type';
+import { CommentRequest, CommentResponse } from '../types/comment.type';
 import { ListItem, ListItemText, IconButton, TextField, Button, Box, Card, CardContent } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 interface CommentProps {
     comment: CommentResponse;
-    lobbyId: number;
-    onCommentUpdated: (updatedComment: CommentResponse) => void;
+    chatId: number;
     client: any;
 }
 
-const Comment: React.FC<CommentProps> = ({ comment, lobbyId, onCommentUpdated, client }) => {
-    const [isEditing, setIsEditing] = useState<boolean>(false);
-    const [editedContent, setEditedContent] = useState<string>(comment.content);
+const Comment: React.FC<CommentProps> = ({ comment, chatId, client }) => {
+    const [isEditing, setIsEditing] = useState(false);
+    const [editedContent, setEditedContent] = useState(comment.content);
 
     const handleEdit = () => {
         if (client) {
-            const updatedComment = { content: editedContent, userId: comment.user.id };
-            client.publish({
-                destination: `/app/lobby/${lobbyId}/editComment`,
-                body: JSON.stringify({ commentId: comment.id, ...updatedComment }),
-            });
+            const updatedComment: CommentRequest = {
+                id: comment.id,
+                chatId: chatId,
+                userId: comment.user.id,
+                content: editedContent,
+            };
+            client.send(`/app/chat/${chatId}/edit-comment`, {}, JSON.stringify(updatedComment));
             setIsEditing(false);
         }
     };
 
     const handleDelete = () => {
         if (client) {
-            client.publish({
-                destination: `/app/lobby/${lobbyId}/deleteComment`,
-                body: JSON.stringify({ commentId: comment.id }),
-            });
+            client.send(`/app/chat/${chatId}/delete-comment`, {}, JSON.stringify(comment.id));
         }
     };
 

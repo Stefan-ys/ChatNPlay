@@ -4,6 +4,6 @@ import { UserResponse } from "./user.type";
 export interface LobbyResponse {
     id: number;
     name: string;
-    chat: CommentResponse[];
+    chatId: number;
     users: UserResponse[];
 }

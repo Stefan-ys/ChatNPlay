@@ -10,7 +10,8 @@ export interface CommentResponse {
 }
 
 export interface CommentRequest {
+    id: number;
+    chatId: number;
     userId: number;
-    lobbyId: number;
     content: string;
 }

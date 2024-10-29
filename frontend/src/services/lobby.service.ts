@@ -1,5 +1,4 @@
 import { LobbyResponse } from '../types/lobby.type';
-import { CommentRequest } from '../types/comment.type';
 import axiosInstance from './axiosInstance';
 import { API_LOBBY_URL } from '../common/urls';
 
@@ -23,35 +22,6 @@ export const getLobbyByName = async (lobbyName: string): Promise<LobbyResponse> 
     }
 };
 
-export const createComment = async (lobbyId: number, commentRequest: CommentRequest): Promise<LobbyResponse> => {
-    try {
-        const response = await axiosInstance.post(`${API_LOBBY_URL}/${lobbyId}/comments`, commentRequest);
-        return response.data;
-    } catch (error) {
-        console.error('Error creating comment:', error);
-        throw error;
-    }
-};
-
-export const updateComment = async (lobbyId: number, commentId: number, commentRequest: CommentRequest): Promise<LobbyResponse> => {
-    try {
-        const response = await axiosInstance.put(`${API_LOBBY_URL}/${lobbyId}/comments/${commentId}`, commentRequest);
-        return response.data;
-    } catch (error) {
-        console.error('Error updating comment:', error);
-        throw error;
-    }
-};
-
-export const deleteComment = async (lobbyId: number, commentId: number): Promise<LobbyResponse> => {
-    try {
-        const response = await axiosInstance.delete(`${API_LOBBY_URL}/${lobbyId}/comments/${commentId}`);
-        return response.data;
-    } catch (error) {
-        console.error('Error deleting comment:', error);
-        throw error;
-    }
-};
 
 export const addUserToLobby = async (lobbyId: number, userId: number): Promise<LobbyResponse> => {
     try {
