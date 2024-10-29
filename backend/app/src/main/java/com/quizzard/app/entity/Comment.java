@@ -18,10 +18,6 @@ public class Comment extends BaseEntity{
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "chat_id")
-    private Chat chat;
-
     @Column(nullable = false)
     private String content;
 }

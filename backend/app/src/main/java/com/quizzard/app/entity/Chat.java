@@ -21,6 +21,6 @@ import java.util.List;
 @Table(name = "chats")
 public class Chat extends BaseEntity{
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "chat")
+    @OneToMany(fetch = FetchType.EAGER)
     private List<Comment> comments = new ArrayList<>();
 }

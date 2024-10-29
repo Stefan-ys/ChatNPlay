@@ -9,6 +9,7 @@ import com.quizzard.app.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,27 +28,26 @@ public class ChatController {
 
     @GetMapping("/{chatId}")
     public ResponseEntity<ChatResponseDTO> getChat(@PathVariable Long chatId) {
-        ChatResponseDTO chat = chatService.getChatById(chatId);
-        return ResponseEntity.ok(chat);
+        ChatResponseDTO chatResponseDTO = chatService.getChatById(chatId);
+        return ResponseEntity.ok(chatResponseDTO);
     }
 
     @MessageMapping("/chat/{chatId}/comment")
     @SendTo("/topic/chat/{chatId}")
-    public CommentResponseDTO postComment(@PathVariable Long chatId, CommentRequestDTO commentRequestDTO) {
+    public CommentResponseDTO postComment(@Payload CommentRequestDTO commentRequestDTO) {
         Comment createdComment = commentService.createComment(commentRequestDTO);
-        return chatService.addComment(chatId, createdComment);
+        return chatService.addComment(commentRequestDTO.getChatId(), createdComment);
     }
 
     @MessageMapping("/chat/{chatId}/edit-comment")
     @SendTo("/topic/chat/{chatId}")
-    public CommentResponseDTO editComment(@PathVariable Long chatId, @PathVariable Long commentId,
-                                          CommentRequestDTO commentRequestDTO) {
-        return commentService.updateComment(commentId, commentRequestDTO);
+    public CommentResponseDTO editComment(@Payload CommentRequestDTO commentRequestDTO) {
+        return commentService.updateComment(commentRequestDTO);
     }
 
     @MessageMapping("/chat/{chatId}/delete-comment")
     @SendTo("/topic/chat/{chatId}")
-    public Long deleteComment(@PathVariable Long commentId) {
+    public Long deleteComment(@Payload Long commentId) {
         commentService.deleteComment(commentId);
         return commentId;
     }

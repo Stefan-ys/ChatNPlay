@@ -2,10 +2,12 @@ package com.quizzard.app.data;
 
 
 import com.quizzard.app.dto.request.RegisterRequestDTO;
+import com.quizzard.app.entity.Chat;
 import com.quizzard.app.entity.Lobby;
 import com.quizzard.app.entity.Role;
 import com.quizzard.app.entity.User;
 import com.quizzard.app.enums.UserRoleEnum;
+import com.quizzard.app.repository.ChatRepository;
 import com.quizzard.app.repository.LobbyRepository;
 import com.quizzard.app.repository.RoleRepository;
 import com.quizzard.app.repository.UserRepository;
@@ -25,6 +27,7 @@ public class DataInitializer implements CommandLineRunner {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final LobbyRepository lobbyRepository;
+    private final ChatRepository chatRepository;
 
     @Override
     public void run(String... args) {
@@ -61,6 +64,8 @@ public class DataInitializer implements CommandLineRunner {
         if (lobbyRepository.count() == 0) {
             Lobby lobby = new Lobby();
             lobby.setName("Quiz Maze Lobby");
+            Chat chat = new Chat();
+            lobby.setChat(chatRepository.save(chat));
             lobbyRepository.save(lobby);
         }
     }

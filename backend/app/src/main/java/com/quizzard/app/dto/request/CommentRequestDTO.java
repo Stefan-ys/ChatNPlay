@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CommentRequestDTO {
 
+    private Long id;
+    private Long chatId;
     private Long userId;
     private String content;
 }

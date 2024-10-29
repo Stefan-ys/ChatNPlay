@@ -51,15 +51,13 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public CommentResponseDTO updateComment(Long commentId, CommentRequestDTO commentRequestDTO) {
-        Comment existingComment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new IllegalArgumentException("Comment not found with id: " + commentId));
+    public CommentResponseDTO updateComment(CommentRequestDTO commentRequestDTO) {
+        Comment existingComment = commentRepository.findById(commentRequestDTO.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Comment not found with id: " + commentRequestDTO.getId()));
 
         existingComment.setContent(commentRequestDTO.getContent());
 
-        commentRepository.save(existingComment);
-
-        return modelMapper.map(existingComment, CommentResponseDTO.class);
+        return modelMapper.map(commentRepository.save(existingComment), CommentResponseDTO.class);
     }
 
     @Override
