@@ -1,8 +1,7 @@
-package com.quizzard.app.service;
+package com.quizzard.app.security;
 
 import com.quizzard.app.entity.User;
 import com.quizzard.app.repository.UserRepository;
-import com.quizzard.app.security.CustomUserDetails;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

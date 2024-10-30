@@ -3,7 +3,7 @@ package com.quizzard.app.controller;
 import com.quizzard.app.config.jwt.JwtUtil;
 import com.quizzard.app.dto.response.LoginResponseDTO;
 import com.quizzard.app.security.CustomUserDetails;
-import com.quizzard.app.service.CustomUserDetailsService;
+import com.quizzard.app.security.CustomUserDetailsService;
 import com.quizzard.app.service.UserStatusService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;

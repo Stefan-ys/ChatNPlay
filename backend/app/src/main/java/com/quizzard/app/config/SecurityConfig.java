@@ -1,8 +1,7 @@
 package com.quizzard.app.config;
 
 import com.quizzard.app.config.jwt.JwtRequestFilter;
-import com.quizzard.app.enums.UserRoleEnum;
-import com.quizzard.app.service.CustomUserDetailsService;
+import com.quizzard.app.security.CustomUserDetailsService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
