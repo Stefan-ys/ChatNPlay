@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { CommentRequest, CommentResponse } from '../types/comment.type';
 import { useAuth } from '../hooks/useAuth';
 import Comment from './Comment';
-import { Box, Card, CardContent, Typography, TextField, Button, List } from '@mui/material';
-import Stomp from 'stompjs';
+import { Box, Card, CardContent, Typography, TextField, Button, List, Snackbar } from '@mui/material';
+import { createWebSocketClient } from '../utils/websocketUtil';
 import { getChatById } from '../services/chat.service';
+import { WebSocketReceivedData } from '../types/websocket.type';
+import { WebSocketError } from '../types/error.type';
 
 interface ChatBoxProps {
     chatId: number;
@@ -14,6 +16,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatId }) => {
     const [comments, setComments] = useState<CommentResponse[]>([]);
     const [newComment, setNewComment] = useState<string>('');
     const [stompClient, setStompClient] = useState<any>(null);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const { user } = useAuth();
 
     useEffect(() => {
@@ -29,50 +32,45 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatId }) => {
     }, [chatId]);
 
     useEffect(() => {
-        const accessToken = localStorage.getItem('accessToken');
-        const socketUrl = 'ws://localhost:8080/ws';
-        const client = Stomp.client(socketUrl);
-    
-        client.connect(
-            {
-                Authorization: `Bearer ${accessToken}`,
-                'Content-Type': 'application/json',
+        const topic = `/topic/chat/${chatId}`;
+
+        const client = createWebSocketClient(
+            topic,
+            (receivedData: WebSocketReceivedData) => {
+                if (typeof receivedData === 'string') {
+                    setErrorMessage(receivedData);
+                } else if (typeof receivedData === 'number') {
+                    setComments((prevComments) =>
+                        prevComments.filter((comment) => comment.id !== receivedData)
+                    );
+                } else {
+                    const receivedComment: CommentResponse = receivedData;
+                    setComments((prevComments) => {
+                        const existingIndex = prevComments.findIndex(
+                            (comment) => comment.id === receivedComment.id
+                        );
+                        if (existingIndex > -1) {
+                            return prevComments.map((comment) =>
+                                comment.id === receivedComment.id ? receivedComment : comment
+                            );
+                        } else {
+                            return [...prevComments, receivedComment];
+                        }
+                    });
+                }
             },
-            () => {
-                client.subscribe(`/topic/chat/${chatId}`, (message) => {
-                    const receivedData = JSON.parse(message.body);
-    
-                     if (typeof receivedData === 'number') {
-                        setComments((prevComments) => prevComments.filter(comment => comment.id !== receivedData));
-                    } else {
-                        const receivedComment: CommentResponse = receivedData;
-    
-                        setComments((prevComments) => {
-                            const existingIndex = prevComments.findIndex((comment) => comment.id === receivedComment.id);
-                            
-                            if (existingIndex > -1) {
-                                return prevComments.map((comment) =>
-                                    comment.id === receivedComment.id ? receivedComment : comment
-                                );
-                            } else {
-                                return [...prevComments, receivedComment];
-                            }
-                        });
-                    }
-                });
-            },
-            (error) => {
-                console.error('WebSocket connection error:', error);
+            (error: WebSocketError) => {
+                console.error('WebSocket connection error:', error.message);
+                setErrorMessage(error.message);
             }
         );
-    
+
         setStompClient(client);
-    
+
         return () => {
             client.disconnect(() => console.log('Disconnected WebSocket'));
         };
     }, [chatId]);
-    
 
     const handleAddComment = () => {
         if (newComment.trim() && stompClient) {
@@ -82,10 +80,13 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatId }) => {
                 userId: user.id,
                 content: newComment,
             };
-
             stompClient.send(`/app/chat/${chatId}/comment`, {}, JSON.stringify(commentData));
             setNewComment('');
         }
+    };
+
+    const handleCloseSnackbar = () => {
+        setErrorMessage(null);
     };
 
     return (
@@ -95,12 +96,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatId }) => {
                 <List>
                     {comments.length > 0 ? (
                         comments.map((comment) => (
-                            <Comment
-                                key={comment.id}
-                                comment={comment}
-                                chatId={chatId}
-                                client={stompClient}
-                            />
+                            <Comment key={comment.id} comment={comment} chatId={chatId} client={stompClient} />
                         ))
                     ) : (
                         <Typography>No comments yet.</Typography>
@@ -120,6 +116,12 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatId }) => {
                         Send
                     </Button>
                 </Box>
+                <Snackbar
+                    open={!!errorMessage}
+                    autoHideDuration={6000}
+                    onClose={handleCloseSnackbar}
+                    message={errorMessage}
+                />
             </CardContent>
         </Card>
     );

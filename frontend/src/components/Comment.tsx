@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { CommentRequest, CommentResponse } from '../types/comment.type';
-import { ListItem, ListItemText, IconButton, TextField, Button, Box, Card, CardContent } from '@mui/material';
+import { ListItem, ListItemText, IconButton, TextField, Button, Box, Card, CardContent, Snackbar } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
@@ -13,6 +13,7 @@ interface CommentProps {
 const Comment: React.FC<CommentProps> = ({ comment, chatId, client }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [editedContent, setEditedContent] = useState(comment.content);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const handleEdit = () => {
         if (client) {
@@ -29,8 +30,22 @@ const Comment: React.FC<CommentProps> = ({ comment, chatId, client }) => {
 
     const handleDelete = () => {
         if (client) {
-            client.send(`/app/chat/${chatId}/delete-comment`, {}, JSON.stringify(comment.id));
+            const deletedComment: CommentRequest = {
+                id: comment.id,
+                chatId: chatId,
+                userId: comment.user.id,
+                content: '',
+            };
+            client.send(`/app/chat/${chatId}/delete-comment`, {}, JSON.stringify(deletedComment));
         }
+    };
+
+    const handleErrorMessage = (message: string) => {
+        setErrorMessage(message);
+    };
+
+    const handleCloseSnackbar = () => {
+        setErrorMessage(null);
     };
 
     return (
@@ -63,6 +78,12 @@ const Comment: React.FC<CommentProps> = ({ comment, chatId, client }) => {
                         </>
                     )}
                 </ListItem>
+                <Snackbar
+                    open={!!errorMessage}
+                    autoHideDuration={6000}
+                    onClose={handleCloseSnackbar}
+                    message={errorMessage}
+                />
             </CardContent>
         </Card>
     );
