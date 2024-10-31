@@ -38,36 +38,34 @@ public class ChatController {
 
     @MessageMapping("/chat/{chatId}/comment")
     @SendTo("/topic/chat/{chatId}")
-    public ResponseEntity<?> postComment(@Payload CommentRequestDTO commentRequestDTO) {
+    public CommentResponseDTO postComment(@Payload CommentRequestDTO commentRequestDTO) {
         verifyUserIsAuthor(commentRequestDTO.getUserId());
 
         Comment createdComment = commentService.createComment(commentRequestDTO);
-        CommentResponseDTO response = chatService.addComment(commentRequestDTO.getChatId(), createdComment);
-        return ResponseEntity.ok(response);
+        return chatService.addComment(commentRequestDTO.getChatId(), createdComment);
     }
 
     @MessageMapping("/chat/{chatId}/edit-comment")
     @SendTo("/topic/chat/{chatId}")
-    public ResponseEntity<?> editComment(@Payload CommentRequestDTO commentRequestDTO) {
+    public CommentResponseDTO editComment(@Payload CommentRequestDTO commentRequestDTO) {
         verifyUserIsAuthor(commentRequestDTO.getUserId());
 
-        CommentResponseDTO response = commentService.updateComment(commentRequestDTO);
-        return ResponseEntity.ok(response);
+        return commentService.updateComment(commentRequestDTO);
     }
 
     @MessageMapping("/chat/{chatId}/delete-comment")
     @SendTo("/topic/chat/{chatId}")
-    public ResponseEntity<?> deleteComment(@Payload CommentRequestDTO commentRequestDTO) {
+    public Long deleteComment(@Payload CommentRequestDTO commentRequestDTO) {
         verifyUserIsAuthor(commentRequestDTO.getUserId());
 
         commentService.deleteComment(commentRequestDTO.getId());
-        return ResponseEntity.ok(commentRequestDTO.getId());
+        return commentRequestDTO.getId();
     }
 
     private void verifyUserIsAuthor(Long requestUserId) {
-//        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        if (userDetails == null || !userDetails.getId().equals(requestUserId)) {
-//            throw new AccessDeniedException("Not authorized to perform this action.");
-//        }
+        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (userDetails == null || !userDetails.getId().equals(requestUserId)) {
+            throw new AccessDeniedException("Not authorized to perform this action.");
+        }
     }
 }

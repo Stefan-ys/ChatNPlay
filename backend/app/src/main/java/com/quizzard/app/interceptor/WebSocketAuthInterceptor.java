@@ -46,6 +46,10 @@ public class WebSocketAuthInterceptor implements ChannelInterceptor {
             }
         } else if (StompCommand.DISCONNECT.equals(accessor.getCommand())) {
             SecurityContextHolder.clearContext();
+        }else if (StompCommand.SUBSCRIBE.equals(accessor.getCommand())) {
+            // Log the subscription attempt with the current Principal
+            System.out.println("User attempting to subscribe: " + accessor.getUser());
+            System.out.println("SecurityContext Authentication: " + SecurityContextHolder.getContext().getAuthentication());
         }
 
         return message;

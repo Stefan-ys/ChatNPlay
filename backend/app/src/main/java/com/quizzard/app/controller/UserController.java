@@ -18,11 +18,6 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping
-    public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
-        List<UserResponseDTO> users = userService.getAllUsers();
-        return ResponseEntity.ok(users);
-    }
 
     @PostMapping("/{userId}/avatar")
     public ResponseEntity<?> updateUserProfile(@PathVariable Long userId, @ModelAttribute MyProfileRequestDTO myProfileRequestDTO) {
