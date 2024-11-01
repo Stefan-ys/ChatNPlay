@@ -16,7 +16,7 @@ export const API_REFRESH_TOKEN_URL = `${API_URL}/auth/refresh-token`
 
 // USERS
 
-export const API_GET_USERS_URL = `${API_URL}/users`;
+export const API_GET_USERS_URL = `${API_URL}/admin/users`;
 
 export const API_USER_PROFILE_URL = `${API_URL}/users/profile`;
 

@@ -29,6 +29,7 @@ export const createWebSocketClient = (
             });
         },
         (error) => {
+            console.error('WebSocket connection error:', error);
             const errorMessage = typeof error === 'string' ? error : (error as Stomp.Frame).headers.message || 'Unknown error occurred.';
             onError({ message: errorMessage });
         }
