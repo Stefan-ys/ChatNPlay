@@ -5,6 +5,7 @@ import com.quizzard.app.dto.response.LoginResponseDTO;
 import com.quizzard.app.security.CustomUserDetails;
 import com.quizzard.app.security.CustomUserDetailsService;
 import com.quizzard.app.service.UserStatusService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,7 +18,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,23 +27,14 @@ import java.util.Map;
 @CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/auth")
+@RequiredArgsConstructor
 public class AuthController {
 
-    @Autowired
-    private AuthService authService;
-
-    @Autowired
-    private UserStatusService userStatusService;
-
-    @Autowired
-    private JwtUtil jwtUtil;
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private CustomUserDetailsService customUserDetailsService;
-
+    private final AuthService authService;
+    private final UserStatusService userStatusService;
+    private final JwtUtil jwtUtil;
+    private final AuthenticationManager authenticationManager;
+    private final CustomUserDetailsService customUserDetailsService;
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequestDTO registerRequestDTO) {
@@ -61,7 +52,7 @@ public class AuthController {
                 new UsernamePasswordAuthenticationToken(loginRequestDTO.getUsername(), loginRequestDTO.getPassword())
         );
 
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         String accessToken = jwtUtil.generateToken(userDetails);
         String refreshToken = jwtUtil.generateRefreshToken(userDetails);
 
@@ -94,10 +85,9 @@ public class AuthController {
         if (requestRefreshToken != null && jwtUtil.validateToken(requestRefreshToken)) {
             String username = jwtUtil.extractUsername(requestRefreshToken);
 
-            UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
+            CustomUserDetails userDetails = (CustomUserDetails) customUserDetailsService.loadUserByUsername(username);
 
             String newAccessToken = jwtUtil.generateToken(userDetails);
-
             String newRefreshToken = jwtUtil.generateRefreshToken(userDetails);
 
             Map<String, String> tokens = new HashMap<>();
@@ -109,4 +99,3 @@ public class AuthController {
         }
     }
 }
-

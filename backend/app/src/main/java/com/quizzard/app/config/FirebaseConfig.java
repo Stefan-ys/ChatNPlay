@@ -28,9 +28,7 @@ public class FirebaseConfig {
                     .setStorageBucket(storageBucket)
                     .build();
 
-            FirebaseApp app = FirebaseApp.initializeApp(options);
-            System.out.println("Firebase initialized successfully");
-            return app;
+            return FirebaseApp.initializeApp(options);
         }
         return FirebaseApp.getInstance();
     }

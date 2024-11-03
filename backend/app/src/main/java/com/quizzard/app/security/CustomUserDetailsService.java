@@ -3,6 +3,7 @@ package com.quizzard.app.security;
 import com.quizzard.app.entity.User;
 import com.quizzard.app.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,11 +14,11 @@ import org.springframework.stereotype.Service;
 import java.util.stream.Collectors;
 
 
+@AllArgsConstructor
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Override
     @Transactional

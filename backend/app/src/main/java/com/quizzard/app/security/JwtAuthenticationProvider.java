@@ -1,31 +1,30 @@
 package com.quizzard.app.security;
 
 import com.quizzard.app.config.jwt.JwtUtil;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 
 @Component
+@RequiredArgsConstructor
 public class JwtAuthenticationProvider {
 
     private final JwtUtil jwtUtil;
     private final CustomUserDetailsService customUserDetailsService;
 
-
-    public JwtAuthenticationProvider(JwtUtil jwtUtil, CustomUserDetailsService customUserDetailsService) {
-        this.jwtUtil = jwtUtil;
-        this.customUserDetailsService = customUserDetailsService;
-    }
-
     public UsernamePasswordAuthenticationToken authenticate(String token) {
-        if(jwtUtil.validateToken(token)) {
+        if (jwtUtil.validateToken(token)) {
             String username = jwtUtil.extractUsername(token);
-            UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
+            Long userId = jwtUtil.extractUserId(token);
+            CustomUserDetails userDetails = (CustomUserDetails) customUserDetailsService.loadUserByUsername(username);
 
-            return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            if (userId.equals(userDetails.getId())) {
+                return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            } else {
+                throw new IllegalArgumentException("User ID in token does not match authenticated user ID");
+            }
         }
         return null;
     }
 }
-
