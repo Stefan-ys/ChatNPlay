@@ -3,7 +3,6 @@ package com.quizzard.app.controller;
 import com.quizzard.app.domain.dto.request.CommentRequestDTO;
 import com.quizzard.app.domain.dto.response.ChatResponseDTO;
 import com.quizzard.app.domain.dto.response.CommentResponseDTO;
-import com.quizzard.app.domain.entity.Comment;
 import com.quizzard.app.security.CustomPrincipal;
 import com.quizzard.app.service.ChatService;
 import com.quizzard.app.service.CommentService;
@@ -39,9 +38,7 @@ public class ChatController {
     @MessageMapping("/chat/{chatId}/comment")
     @SendTo("/topic/chat/{chatId}")
     public CommentResponseDTO postComment(@Payload CommentRequestDTO commentRequestDTO) {
-        Comment createdComment = commentService.createComment(commentRequestDTO);
-
-        return chatService.addComment(commentRequestDTO.getChatId(), createdComment);
+        return commentService.createComment(commentRequestDTO);
     }
 
     @MessageMapping("/chat/{chatId}/edit-comment")

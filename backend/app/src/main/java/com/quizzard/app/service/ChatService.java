@@ -7,6 +7,4 @@ import com.quizzard.app.domain.entity.Comment;
 public interface ChatService {
 
     ChatResponseDTO getChatById(Long chatId);
-
-    CommentResponseDTO addComment(Long chatId, Comment comment);
 }

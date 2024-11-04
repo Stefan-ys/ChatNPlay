@@ -39,18 +39,4 @@ public class ChatServiceImpl implements ChatService {
 
         return chatResponseDTO;
     }
-
-    @Override
-    public CommentResponseDTO addComment(Long chatId, Comment comment) {
-        Chat chat = chatRepository.findById(chatId)
-                .orElseThrow(() -> new IllegalArgumentException("Chat not found with id: " + chatId));
-
-        chat.getComments().add(comment);
-
-        chatRepository.save(chat);
-
-        CommentResponseDTO commentResponseDTO =  modelMapper.map(comment, CommentResponseDTO.class);
-        commentResponseDTO.setUser(modelMapper.map(comment.getUser(), UserResponseDTO.class));
-        return commentResponseDTO;
-    }
 }
