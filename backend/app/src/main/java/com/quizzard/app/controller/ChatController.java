@@ -1,9 +1,9 @@
 package com.quizzard.app.controller;
 
-import com.quizzard.app.dto.request.CommentRequestDTO;
-import com.quizzard.app.dto.response.ChatResponseDTO;
-import com.quizzard.app.dto.response.CommentResponseDTO;
-import com.quizzard.app.entity.Comment;
+import com.quizzard.app.domain.dto.request.CommentRequestDTO;
+import com.quizzard.app.domain.dto.response.ChatResponseDTO;
+import com.quizzard.app.domain.dto.response.CommentResponseDTO;
+import com.quizzard.app.domain.entity.Comment;
 import com.quizzard.app.security.CustomPrincipal;
 import com.quizzard.app.service.ChatService;
 import com.quizzard.app.service.CommentService;
@@ -28,6 +28,7 @@ public class ChatController {
 
     private final ChatService chatService;
     private final CommentService commentService;
+
 
     @GetMapping("/{chatId}")
     public ResponseEntity<ChatResponseDTO> getChat(@PathVariable Long chatId) {

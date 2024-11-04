@@ -1,9 +1,6 @@
-package com.quizzard.app.entity;
+package com.quizzard.app.domain.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,8 +16,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "chats")
-public class Chat extends BaseEntity{
+public class Chat extends BaseEntity {
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Comment> comments = new ArrayList<>();
 }

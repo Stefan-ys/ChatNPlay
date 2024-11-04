@@ -1,22 +1,21 @@
 package com.quizzard.app.controller;
 
-import com.quizzard.app.dto.request.MyProfileRequestDTO;
-import com.quizzard.app.dto.response.UserResponseDTO;
+import com.quizzard.app.domain.dto.request.MyProfileRequestDTO;
+import com.quizzard.app.domain.dto.response.UserResponseDTO;
 import com.quizzard.app.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 
 @CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/users")
+@RequiredArgsConstructor
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
 
     @PostMapping("/{userId}/avatar")

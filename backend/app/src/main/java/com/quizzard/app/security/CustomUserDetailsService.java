@@ -1,10 +1,9 @@
 package com.quizzard.app.security;
 
-import com.quizzard.app.entity.User;
+import com.quizzard.app.domain.entity.User;
 import com.quizzard.app.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

@@ -1,8 +1,8 @@
 package com.quizzard.app.service;
 
-import com.quizzard.app.dto.response.ChatResponseDTO;
-import com.quizzard.app.dto.response.CommentResponseDTO;
-import com.quizzard.app.entity.Comment;
+import com.quizzard.app.domain.dto.response.ChatResponseDTO;
+import com.quizzard.app.domain.dto.response.CommentResponseDTO;
+import com.quizzard.app.domain.entity.Comment;
 
 public interface ChatService {
 

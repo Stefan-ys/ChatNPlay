@@ -1,4 +1,4 @@
-package com.quizzard.app.entity;
+package com.quizzard.app.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

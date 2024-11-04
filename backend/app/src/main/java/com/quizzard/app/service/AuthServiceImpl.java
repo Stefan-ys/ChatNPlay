@@ -1,14 +1,15 @@
 package com.quizzard.app.service;
 
-import com.quizzard.app.dto.request.LoginRequestDTO;
-import com.quizzard.app.dto.request.RegisterRequestDTO;
-import com.quizzard.app.dto.response.UserResponseDTO;
-import com.quizzard.app.entity.Role;
-import com.quizzard.app.entity.User;
-import com.quizzard.app.enums.UserRoleEnum;
-import com.quizzard.app.exception.UserNotFoundException;
+import com.quizzard.app.domain.dto.request.LoginRequestDTO;
+import com.quizzard.app.domain.dto.request.RegisterRequestDTO;
+import com.quizzard.app.domain.dto.response.UserResponseDTO;
+import com.quizzard.app.domain.entity.Role;
+import com.quizzard.app.domain.entity.User;
+import com.quizzard.app.domain.enums.UserRoleEnum;
 import com.quizzard.app.repository.RoleRepository;
 import com.quizzard.app.repository.UserRepository;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,19 +21,13 @@ import java.util.HashSet;
 
 
 @Service
+@RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private ModelMapper modelMapper;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final ModelMapper modelMapper;
 
 
     @Override

@@ -1,17 +1,19 @@
 package com.quizzard.app.controller;
 
-import com.quizzard.app.dto.response.LobbyResponseDTO;
+import com.quizzard.app.domain.dto.response.LobbyResponseDTO;
 import com.quizzard.app.service.LobbyService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/lobbies")
+@RequiredArgsConstructor
 public class LobbyController {
 
-    @Autowired
-    private LobbyService lobbyService;
+    private final LobbyService lobbyService;
+
 
     @GetMapping("/{lobbyId}")
     public ResponseEntity<LobbyResponseDTO> getLobby(@PathVariable Long lobbyId) {

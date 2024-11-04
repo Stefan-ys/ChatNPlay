@@ -1,22 +1,21 @@
 package com.quizzard.app.service;
 
 
-import com.quizzard.app.dto.response.UserStatusResponseDTO;
-import com.quizzard.app.entity.User;
+import com.quizzard.app.domain.dto.response.UserStatusResponseDTO;
+import com.quizzard.app.domain.entity.User;
 import com.quizzard.app.exception.UserNotFoundException;
 import com.quizzard.app.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class UserStatusServiceImp implements UserStatusService {
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private SimpMessagingTemplate messagingTemplate;
+    private final UserRepository userRepository;
+    private final SimpMessagingTemplate messagingTemplate;
 
 
     @Override

@@ -2,18 +2,17 @@ package com.quizzard.app.service;
 
 import com.google.cloud.storage.Bucket;
 import com.google.firebase.cloud.StorageClient;
-import com.quizzard.app.dto.request.MyProfileRequestDTO;
-import com.quizzard.app.dto.response.UserResponseDTO;
-import com.quizzard.app.entity.Role;
-import com.quizzard.app.entity.User;
-import com.quizzard.app.enums.UserRoleEnum;
+import com.quizzard.app.domain.dto.request.MyProfileRequestDTO;
+import com.quizzard.app.domain.dto.response.UserResponseDTO;
+import com.quizzard.app.domain.entity.Role;
+import com.quizzard.app.domain.entity.User;
+import com.quizzard.app.domain.enums.UserRoleEnum;
 import com.quizzard.app.exception.InvalidFileTypeException;
 import com.quizzard.app.exception.UserNotFoundException;
 import com.quizzard.app.repository.RoleRepository;
 import com.quizzard.app.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,19 +26,12 @@ import java.util.stream.Collectors;
 
 
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
-    private ModelMapper modelMapper;
-
-    @Autowired
-    private SimpMessagingTemplate messagingTemplate;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final ModelMapper modelMapper;
 
 
     @Override

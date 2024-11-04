@@ -1,8 +1,8 @@
 package com.quizzard.app.service;
 
-import com.quizzard.app.dto.request.LoginRequestDTO;
-import com.quizzard.app.dto.request.RegisterRequestDTO;
-import com.quizzard.app.dto.response.UserResponseDTO;
+import com.quizzard.app.domain.dto.request.LoginRequestDTO;
+import com.quizzard.app.domain.dto.request.RegisterRequestDTO;
+import com.quizzard.app.domain.dto.response.UserResponseDTO;
 
 
 public interface AuthService {

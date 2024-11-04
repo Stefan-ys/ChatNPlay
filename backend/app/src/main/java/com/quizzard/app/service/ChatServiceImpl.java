@@ -1,11 +1,12 @@
 package com.quizzard.app.service;
 
-import com.quizzard.app.dto.response.ChatResponseDTO;
-import com.quizzard.app.dto.response.CommentResponseDTO;
-import com.quizzard.app.dto.response.UserResponseDTO;
-import com.quizzard.app.entity.Chat;
-import com.quizzard.app.entity.Comment;
+import com.quizzard.app.domain.dto.response.ChatResponseDTO;
+import com.quizzard.app.domain.dto.response.CommentResponseDTO;
+import com.quizzard.app.domain.dto.response.UserResponseDTO;
+import com.quizzard.app.domain.entity.Chat;
+import com.quizzard.app.domain.entity.Comment;
 import com.quizzard.app.repository.ChatRepository;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,13 +14,11 @@ import org.springframework.stereotype.Service;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ChatServiceImpl implements ChatService {
 
-    @Autowired
-    private ChatRepository chatRepository;
-
-    @Autowired
-    private ModelMapper modelMapper;
+    private final ChatRepository chatRepository;
+    private final ModelMapper modelMapper;
 
 
     @Override

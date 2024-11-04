@@ -1,8 +1,8 @@
 package com.quizzard.app.service;
 
 
-import com.quizzard.app.dto.request.MyProfileRequestDTO;
-import com.quizzard.app.dto.response.UserResponseDTO;
+import com.quizzard.app.domain.dto.request.MyProfileRequestDTO;
+import com.quizzard.app.domain.dto.response.UserResponseDTO;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;

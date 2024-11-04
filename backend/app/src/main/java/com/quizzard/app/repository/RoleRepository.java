@@ -1,7 +1,7 @@
 package com.quizzard.app.repository;
 
-import com.quizzard.app.entity.Role;
-import com.quizzard.app.enums.UserRoleEnum;
+import com.quizzard.app.domain.entity.Role;
+import com.quizzard.app.domain.enums.UserRoleEnum;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

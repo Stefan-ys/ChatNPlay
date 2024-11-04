@@ -1,4 +1,4 @@
-package com.quizzard.app.entity;
+package com.quizzard.app.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -20,4 +20,8 @@ public class Comment extends BaseEntity{
 
     @Column(nullable = false)
     private String content;
+
+    @ManyToOne
+    @JoinColumn(name = "chat_id")
+    private Chat chat;
 }

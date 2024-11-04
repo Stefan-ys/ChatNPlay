@@ -1,13 +1,12 @@
 package com.quizzard.app.service;
 
-import com.quizzard.app.dto.response.CommentResponseDTO;
-import com.quizzard.app.dto.response.LobbyResponseDTO;
-import com.quizzard.app.dto.response.UserResponseDTO;
-import com.quizzard.app.entity.Comment;
-import com.quizzard.app.entity.Lobby;
-import com.quizzard.app.entity.User;
+import com.quizzard.app.domain.dto.response.LobbyResponseDTO;
+import com.quizzard.app.domain.dto.response.UserResponseDTO;
+import com.quizzard.app.domain.entity.Lobby;
+import com.quizzard.app.domain.entity.User;
 import com.quizzard.app.repository.LobbyRepository;
 import com.quizzard.app.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,16 +15,12 @@ import java.util.stream.Collectors;
 
 
 @Service
+@RequiredArgsConstructor
 public class LobbyServiceImpl implements LobbyService {
 
-    @Autowired
-    private LobbyRepository lobbyRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private ModelMapper modelMapper;
+    private final LobbyRepository lobbyRepository;
+    private final UserRepository userRepository;
+    private final ModelMapper modelMapper;
 
 
     @Override
@@ -33,7 +28,6 @@ public class LobbyServiceImpl implements LobbyService {
         Lobby lobby = new Lobby();
         return modelMapper.map(lobbyRepository.save(lobby), LobbyResponseDTO.class);
     }
-
 
 
     @Override

@@ -1,12 +1,12 @@
 package com.quizzard.app.data;
 
 
-import com.quizzard.app.dto.request.RegisterRequestDTO;
-import com.quizzard.app.entity.Chat;
-import com.quizzard.app.entity.Lobby;
-import com.quizzard.app.entity.Role;
-import com.quizzard.app.entity.User;
-import com.quizzard.app.enums.UserRoleEnum;
+import com.quizzard.app.domain.dto.request.RegisterRequestDTO;
+import com.quizzard.app.domain.entity.Chat;
+import com.quizzard.app.domain.entity.Lobby;
+import com.quizzard.app.domain.entity.Role;
+import com.quizzard.app.domain.entity.User;
+import com.quizzard.app.domain.enums.UserRoleEnum;
 import com.quizzard.app.repository.ChatRepository;
 import com.quizzard.app.repository.LobbyRepository;
 import com.quizzard.app.repository.RoleRepository;

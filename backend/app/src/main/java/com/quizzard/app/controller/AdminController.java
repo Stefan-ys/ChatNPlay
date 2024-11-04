@@ -1,7 +1,8 @@
 package com.quizzard.app.controller;
 
-import com.quizzard.app.dto.response.UserResponseDTO;
+import com.quizzard.app.domain.dto.response.UserResponseDTO;
 import com.quizzard.app.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,10 +13,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/admin")
+@RequiredArgsConstructor
 public class AdminController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+
 
     @GetMapping("/users")
     public ResponseEntity<List<UserResponseDTO>> getAllUsers() {

@@ -1,6 +1,6 @@
-package com.quizzard.app.entity;
+package com.quizzard.app.domain.entity;
 
-import com.quizzard.app.enums.UserRoleEnum;
+import com.quizzard.app.domain.enums.UserRoleEnum;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

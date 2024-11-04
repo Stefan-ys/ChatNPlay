@@ -1,31 +1,26 @@
 package com.quizzard.app.service;
 
-import com.quizzard.app.dto.request.CommentRequestDTO;
-import com.quizzard.app.dto.response.CommentResponseDTO;
-import com.quizzard.app.entity.Comment;
-import com.quizzard.app.entity.User;
+import com.quizzard.app.domain.dto.request.CommentRequestDTO;
+import com.quizzard.app.domain.dto.response.CommentResponseDTO;
+import com.quizzard.app.domain.entity.Comment;
+import com.quizzard.app.domain.entity.User;
 import com.quizzard.app.repository.CommentRepository;
 import com.quizzard.app.repository.LobbyRepository;
 import com.quizzard.app.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
 @Service
+@RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService {
 
-    @Autowired
-    private CommentRepository commentRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private LobbyRepository lobbyRepository;
-
-    @Autowired
-    private ModelMapper modelMapper;
+    private final CommentRepository commentRepository;
+    private final UserRepository userRepository;
+    private final LobbyRepository lobbyRepository;
+    private final ModelMapper modelMapper;
 
 
     @Override

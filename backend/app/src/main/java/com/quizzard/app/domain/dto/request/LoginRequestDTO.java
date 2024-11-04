@@ -1,4 +1,4 @@
-package com.quizzard.app.dto.request;
+package com.quizzard.app.domain.dto.request;
 
 import lombok.*;
 

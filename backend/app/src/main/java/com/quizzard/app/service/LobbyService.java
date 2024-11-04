@@ -1,8 +1,6 @@
 package com.quizzard.app.service;
 
-import com.quizzard.app.dto.response.CommentResponseDTO;
-import com.quizzard.app.dto.response.LobbyResponseDTO;
-import com.quizzard.app.entity.Comment;
+import com.quizzard.app.domain.dto.response.LobbyResponseDTO;
 
 public interface LobbyService {
 

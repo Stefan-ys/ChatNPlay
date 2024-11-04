@@ -1,7 +1,7 @@
 package com.quizzard.app.controller;
 
 import com.quizzard.app.config.jwt.JwtUtil;
-import com.quizzard.app.dto.response.LoginResponseDTO;
+import com.quizzard.app.domain.dto.response.LoginResponseDTO;
 import com.quizzard.app.security.CustomUserDetails;
 import com.quizzard.app.security.CustomUserDetailsService;
 import com.quizzard.app.service.UserStatusService;
@@ -10,13 +10,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import com.quizzard.app.dto.request.LoginRequestDTO;
-import com.quizzard.app.dto.request.RegisterRequestDTO;
-import com.quizzard.app.dto.response.UserResponseDTO;
+import com.quizzard.app.domain.dto.request.LoginRequestDTO;
+import com.quizzard.app.domain.dto.request.RegisterRequestDTO;
+import com.quizzard.app.domain.dto.response.UserResponseDTO;
 import com.quizzard.app.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
