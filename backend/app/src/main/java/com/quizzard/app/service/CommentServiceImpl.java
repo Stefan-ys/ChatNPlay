@@ -5,6 +5,7 @@ import com.quizzard.app.domain.dto.response.CommentResponseDTO;
 import com.quizzard.app.domain.entity.Chat;
 import com.quizzard.app.domain.entity.Comment;
 import com.quizzard.app.domain.entity.User;
+import com.quizzard.app.domain.enums.OperationType;
 import com.quizzard.app.repository.ChatRepository;
 import com.quizzard.app.repository.CommentRepository;
 import com.quizzard.app.repository.UserRepository;
@@ -50,7 +51,10 @@ public class CommentServiceImpl implements CommentService {
 
         chatRepository.save(chat);
 
-        return modelMapper.map(comment, CommentResponseDTO.class);
+        CommentResponseDTO commentResponseDTO = modelMapper.map(comment, CommentResponseDTO.class);
+        commentResponseDTO.setType(OperationType.ADD.toString());
+
+        return commentResponseDTO;
     }
 
     @Override
@@ -60,18 +64,26 @@ public class CommentServiceImpl implements CommentService {
 
         existingComment.setContent(commentRequestDTO.getContent());
 
-        return modelMapper.map(commentRepository.save(existingComment), CommentResponseDTO.class);
+        CommentResponseDTO commentResponseDTO =  modelMapper.map(commentRepository.save(existingComment), CommentResponseDTO.class);
+        commentResponseDTO.setType(OperationType.EDIT.toString());
+
+        return  commentResponseDTO;
     }
 
     @Override
     @Transactional
-    public void deleteComment(Long commentId) {
+    public CommentResponseDTO deleteComment(Long commentId) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("Comment not found with id: " + commentId));
 
         Chat chat = comment.getChat();
         chat.getComments().remove(comment);
 
+        CommentResponseDTO commentResponseDTO = modelMapper.map(comment, CommentResponseDTO.class);
+        commentResponseDTO.setType(OperationType.DELETE.toString());
+
         commentRepository.delete(comment);
+
+        return commentResponseDTO;
     }
 }

@@ -53,13 +53,12 @@ public class ChatController {
 
     @MessageMapping("/chat/{chatId}/delete-comment")
     @SendTo("/topic/chat/{chatId}")
-    public Long deleteComment(@Payload CommentRequestDTO commentRequestDTO,
-                              SimpMessageHeaderAccessor headerAccessor) {
+    public CommentResponseDTO deleteComment(@Payload CommentRequestDTO commentRequestDTO,
+                                            SimpMessageHeaderAccessor headerAccessor) {
         Principal principal = headerAccessor.getUser();
         verifyUserIsAuthor(principal, commentRequestDTO.getUserId());
 
-        commentService.deleteComment(commentRequestDTO.getId());
-        return commentRequestDTO.getId();
+        return commentService.deleteComment(commentRequestDTO.getId());
     }
 
     private void verifyUserIsAuthor(Principal principal, Long requestUserId) {
