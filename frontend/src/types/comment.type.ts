@@ -7,6 +7,7 @@ export interface CommentResponse {
     content: string;
     createdAt: Date;
     updatedAt: Date;
+    type: "ADD" | "EDIT" | "DELETE";
 }
 
 export interface CommentRequest {

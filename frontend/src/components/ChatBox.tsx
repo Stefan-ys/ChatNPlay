@@ -36,29 +36,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatId }) => {
 
         const client = createWebSocketClient(
             topic,
-            (receivedData: WebSocketReceivedData) => {
-                if (typeof receivedData === 'string') {
-                    setErrorMessage(receivedData);
-                } else if (typeof receivedData === 'number') {
-                    setComments((prevComments) =>
-                        prevComments.filter((comment) => comment.id !== receivedData)
-                    );
-                } else {
-                    const receivedComment: CommentResponse = receivedData;
-                    setComments((prevComments) => {
-                        const existingIndex = prevComments.findIndex(
-                            (comment) => comment.id === receivedComment.id
-                        );
-                        if (existingIndex > -1) {
-                            return prevComments.map((comment) =>
-                                comment.id === receivedComment.id ? receivedComment : comment
-                            );
-                        } else {
-                            return [...prevComments, receivedComment];
-                        }
-                    });
-                }
-            },
+            (receivedData: WebSocketReceivedData) => handleWebSocketMessage(receivedData),
             (error: WebSocketError) => {
                 console.error('WebSocket connection error:', error.message);
                 setErrorMessage(error.message);
@@ -72,10 +50,37 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatId }) => {
         };
     }, [chatId]);
 
+
+    const handleWebSocketMessage = (receivedData: WebSocketReceivedData) => {
+        if (typeof receivedData === 'string') {
+            setErrorMessage(receivedData);
+        } else {
+            handleCommentOperation(receivedData as CommentResponse);
+        }
+    };
+
+    const handleCommentOperation = (receivedComment: CommentResponse) => {
+        if (receivedComment.type === 'ADD') {
+            setComments((prevComments) => [...prevComments, receivedComment]);
+        } else if (receivedComment.type === 'EDIT') {
+            setComments((prevComments) =>
+                prevComments.map((comment) =>
+                    comment.id === receivedComment.id ? receivedComment : comment
+                )
+            );
+        } else if (receivedComment.type === 'DELETE') {
+            setComments((prevComments) =>
+                prevComments.filter((comment) => comment.id !== receivedComment.id)
+            );
+        } else {
+            console.warn('Unknown comment operation type:', receivedComment.type);
+        }
+    };
+
     const handleAddComment = () => {
-        if (newComment.trim() && stompClient) {
+        if (newComment.trim() && stompClient && user) {
             const commentData: CommentRequest = {
-                id: -1,
+                id: -1, 
                 chatId: chatId,
                 userId: user.id,
                 content: newComment,
