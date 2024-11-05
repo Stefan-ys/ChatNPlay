@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "react-scripts test"
+    "test": "react-scripts test",
+    "lint": "eslint \"**/*.{js,jsx,ts,tsx}\" --max-warnings 0"
   },
   "dependencies": {
     "@emotion/react": "^11.13.3",
@@ -19,8 +20,6 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "@types/axios": "^0.14.0",
-    "@types/sockjs-client": "^1.5.4",
-    "@vitejs/plugin-react": "^4.3.2",
     "axios": "^1.7.7",
     "buffer": "^6.0.3",
     "jwt-decode": "^4.0.0",
@@ -32,12 +31,6 @@
     "stompjs": "^2.3.3",
     "vite": "^5.4.8",
     "web-vitals": "^2.1.4"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
   },
   "browserslist": {
     "production": [
@@ -53,9 +46,24 @@
   },
   "devDependencies": {
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
+    "@eslint/js": "^9.14.0",
+    "@types/eslint": "^9.6.1",
+    "@types/eslint-config-prettier": "^6.11.3",
+    "@types/eslint-plugin-prettier": "^3.1.3",
     "@types/jwt-decode": "^3.1.0",
+    "@types/prettier": "^3.0.0",
     "@types/react-router-dom": "^5.3.3",
     "@types/stompjs": "^2.3.9",
-    "typescript": "^4.9.5"
+    "eslint": "^9.14.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-jsdoc": "^50.4.3",
+    "eslint-plugin-prettier": "^5.2.1",
+    "eslint-plugin-react": "^7.37.2",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-react-refresh": "^0.4.14",
+    "globals": "^15.12.0",
+    "prettier": "^3.3.3",
+    "typescript": "^4.9.5",
+    "typescript-eslint": "^8.13.0"
   }
 }
