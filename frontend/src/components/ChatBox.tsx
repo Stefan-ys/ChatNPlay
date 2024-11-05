@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { CommentRequest, CommentResponse } from '../types/comment.type';
 import { useAuth } from '../hooks/useAuth';
 import Comment from './Comment';
@@ -18,6 +18,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatId }) => {
     const [stompClient, setStompClient] = useState<any>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const { user } = useAuth();
+    const commentsEndRef = useRef<null | HTMLDivElement>(null);
 
     useEffect(() => {
         const fetchChat = async () => {
@@ -33,7 +34,6 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatId }) => {
 
     useEffect(() => {
         const topic = `/topic/chat/${chatId}`;
-
         const client = createWebSocketClient(
             topic,
             (receivedData: WebSocketReceivedData) => handleWebSocketMessage(receivedData),
@@ -42,14 +42,11 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatId }) => {
                 setErrorMessage(error.message);
             }
         );
-
         setStompClient(client);
-
         return () => {
             client.disconnect(() => console.log('Disconnected WebSocket'));
         };
     }, [chatId]);
-
 
     const handleWebSocketMessage = (receivedData: WebSocketReceivedData) => {
         if (typeof receivedData === 'string') {
@@ -72,15 +69,13 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatId }) => {
             setComments((prevComments) =>
                 prevComments.filter((comment) => comment.id !== receivedComment.id)
             );
-        } else {
-            console.warn('Unknown comment operation type:', receivedComment.type);
         }
     };
 
     const handleAddComment = () => {
         if (newComment.trim() && stompClient && user) {
             const commentData: CommentRequest = {
-                id: -1, 
+                id: -1,
                 chatId: chatId,
                 userId: user.id,
                 content: newComment,
@@ -95,29 +90,68 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatId }) => {
     };
 
     return (
-        <Card variant="outlined">
+        <Card
+            variant="outlined"
+            sx={{
+                maxWidth: '1000px',
+                margin: 'auto',
+                borderRadius: 3,
+                boxShadow: 3,
+                backgroundColor: '#f5f5f5',
+                color: '#333',
+            }}
+        >
             <CardContent>
-                <Typography variant="h6">Chat</Typography>
-                <List>
-                    {comments.length > 0 ? (
-                        comments.map((comment) => (
-                            <Comment key={comment.id} comment={comment} chatId={chatId} client={stompClient} />
-                        ))
-                    ) : (
-                        <Typography>No comments yet.</Typography>
-                    )}
-                </List>
-                <Box mt={2} display="flex">
+                <Typography
+                    variant="h6"
+                    sx={{ color: '#1976d2', borderBottom: '1px solid #ccc', pb: 1, mb: 2 }} // Subtle header color
+                >
+                    Game Lobby Chat
+                </Typography>
+                <Box
+                    sx={{
+                        maxHeight: '500px',
+                        overflowY: 'auto',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        pb: 2,
+                    }}
+                >
+                    <List>
+                        {comments.map((comment) => (
+                            <Comment
+                                key={comment.id}
+                                comment={comment}
+                                chatId={chatId}
+                                client={stompClient}
+                                isCurrentUser={comment.user.id === user?.id}
+                            />
+                        ))}
+                        <div ref={commentsEndRef} />
+                    </List>
+                </Box>
+                <Box sx={{ mt: 2, display: 'flex' }}>
                     <TextField
-                        label="Type a comment..."
+                        variant="outlined"
+                        placeholder="Type a message..."
                         value={newComment}
                         onChange={(e) => setNewComment(e.target.value)}
                         fullWidth
-                        variant="outlined"
                         size="small"
-                        sx={{ marginRight: 1 }}
+                        sx={{
+                            '& .MuiOutlinedInput-root': {
+                                color: '#000',
+                                backgroundColor: '#e0e0e0',
+                                borderRadius: '5px',
+                            },
+                        }}
                     />
-                    <Button variant="contained" color="primary" onClick={handleAddComment}>
+                    <Button
+                        onClick={handleAddComment}
+                        variant="contained"
+                        color="primary"
+                        sx={{ ml: 2, backgroundColor: '#1976d2' }}
+                    >
                         Send
                     </Button>
                 </Box>
