@@ -3,7 +3,7 @@ export const API_URL = 'http://localhost:8080/api';
 export const SOCKET_URL = 'ws://localhost:8080/ws';
 
 
-// AUTH 
+// AUTH
 
 export const API_LOGIN_URL = `${API_URL}/auth/login`;
 
@@ -11,7 +11,7 @@ export const API_REGISTER_URL = `${API_URL}/auth/register`;
 
 export const API_LOGOUT_URL = `${API_URL}/auth/logout`;
 
-export const API_REFRESH_TOKEN_URL = `${API_URL}/auth/refresh-token`
+export const API_REFRESH_TOKEN_URL = `${API_URL}/auth/refresh-token`;
 
 
 // USERS

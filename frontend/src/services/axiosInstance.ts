@@ -12,15 +12,15 @@ const axiosInstance = axios.create({
 const clearStorage = () => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
-    localStorage.removeItem('user')
-}
+    localStorage.removeItem('user');
+};
 
 axiosInstance.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('accessToken');
 
         if (token) {
-            config.headers['Authorization'] = `Bearer ${token}`;
+            config.headers.Authorization = `Bearer ${token}`;
         } else {
             const currentPath = window.location.pathname;
             if (currentPath !== '/login') {
@@ -56,14 +56,14 @@ axiosInstance.interceptors.response.use(
                             const { accessToken: newToken, refreshToken: newRefreshToken } = response;
                             localStorage.setItem('accessToken', newToken);
                             localStorage.setItem('refreshToken', newRefreshToken);
-                            axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
-                            originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
+                            axiosInstance.defaults.headers.common.Authorization = `Bearer ${newToken}`;
+                            originalRequest.headers.Authorization = `Bearer ${newToken}`;
                             return axiosInstance(originalRequest);
-                        } else {
-                            console.error('Failed to refresh token. Logging out...');
-                            clearStorage();
-                            window.location.href = '/login';
                         }
+                        console.error('Failed to refresh token. Logging out...');
+                        clearStorage();
+                        window.location.href = '/login';
+
                     } catch (refreshError) {
                         console.error('Error refreshing token:', refreshError);
                         clearStorage();
