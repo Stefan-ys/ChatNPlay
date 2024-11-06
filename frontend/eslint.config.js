@@ -3,6 +3,7 @@ import js from '@eslint/js';
 import jsdoc from 'eslint-plugin-jsdoc';
 import pluginReact from 'eslint-plugin-react';
 import pluginReactHooks from 'eslint-plugin-react-hooks';
+import typescriptEslintPlugin from '@typescript-eslint/eslint-plugin';
 
 /** @type {import('eslint').Linter.Config} */
 export default [
@@ -12,13 +13,19 @@ export default [
             globals: { ...globals.browser, ...globals.node },
             ecmaVersion: 'latest',
             sourceType: 'module',
+            parser: '@typescript-eslint/parser',
+            parserOptions: {
+                project: './tsconfig.json',
+            },
         },
         plugins: {
             react: pluginReact,
             reactHooks: pluginReactHooks,
             jsdoc,
+            '@typescript-eslint': typescriptEslintPlugin,
         },
         rules: {
+            ...typescriptEslintPlugin.configs.recommended.rules,
             'max-len': ['error', { code: 250, tabWidth: 4, ignoreComments: true, ignoreTrailingComments: true, ignoreUrls: true, ignoreStrings: true }],
             'no-console': ['error', { allow: ['warn', 'error'] }],
             'object-curly-spacing': ['error', 'always'],
