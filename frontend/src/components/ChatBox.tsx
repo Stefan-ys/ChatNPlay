@@ -19,6 +19,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatId }) => {
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const { user } = useAuth();
     const commentsEndRef = useRef<null | HTMLDivElement>(null);
+    const isInitialLoad = useRef(true);
 
     useEffect(() => {
         const fetchChat = async () => {
@@ -89,6 +90,13 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatId }) => {
         setErrorMessage(null);
     };
 
+    useEffect(() => {
+        if (isInitialLoad.current && comments.length > 0) {
+            commentsEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+            isInitialLoad.current = false;
+        }
+    }, [comments]);
+
     return (
         <Card
             variant="outlined"
@@ -104,7 +112,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatId }) => {
             <CardContent>
                 <Typography
                     variant="h6"
-                    sx={{ color: '#1976d2', borderBottom: '1px solid #ccc', pb: 1, mb: 2 }} // Subtle header color
+                    sx={{ color: '#1976d2', borderBottom: '1px solid #ccc', pb: 1, mb: 2 }}
                 >
                     Game Lobby Chat
                 </Typography>
