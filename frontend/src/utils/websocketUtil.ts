@@ -8,32 +8,35 @@ interface StompClient {
     disconnect: (callback: () => void) => void;
 }
 
-export const createWebSocketClient = (
+export const createWebSocketClient = async (
     topic: string,
     onMessage: (data: WebSocketReceivedData) => void,
     onError: (error: { message: string }) => void
-): StompClient => {
+): Promise<StompClient> => {
     const accessToken = localStorage.getItem('accessToken');
     const socketUrl = 'ws://localhost:8080/ws';
     const client = Stomp.client(socketUrl);
 
-    client.connect(
-        {
-            Authorization: `Bearer ${accessToken}`,
-            'Content-Type': 'application/json',
-        },
-        () => {
-            client.subscribe(topic, (message) => {
-                const receivedData: WebSocketReceivedData = JSON.parse(message.body);
-                onMessage(receivedData);
-            });
-        },
-        (error) => {
-            console.error('WebSocket connection error:', error);
-            const errorMessage = typeof error === 'string' ? error : (error as Stomp.Frame).headers.message || 'Unknown error occurred.';
-            onError({ message: errorMessage });
-        }
-    );
-
-    return client;
+    return new Promise((resolve, reject) => {
+        client.connect(
+            {
+                Authorization: `Bearer ${accessToken}`,
+                'Content-Type': 'application/json',
+            },
+            () => {
+                client.subscribe(topic, (message) => {
+                    const receivedData: WebSocketReceivedData = JSON.parse(message.body);
+                    onMessage(receivedData);
+                });
+                console.log("WebSocket connected and subscribed to topic.");
+                resolve(client);
+            },
+            (error) => {
+                console.error('WebSocket connection error:', error);
+                const errorMessage = typeof error === 'string' ? error : (error as Stomp.Frame).headers.message || 'Unknown error occurred.';
+                onError({ message: errorMessage });
+                reject(new Error(errorMessage));
+            }
+        );
+    });
 };

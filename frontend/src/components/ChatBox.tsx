@@ -2,7 +2,16 @@ import React, { useState, useEffect, useRef } from 'react';
 import { CommentRequest, CommentResponse } from '../types/comment.type';
 import { useAuth } from '../hooks/useAuth';
 import Comment from './Comment';
-import { Box, Card, CardContent, Typography, TextField, Button, List, Snackbar } from '@mui/material';
+import {
+    Box,
+    Card,
+    CardContent,
+    Typography,
+    TextField,
+    Button,
+    List,
+    Snackbar,
+} from '@mui/material';
 import { createWebSocketClient } from '../utils/websocketUtil';
 import { getChatById } from '../services/chat.service';
 import { WebSocketReceivedData } from '../types/websocket.type';
@@ -34,18 +43,28 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatId }) => {
     }, [chatId]);
 
     useEffect(() => {
-        const topic = `/topic/chat/${chatId}`;
-        const client = createWebSocketClient(
-            topic,
-            (receivedData: WebSocketReceivedData) => handleWebSocketMessage(receivedData),
-            (error: WebSocketError) => {
-                console.error('WebSocket connection error:', error.message);
-                setErrorMessage(error.message);
-            }
-        );
-        setStompClient(client);
+        const setupWebSocket = async () => {
+            const topic = `/topic/chat/${chatId}`;
+            const client = createWebSocketClient(
+                topic,
+                (receivedData: WebSocketReceivedData) =>
+                    handleWebSocketMessage(receivedData),
+                (error: WebSocketError) => {
+                    console.error('WebSocket connection error:', error.message);
+                    setErrorMessage(error.message);
+                },
+            );
+            setStompClient(client);
+        };
+
+        setupWebSocket();
+
         return () => {
-            client.disconnect(() => console.log('Disconnected WebSocket'));
+            if (stompClient) {
+                stompClient.disconnect(() => {
+                    console.log('WebSocket disconnected.');
+                });
+            }
         };
     }, [chatId]);
 
@@ -63,12 +82,16 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatId }) => {
         } else if (receivedComment.type === 'EDIT') {
             setComments((prevComments) =>
                 prevComments.map((comment) =>
-                    comment.id === receivedComment.id ? receivedComment : comment
-                )
+                    comment.id === receivedComment.id
+                        ? receivedComment
+                        : comment,
+                ),
             );
         } else if (receivedComment.type === 'DELETE') {
             setComments((prevComments) =>
-                prevComments.filter((comment) => comment.id !== receivedComment.id)
+                prevComments.filter(
+                    (comment) => comment.id !== receivedComment.id,
+                ),
             );
         }
     };
@@ -81,7 +104,11 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatId }) => {
                 userId: user.id,
                 content: newComment,
             };
-            stompClient.send(`/app/chat/${chatId}/comment`, {}, JSON.stringify(commentData));
+            stompClient.send(
+                `/app/chat/${chatId}/comment`,
+                {},
+                JSON.stringify(commentData),
+            );
             setNewComment('');
         }
     };
@@ -99,7 +126,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatId }) => {
 
     return (
         <Card
-            variant="outlined"
+            variant='outlined'
             sx={{
                 maxWidth: '1000px',
                 margin: 'auto',
@@ -111,8 +138,13 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatId }) => {
         >
             <CardContent>
                 <Typography
-                    variant="h6"
-                    sx={{ color: '#1976d2', borderBottom: '1px solid #ccc', pb: 1, mb: 2 }}
+                    variant='h6'
+                    sx={{
+                        color: '#1976d2',
+                        borderBottom: '1px solid #ccc',
+                        pb: 1,
+                        mb: 2,
+                    }}
                 >
                     Game Lobby Chat
                 </Typography>
@@ -140,12 +172,12 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatId }) => {
                 </Box>
                 <Box sx={{ mt: 2, display: 'flex' }}>
                     <TextField
-                        variant="outlined"
-                        placeholder="Type a message..."
+                        variant='outlined'
+                        placeholder='Type a message...'
                         value={newComment}
                         onChange={(e) => setNewComment(e.target.value)}
                         fullWidth
-                        size="small"
+                        size='small'
                         sx={{
                             '& .MuiOutlinedInput-root': {
                                 color: '#000',
@@ -156,8 +188,8 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatId }) => {
                     />
                     <Button
                         onClick={handleAddComment}
-                        variant="contained"
-                        color="primary"
+                        variant='contained'
+                        color='primary'
                         sx={{ ml: 2, backgroundColor: '#1976d2' }}
                     >
                         Send
@@ -175,3 +207,4 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatId }) => {
 };
 
 export default ChatBox;
+

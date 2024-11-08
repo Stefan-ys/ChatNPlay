@@ -1,10 +1,10 @@
 import { LobbyResponse } from '../types/lobby.type';
-import axiosInstance from './axiosInstance';
+import axiosUtil from '../utils/axiosUtil';
 import { API_LOBBY_URL } from '../common/urls';
 
 export const getLobbyById = async (lobbyId: number): Promise<LobbyResponse> => {
     try {
-        const response = await axiosInstance.get(`${API_LOBBY_URL}/${lobbyId}`);
+        const response = await axiosUtil.get(`${API_LOBBY_URL}/${lobbyId}`);
         return response.data;
     } catch (error) {
         console.error('Error fetching lobby by ID:', error);
@@ -14,7 +14,7 @@ export const getLobbyById = async (lobbyId: number): Promise<LobbyResponse> => {
 
 export const getLobbyByName = async (lobbyName: string): Promise<LobbyResponse> => {
     try {
-        const response = await axiosInstance.get(`${API_LOBBY_URL}/name/${lobbyName}`);
+        const response = await axiosUtil.get(`${API_LOBBY_URL}/name/${lobbyName}`);
         return response.data;
     } catch (error) {
         console.error('Error fetching lobby by name:', error);
@@ -25,7 +25,7 @@ export const getLobbyByName = async (lobbyName: string): Promise<LobbyResponse> 
 
 export const addUserToLobby = async (lobbyId: number, userId: number): Promise<LobbyResponse> => {
     try {
-        const response = await axiosInstance.post(`${API_LOBBY_URL}/${lobbyId}/users/${userId}`);
+        const response = await axiosUtil.post(`${API_LOBBY_URL}/${lobbyId}/users/${userId}`);
         return response.data;
     } catch (error) {
         console.error('Error adding user to lobby:', error);
@@ -35,7 +35,7 @@ export const addUserToLobby = async (lobbyId: number, userId: number): Promise<L
 
 export const removeUserFromLobby = async (lobbyId: number, userId: number): Promise<LobbyResponse> => {
     try {
-        const response = await axiosInstance.delete(`${API_LOBBY_URL}/${lobbyId}/users/${userId}`);
+        const response = await axiosUtil.delete(`${API_LOBBY_URL}/${lobbyId}/users/${userId}`);
         return response.data;
     } catch (error) {
         console.error('Error removing user from lobby:', error);

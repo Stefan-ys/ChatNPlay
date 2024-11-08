@@ -1,4 +1,3 @@
-import { CommentResponse } from "./comment.type";
 import { UserResponse } from "./user.type";
 
 export interface LobbyResponse {

@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { API_URL } from '../common/urls';
-import { refreshToken } from './auth.service';
+import { refreshToken } from '../services/auth.service';
 
-const axiosInstance = axios.create({
+const axiosUtil = axios.create({
     baseURL: API_URL,
     headers: {
         'Content-Type': 'application/json',
@@ -15,7 +15,7 @@ const clearStorage = () => {
     localStorage.removeItem('user');
 };
 
-axiosInstance.interceptors.request.use(
+axiosUtil.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('accessToken');
 
@@ -35,7 +35,7 @@ axiosInstance.interceptors.request.use(
         return Promise.reject(error);
     }
 );
-axiosInstance.interceptors.response.use(
+axiosUtil.interceptors.response.use(
     (response) => response,
     async (error) => {
         const originalRequest = error.config;
@@ -56,9 +56,9 @@ axiosInstance.interceptors.response.use(
                             const { accessToken: newToken, refreshToken: newRefreshToken } = response;
                             localStorage.setItem('accessToken', newToken);
                             localStorage.setItem('refreshToken', newRefreshToken);
-                            axiosInstance.defaults.headers.common.Authorization = `Bearer ${newToken}`;
+                            axiosUtil.defaults.headers.common.Authorization = `Bearer ${newToken}`;
                             originalRequest.headers.Authorization = `Bearer ${newToken}`;
-                            return axiosInstance(originalRequest);
+                            return axiosUtil(originalRequest);
                         }
                         console.error('Failed to refresh token. Logging out...');
                         clearStorage();
@@ -85,4 +85,4 @@ axiosInstance.interceptors.response.use(
     }
 );
 
-export default axiosInstance;
+export default axiosUtil;

@@ -1,11 +1,11 @@
-import axiosInstance from './axiosInstance';
+import axiosUtil from '../utils/axiosUtil';
 import { API_LOGIN_URL, API_LOGOUT_URL, API_REFRESH_TOKEN_URL, API_REGISTER_URL } from '../common/urls';
 import { LoginRequest, RegisterRequest } from '../types/auth.type';
 import axios from 'axios';
 
 export const register = async (registerData: RegisterRequest) => {
     try {
-        const response = await axiosInstance.post(API_REGISTER_URL, registerData);
+        const response = await axiosUtil.post(API_REGISTER_URL, registerData);
         return response.data;
     } catch (error: any) {
         throw new Error(error.response?.data?.message || 'Registration failed');
@@ -14,7 +14,7 @@ export const register = async (registerData: RegisterRequest) => {
 
 export const login = async (loginData: LoginRequest) => {
     try {
-        const response = await axiosInstance.post(API_LOGIN_URL, loginData);
+        const response = await axiosUtil.post(API_LOGIN_URL, loginData);
         return response.data;
     } catch (error: any) {
         throw new Error(error.response?.data?.message || 'Login failed');
@@ -23,7 +23,7 @@ export const login = async (loginData: LoginRequest) => {
 
 export const logout = async () => {
     try {
-        await axiosInstance.post(API_LOGOUT_URL);
+        await axiosUtil.post(API_LOGOUT_URL);
     } catch (error: any) {
         throw new Error('Logout failed');
     }
