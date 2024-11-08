@@ -24,12 +24,4 @@ public class Lobby extends BaseEntity {
     @OneToOne()
     @JoinColumn(name = "chat_id")
     private Chat chat;
-
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "lobby_users",
-            joinColumns = @JoinColumn(name = "lobby_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
-    private Set<User> users = new HashSet<>();
 }

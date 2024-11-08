@@ -39,7 +39,4 @@ public class User extends BaseEntity {
 
     @Column
     private String avatarUrl;
-
-    @Column(nullable = false)
-    private boolean isOnline = false;
 }

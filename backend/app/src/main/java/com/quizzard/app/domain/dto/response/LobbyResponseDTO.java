@@ -15,5 +15,4 @@ public class LobbyResponseDTO {
     private Long id;
     private String name;
     private Long chatId;
-    private List<UserResponseDTO> users = new ArrayList<>();
 }

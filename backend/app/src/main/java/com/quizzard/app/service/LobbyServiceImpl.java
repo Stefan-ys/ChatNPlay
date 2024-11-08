@@ -1,17 +1,11 @@
 package com.quizzard.app.service;
 
 import com.quizzard.app.domain.dto.response.LobbyResponseDTO;
-import com.quizzard.app.domain.dto.response.UserResponseDTO;
 import com.quizzard.app.domain.entity.Lobby;
-import com.quizzard.app.domain.entity.User;
 import com.quizzard.app.repository.LobbyRepository;
-import com.quizzard.app.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-
-
-import java.util.stream.Collectors;
 
 
 @Service
@@ -33,7 +27,7 @@ public class LobbyServiceImpl implements LobbyService {
         Lobby lobby = lobbyRepository.findByName(name)
                 .orElseThrow(() -> new IllegalArgumentException("Lobby not found with name: " + name));
 
-        return mapToLobbyDTO(lobby);
+        return modelMapper.map(lobby, LobbyResponseDTO.class);
     }
 
 
@@ -42,18 +36,6 @@ public class LobbyServiceImpl implements LobbyService {
         Lobby lobby = lobbyRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Lobby not found with id: " + id));
 
-        return mapToLobbyDTO(lobby);
-    }
-
-    private LobbyResponseDTO mapToLobbyDTO(Lobby lobby) {
-        LobbyResponseDTO lobbyResponseDTO = modelMapper.map(lobby, LobbyResponseDTO.class);
-
-        lobbyResponseDTO.setUsers(
-                lobby.getUsers().stream()
-                        .map(user -> modelMapper.map(user, UserResponseDTO.class))
-                        .collect(Collectors.toList())
-        );
-
-        return lobbyResponseDTO;
+        return modelMapper.map(lobby, LobbyResponseDTO.class);
     }
 }
