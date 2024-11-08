@@ -19,11 +19,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
-
 
 @Service
 @RequiredArgsConstructor
@@ -121,5 +118,13 @@ public class UserServiceImpl implements UserService {
         } else {
             throw new RuntimeException("User does not have the role: " + role);
         }
+    }
+
+    @Override
+    public List<UserResponseDTO> getUsersByIds(Set<Long> usersIds){
+        List<User> users = userRepository.findAllById(usersIds);
+        return users.stream()
+                .map(user -> modelMapper.map(user, UserResponseDTO.class))
+                .collect(Collectors.toList());
     }
 }

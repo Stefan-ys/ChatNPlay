@@ -9,8 +9,4 @@ public interface LobbyService {
     LobbyResponseDTO getLobbyById(Long id);
 
     LobbyResponseDTO getLobbyByName(String lobbyName);
-
-    LobbyResponseDTO addUserToLobby(Long lobbyId, Long userId);
-
-    LobbyResponseDTO removeUserFromLobby(Long lobbyId, Long userId);
 }

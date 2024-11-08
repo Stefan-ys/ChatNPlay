@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 public interface UserService {
     List<UserResponseDTO> getAllUsers();
@@ -24,4 +25,6 @@ public interface UserService {
     void addRole(Long userId, String role);
 
     void removeRole(Long userId, String role);
+
+    List<UserResponseDTO> getUsersByIds(Set<Long> usersIds);
 }

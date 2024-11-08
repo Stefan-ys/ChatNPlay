@@ -8,8 +8,8 @@ import com.quizzard.app.repository.LobbyRepository;
 import com.quizzard.app.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 
 import java.util.stream.Collectors;
 
@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 public class LobbyServiceImpl implements LobbyService {
 
     private final LobbyRepository lobbyRepository;
-    private final UserRepository userRepository;
     private final ModelMapper modelMapper;
 
 
@@ -29,39 +28,10 @@ public class LobbyServiceImpl implements LobbyService {
         return modelMapper.map(lobbyRepository.save(lobby), LobbyResponseDTO.class);
     }
 
-
     @Override
     public LobbyResponseDTO getLobbyByName(String name) {
         Lobby lobby = lobbyRepository.findByName(name)
                 .orElseThrow(() -> new IllegalArgumentException("Lobby not found with name: " + name));
-
-        return mapToLobbyDTO(lobby);
-    }
-
-    @Override
-    public LobbyResponseDTO addUserToLobby(Long lobbyId, Long userId) {
-        Lobby lobby = lobbyRepository.findById(lobbyId)
-                .orElseThrow(() -> new IllegalArgumentException("Lobby not found with id: " + lobbyId));
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + userId));
-
-        lobby.getUsers().add(user);
-        lobbyRepository.save(lobby);
-
-        return mapToLobbyDTO(lobby);
-    }
-
-    @Override
-    public LobbyResponseDTO removeUserFromLobby(Long lobbyId, Long userId) {
-        Lobby lobby = lobbyRepository.findById(lobbyId)
-                .orElseThrow(() -> new IllegalArgumentException("Lobby not found with id: " + lobbyId));
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + userId));
-
-        lobby.getUsers().remove(user);
-        lobbyRepository.save(lobby);
 
         return mapToLobbyDTO(lobby);
     }
@@ -80,14 +50,10 @@ public class LobbyServiceImpl implements LobbyService {
 
         lobbyResponseDTO.setUsers(
                 lobby.getUsers().stream()
-                        .map(this::mapToUserResponseDTO)
+                        .map(user -> modelMapper.map(user, UserResponseDTO.class))
                         .collect(Collectors.toList())
         );
 
         return lobbyResponseDTO;
-    }
-
-    private UserResponseDTO mapToUserResponseDTO(User user) {
-        return modelMapper.map(user, UserResponseDTO.class);
     }
 }

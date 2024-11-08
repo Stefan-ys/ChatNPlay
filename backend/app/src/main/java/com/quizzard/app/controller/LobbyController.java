@@ -1,11 +1,19 @@
 package com.quizzard.app.controller;
 
 import com.quizzard.app.domain.dto.response.LobbyResponseDTO;
+import com.quizzard.app.domain.dto.response.UserResponseDTO;
 import com.quizzard.app.service.LobbyService;
+import com.quizzard.app.service.UserService;
+import com.quizzard.app.tracker.ChannelConnectionTracker;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/lobbies")
@@ -13,6 +21,8 @@ import org.springframework.web.bind.annotation.*;
 public class LobbyController {
 
     private final LobbyService lobbyService;
+    private final UserService userService;
+    private final ChannelConnectionTracker connectionTracker;
 
 
     @GetMapping("/{lobbyId}")
@@ -27,15 +37,21 @@ public class LobbyController {
         return ResponseEntity.ok(lobby);
     }
 
-    @PostMapping("/{lobbyId}/users/{userId}")
-    public ResponseEntity<LobbyResponseDTO> addUserToLobby(@PathVariable Long lobbyId, @PathVariable Long userId) {
-        LobbyResponseDTO updatedLobby = lobbyService.addUserToLobby(lobbyId, userId);
-        return ResponseEntity.ok(updatedLobby);
+    @MessageMapping("/lobby/{lobbyId}/addUser")
+    @SendTo("/topic/lobby/{lobbyId}")
+    public List<UserResponseDTO> addUserToLobby(
+            @DestinationVariable Long lobbyId,
+            @Payload Long userId) {
+        connectionTracker.addUserToLobby(lobbyId, userId);
+        return userService.getUsersByIds(connectionTracker.getUsersInLobby(lobbyId));
     }
 
-    @DeleteMapping("/{lobbyId}/users/{userId}")
-    public ResponseEntity<LobbyResponseDTO> removeUserFromLobby(@PathVariable Long lobbyId, @PathVariable Long userId) {
-        LobbyResponseDTO updatedLobby = lobbyService.removeUserFromLobby(lobbyId, userId);
-        return ResponseEntity.ok(updatedLobby);
+    @MessageMapping("/lobby/{lobbyId}/removeUser")
+    @SendTo("/topic/lobby/{lobbyId}")
+    public List<UserResponseDTO> removeUserFromLobby(
+            @DestinationVariable Long lobbyId,
+            @Payload Long userId) {
+        connectionTracker.removeUserFromLobby(lobbyId, userId);
+        return userService.getUsersByIds(connectionTracker.getUsersInLobby(lobbyId));
     }
 }
