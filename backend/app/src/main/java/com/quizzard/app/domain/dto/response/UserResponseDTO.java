@@ -14,5 +14,4 @@ public class UserResponseDTO {
     private String email;
     private String role;
     private int score;
-    private boolean isOnline;
 }

@@ -4,7 +4,6 @@ import com.quizzard.app.config.jwt.JwtUtil;
 import com.quizzard.app.domain.dto.response.LoginResponseDTO;
 import com.quizzard.app.security.CustomUserDetails;
 import com.quizzard.app.security.CustomUserDetailsService;
-import com.quizzard.app.service.UserStatusService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -30,7 +29,6 @@ import java.util.Map;
 public class AuthController {
 
     private final AuthService authService;
-    private final UserStatusService userStatusService;
     private final JwtUtil jwtUtil;
     private final AuthenticationManager authenticationManager;
     private final CustomUserDetailsService customUserDetailsService;
@@ -61,19 +59,13 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
 
-        userStatusService.updateUserStatus(userResponseDTO.getId(), true);
-
         return ResponseEntity.ok(new LoginResponseDTO(accessToken, refreshToken, userResponseDTO));
     }
 
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         new SecurityContextLogoutHandler().logout(request, response, authentication);
-        if (authentication != null && authentication.getPrincipal() instanceof CustomUserDetails userDetails) {
-            Long userId = userDetails.getId();
-            userStatusService.updateUserStatus(userId, false);
-        }
-        assert authentication != null;
+
         return ResponseEntity.ok("User " + authentication.getName() + " successfully logged out!");
     }
 

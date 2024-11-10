@@ -3,19 +3,24 @@ package com.quizzard.app.controller;
 import com.quizzard.app.domain.dto.request.MyProfileRequestDTO;
 import com.quizzard.app.domain.dto.response.UserResponseDTO;
 import com.quizzard.app.service.UserService;
+import com.quizzard.app.tracker.UserStatusTracker;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Set;
 
-@CrossOrigin(origins = "http://localhost:5173")
+
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
+    private final UserStatusTracker userStatusTracker;
 
 
     @PostMapping("/{userId}/avatar")
@@ -38,5 +43,21 @@ public class UserController {
     public ResponseEntity<String> removeRoleFromUser(@PathVariable Long userId, @RequestParam String role) {
         userService.removeRole(userId, role);
         return ResponseEntity.ok("Role " + role + " removed from user " + userId);
+    }
+
+    @MessageMapping("/status/online")
+    @SendTo("/topic/user-status")
+    public Set<Long> userIsOnline(
+            @Payload Long userId) {
+        userStatusTracker.addUser(userId);
+        return userStatusTracker.getOnlineUsers();
+    }
+
+    @MessageMapping("/status/offline")
+    @SendTo("/topic/user-status")
+    public Set<Long> userIsOffline(
+            @Payload Long userId) {
+        userStatusTracker.removeUser(userId);
+        return userStatusTracker.getOnlineUsers();
     }
 }
