@@ -32,8 +32,9 @@ const UserStatusProvider: React.FC<{ children: React.ReactNode }> = ({
             try {
                 const client = await createWebSocketClient(
                     topic,
-                    (recievedData: WebSocketReceivedData) =>{
-                            setOnlineUsers(new Set(recievedData)) } ,
+                    (recievedData: WebSocketReceivedData) => {
+                        setOnlineUsers(new Set(recievedData));
+                    },
                     (error) => {
                         console.error(
                             'WebSocket connection error:',
@@ -46,16 +47,13 @@ const UserStatusProvider: React.FC<{ children: React.ReactNode }> = ({
                 handleUserIsOnline();
             } catch (error) {
                 console.error('Failed to connect WebSocket:', error);
-            }  
-        }
-        
+            }
+        };
+
         setupWebSocket();
 
         return () => {
-            if (
-                stompClientRef.current &&
-                stompClientRef.current.connected
-            ) {
+            if (stompClientRef.current && stompClientRef.current.connected) {
                 handleUserIsOffline();
                 stompClientRef.current.disconnect(() => {
                     console.log('WebSoclet disconnected.');

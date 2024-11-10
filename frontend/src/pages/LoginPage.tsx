@@ -1,21 +1,31 @@
 import React, { useState } from 'react';
-import { Button, TextField, Grid, Paper, Typography, Alert } from '@mui/material';
+import {
+    Button,
+    TextField,
+    Grid,
+    Paper,
+    Typography,
+    Alert,
+    CircularProgress,
+} from '@mui/material';
 import { useAuth } from '../hooks/useAuth';
-
 
 const LoginPage: React.FC = () => {
     const { login } = useAuth();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState<string | null>(null);
-
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleSubmit = async () => {
+        setIsLoading(true);
         try {
-            await login({username, password});
+            await login({ username, password });
             setError(null);
         } catch (err) {
             setError('Invalid credentials. Please try again.');
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -46,11 +56,20 @@ const LoginPage: React.FC = () => {
                         variant="contained"
                         color="primary"
                         onClick={handleSubmit}
+                        disabled={isLoading}
                         style={{ marginTop: '20px' }}
                     >
-                        Login
+                        {isLoading ? (
+                            <CircularProgress size={24} color="inherit" />
+                        ) : (
+                            'Login'
+                        )}
                     </Button>
-                    {error && <Alert severity="error" style={{ marginTop: '20px' }}>{error}</Alert>}
+                    {error && (
+                        <Alert severity="error" style={{ marginTop: '20px' }}>
+                            {error}
+                        </Alert>
+                    )}
                 </Paper>
             </Grid>
         </Grid>

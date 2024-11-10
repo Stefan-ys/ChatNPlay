@@ -1,5 +1,5 @@
-import { UserResponse } from '../types/user.type';
 import { API_GET_USERS_URL, API_USER_PROFILE_URL, API_UPDATE_PROFILE_URL } from '../common/urls';
+import { UserResponse } from '../types/user.type';
 import axiosUtil from '../utils/axiosUtil';
 
 

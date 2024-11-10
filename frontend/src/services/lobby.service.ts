@@ -1,6 +1,7 @@
+import { API_LOBBY_URL } from '../common/urls';
 import { LobbyResponse } from '../types/lobby.type';
 import axiosUtil from '../utils/axiosUtil';
-import { API_LOBBY_URL } from '../common/urls';
+
 
 export const getLobbyById = async (lobbyId: number): Promise<LobbyResponse> => {
     try {
