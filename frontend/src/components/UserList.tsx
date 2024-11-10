@@ -23,11 +23,7 @@ const UserList: React.FC<UserListProps> = ({ users }) => {
           {users.map((user) => (
             <ListItem key={user.id}>
               <ListItemText primary={user.username} />
-              {user.isOnline ? (
-                <Chip label="Online" color="success" size="small" />
-              ) : (
-                <Chip label="Offline" color="default" size="small" />
-              )}
+                <Chip label="Online" color="success" size="small" />              
             </ListItem>
           ))}
         </List>

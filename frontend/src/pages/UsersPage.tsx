@@ -3,7 +3,6 @@ import { getAllUsers } from '../services/user.service';
 import { List, ListItem, Typography, Container, Paper, Box } from '@mui/material';
 import UserAvatar from '../components/UserAvatar';
 import { UserResponse } from '../types/user.type';
-// import { userStatusWebSocket } from '../utils/userStatusWebSocket';
 
 const UsersPage: React.FC = () => {
     const [users, setUsers] = useState<UserResponse[]>([]);
@@ -19,18 +18,6 @@ const UsersPage: React.FC = () => {
         };
 
         fetchUsers();
-
-        // userStatusWebSocket.initWebSocket((userId, isOnline) => {
-        //     setUsers((prevUsers) =>
-        //         prevUsers.map((user) =>
-        //             user.id === userId ? { ...user, isOnline } : user
-        //         )
-        //     );
-        // });
-
-        // return () => {
-        //     userStatusWebSocket.closeWebSocket();
-        // };
     }, []);
 
     return (
@@ -40,7 +27,7 @@ const UsersPage: React.FC = () => {
                 <List>
                     {users.map((user) => (
                         <ListItem key={user.id} style={{ display: 'flex', alignItems: 'center' }}>
-                            <UserAvatar avatarUrl={user.avatarUrl} isOnline={user.isOnline} />
+                            <UserAvatar avatarUrl={user.avatarUrl} userId={user.id} />
                             <Box ml={2}>
                                 <Typography>{user.username}</Typography>
                                 <Typography variant="body2" color="textSecondary">{user.email}</Typography>

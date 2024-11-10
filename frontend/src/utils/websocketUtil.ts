@@ -1,5 +1,6 @@
 import Stomp from 'stompjs';
 import { WebSocketReceivedData } from '../types/websocket.type';
+import { getHeaders } from '../assets/header';
 
 interface StompClient {
     connect: (headers: object, onConnect: () => void, onError: (error: any) => void) => void;
@@ -17,12 +18,14 @@ export const createWebSocketClient = async (
     const socketUrl = 'ws://localhost:8080/ws';
     const client = Stomp.client(socketUrl);
 
+    const headers = accessToken ? {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+    } : {};
+
     return new Promise((resolve, reject) => {
         client.connect(
-            {
-                Authorization: `Bearer ${accessToken}`,
-                'Content-Type': 'application/json',
-            },
+           headers,
             () => {
                 client.subscribe(topic, (message) => {
                     const receivedData: WebSocketReceivedData = JSON.parse(message.body);

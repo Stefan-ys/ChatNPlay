@@ -1,9 +1,10 @@
 import React from 'react';
 import { Avatar, Badge, styled } from '@mui/material';
+import { useUserStatus } from '../context/UserStatusProvider';
 
 interface UserAvatarProps {
     avatarUrl: string;
-    isOnline: boolean;
+    userId: number;
 }
 
 const StatusBadge = styled(Badge)(({ theme }) => ({
@@ -16,7 +17,9 @@ const StatusBadge = styled(Badge)(({ theme }) => ({
     },
 }));
 
-const UserAvatar: React.FC<UserAvatarProps> = ({ avatarUrl, isOnline }) => {
+const UserAvatar: React.FC<UserAvatarProps> = ({ avatarUrl, userId }) => {
+    const { onlineUsers } = useUserStatus();
+
     return (
         <StatusBadge
             overlap="circular"
@@ -24,7 +27,7 @@ const UserAvatar: React.FC<UserAvatarProps> = ({ avatarUrl, isOnline }) => {
             badgeContent=""
             sx={{
                 '& .MuiBadge-badge': {
-                    backgroundColor: isOnline ? 'green' : 'red',
+                    backgroundColor: onlineUsers.has(userId) ? 'green' : 'red',
                 },
             }}
         >

@@ -11,6 +11,7 @@ import './App.css';
 import { AuthProvider, AuthContext } from './context/AuthProvider';
 import { themeOptions } from './themes/themeOptions';
 import LobbyPage from './pages/LobbyPage';
+import { UserStatusProvider } from './context/UserStatusProvider';
 
 const theme = createTheme(themeOptions);
 
@@ -26,6 +27,7 @@ const PrivateRoute = () => {
 const App: React.FC = () => {
   return (
     <AuthProvider>
+      <UserStatusProvider>
       <ThemeProvider theme={theme}>
         <Router>
           <Navbar />
@@ -41,6 +43,7 @@ const App: React.FC = () => {
           </Routes>
         </Router>
       </ThemeProvider>
+      </UserStatusProvider>
     </AuthProvider>
   );
 };

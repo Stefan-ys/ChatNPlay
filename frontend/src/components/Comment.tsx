@@ -61,7 +61,7 @@ const Comment: React.FC<CommentProps> = ({ comment, chatId, client, isCurrentUse
                     <Typography variant="subtitle2" color="textSecondary">
                         {comment.user.username}
                     </Typography>
-                    <UserAvatar avatarUrl={comment.user.avatarUrl} isOnline={false} />
+                    <UserAvatar avatarUrl={comment.user.avatarUrl} userId={comment.user.id} />
                 </Box>
             )}
             <Card
@@ -112,7 +112,7 @@ const Comment: React.FC<CommentProps> = ({ comment, chatId, client, isCurrentUse
                     <Typography variant="subtitle2" color="textSecondary">
                         {comment.user.username}
                     </Typography>
-                    <UserAvatar avatarUrl={comment.user.avatarUrl} isOnline={false} />
+                    <UserAvatar avatarUrl={comment.user.avatarUrl} userId={comment.user.id} />
                 </Box>
             )}
             <Snackbar

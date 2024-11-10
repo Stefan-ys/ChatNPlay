@@ -70,7 +70,6 @@ const LobbyPage: React.FC<{ lobbyName: string }> = ({ lobbyName }) => {
 
 
     const handleWebSocketMessage = (receivedData: WebSocketReceivedData) => {
-        console.log('Received data:', receivedData);
         if (typeof receivedData === 'string') {
             setErrorMessage(receivedData);
         } else {
@@ -92,8 +91,7 @@ const LobbyPage: React.FC<{ lobbyName: string }> = ({ lobbyName }) => {
     };
 
     const handleRemoveUserFromLobby = () => {
-        if (stompClientRef.current?.connected && user && lobby) {
-            console.log("****");
+        if (user && lobby) {
             stompClientRef.current.send(
                 `/app/lobby/${lobby.id}/removeUser`,
                 {},

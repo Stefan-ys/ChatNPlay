@@ -207,4 +207,3 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatId }) => {
 };
 
 export default ChatBox;
-
