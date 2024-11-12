@@ -8,24 +8,28 @@ import {
 	Alert,
 	CircularProgress,
 } from '@mui/material';
-import { useAuth } from '../hooks/useAuth';
+import { register } from '../services/auth.service';
 
 const RegisterPage: React.FC = () => {
-	const { register } = useAuth();
 	const [username, setUsername] = useState('');
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [confirmPassword, setConfirmPassword] = useState('');
-	const [error, setError] = useState<string | null>(null);
+	const [error, setError] = useState<string[] | null>(null);
 	const [isLoading, setIsLoading] = useState(false);
 
 	const handleSubmit = async () => {
 		setIsLoading(true);
+		setError(null);
 		try {
 			await register({ username, email, password, confirmPassword });
-			setError(null);
 		} catch (err) {
-			setError('Registration failed. Please check your details.');
+			console.log('ss-<' , err)
+			if (Array.isArray(err)) {
+				setError(err.map((x) => '* ' + x + ' *'));
+			} else {
+				setError(['Registration failed. Please check your details.']);
+			}
 		} finally {
 			setIsLoading(false);
 		}
@@ -84,7 +88,9 @@ const RegisterPage: React.FC = () => {
 					</Button>
 					{error && (
 						<Alert severity='error' style={{ marginTop: '20px' }}>
-							{error}
+							{error.map((err, index) => (
+								<div key={index}>{err}</div>
+							))}
 						</Alert>
 					)}
 				</Paper>
