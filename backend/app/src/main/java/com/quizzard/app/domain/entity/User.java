@@ -1,12 +1,17 @@
 package com.quizzard.app.domain.entity;
 
+import com.quizzard.app.common.Constraints;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 import java.util.Set;
 import java.util.HashSet;
+
 
 @Entity
 @Getter
@@ -20,12 +25,16 @@ import java.util.HashSet;
 public class User extends BaseEntity {
 
     @Column(nullable = false, unique = true)
+    @NotBlank
+    @Size(min= Constraints.USERNAME_MIN_LENGTH, max = Constraints.USERNAME_MAX_LENGTH)
     private String username;
 
     @Column(nullable = false, unique = true)
+    @NotBlank
     private String email;
 
     @Column(nullable = false)
+    @NotBlank
     private String password;
 
     @ManyToMany(fetch = FetchType.EAGER)

@@ -2,7 +2,6 @@ package com.quizzard.app.config;
 
 import com.quizzard.app.config.jwt.JwtRequestFilter;
 import com.quizzard.app.security.CustomUserDetailsService;
-import com.quizzard.app.security.JwtAuthenticationProvider;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,7 +29,6 @@ public class SecurityConfig {
     private final JwtRequestFilter jwtRequestFilter;
 
     private final CustomUserDetailsService customUserDetailsService;
-    private final JwtAuthenticationProvider jwtAuthenticationProvider;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -59,7 +57,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/ws/**").permitAll()
-                        .anyRequest().authenticated())
+//                        .anyRequest().authenticated()
+                )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
