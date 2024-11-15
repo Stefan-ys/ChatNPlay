@@ -7,7 +7,14 @@ import axios from 'axios';
 
 export const register = async (registerData: RegisterRequest): Promise<UserResponse> => {
     try {
-        const response = await axios.post<UserResponse>(API_REGISTER_URL, registerData);
+        const response = await axios.post<UserResponse>(
+            API_REGISTER_URL, 
+            registerData,
+            { 
+                headers: {
+                    'Content-Type': 'application/json' 
+                }}
+        );
         return response.data;
     } catch (error: any) {
         if (error.response?.status === 400 && Array.isArray(error.response?.data)) {

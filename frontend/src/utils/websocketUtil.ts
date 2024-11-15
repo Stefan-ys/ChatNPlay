@@ -1,6 +1,6 @@
-import Stomp from 'stompjs';
+import Stomp, {Client} from 'stompjs';
 import { WebSocketReceivedData } from '../types/websocket.type';
-import { getHeaders } from '../assets/header';
+import { WEBSOCKET_URL } from '../common/urls';
 
 interface StompClient {
     connect: (headers: object, onConnect: () => void, onError: (error: any) => void) => void;
@@ -15,8 +15,7 @@ export const createWebSocketClient = async (
     onError: (error: { message: string }) => void
 ): Promise<StompClient> => {
     const accessToken = localStorage.getItem('accessToken');
-    const socketUrl = 'ws://localhost:8080/ws';
-    const client = Stomp.client(socketUrl);
+    const client = Stomp.client(WEBSOCKET_URL);
 
     const headers = accessToken ? {
         Authorization: `Bearer ${accessToken}`,

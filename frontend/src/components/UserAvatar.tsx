@@ -4,7 +4,7 @@ import { useUserStatus } from '../context/UserStatusProvider';
 
 interface UserAvatarProps {
 	avatarUrl: string;
-	userId: string;
+	userId: number;
 }
 
 const StatusBadge = styled(Badge)(({ theme }) => ({

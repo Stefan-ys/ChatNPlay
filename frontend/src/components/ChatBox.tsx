@@ -15,7 +15,6 @@ import {
 import { createWebSocketClient } from '../utils/websocketUtil';
 import { getChatById } from '../services/chat.service';
 import { WebSocketReceivedData } from '../types/websocket.type';
-import { WebSocketError } from '../types/error.type';
 
 interface ChatBoxProps {
 	chatId: number;
@@ -24,11 +23,10 @@ interface ChatBoxProps {
 const ChatBox: React.FC<ChatBoxProps> = ({ chatId }) => {
 	const [comments, setComments] = useState<CommentResponse[]>([]);
 	const [newComment, setNewComment] = useState<string>('');
-	const [stompClient, setStompClient] = useState<any>(null);
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 	const { user } = useAuth();
 	const commentsEndRef = useRef<null | HTMLDivElement>(null);
-	const isInitialLoad = useRef(true);
+	const stompClientRef = useRef<any>(null);
 
 	useEffect(() => {
 		const fetchChat = async () => {
@@ -45,23 +43,22 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatId }) => {
 	useEffect(() => {
 		const setupWebSocket = async () => {
 			const topic = `/topic/chat/${chatId}`;
-			const client = createWebSocketClient(
+			const client = await createWebSocketClient(
 				topic,
-				(receivedData: WebSocketReceivedData) =>
-					handleWebSocketMessage(receivedData),
-				(error: WebSocketError) => {
-					console.error('WebSocket connection error:', error.message);
+				handleWebSocketMessage,
+				(error) => {
+					console.error('WebSocket error:', error.message);
 					setErrorMessage(error.message);
 				},
 			);
-			setStompClient(client);
+			stompClientRef.current = client;
 		};
 
 		setupWebSocket();
 
 		return () => {
-			if (stompClient) {
-				stompClient.disconnect(() => {
+			if (stompClientRef.current) {
+				stompClientRef.current.disconnect(() => {
 					console.log('WebSocket disconnected.');
 				});
 			}
@@ -76,35 +73,30 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatId }) => {
 		}
 	};
 
-	const handleCommentOperation = (receivedComment: CommentResponse) => {
-		if (receivedComment.type === 'ADD') {
-			setComments((prevComments) => [...prevComments, receivedComment]);
-		} else if (receivedComment.type === 'EDIT') {
-			setComments((prevComments) =>
-				prevComments.map((comment) =>
-					comment.id === receivedComment.id
-						? receivedComment
-						: comment,
-				),
-			);
-		} else if (receivedComment.type === 'DELETE') {
-			setComments((prevComments) =>
-				prevComments.filter(
-					(comment) => comment.id !== receivedComment.id,
-				),
-			);
+	const handleCommentOperation = async (receivedComment: CommentResponse) => {
+		try {
+			if (receivedComment.type === 'ADD' || receivedComment.type === 'EDIT') {
+				const updatedComments = await getChatById(chatId);
+				setComments(updatedComments.comments);
+			} else if (receivedComment.type === 'DELETE') {
+				const updatedComments = await getChatById(chatId);
+				setComments(updatedComments.comments);
+			}
+		} catch (error) {
+			console.error('Error updating comments from the backend:', error);
+			setErrorMessage('Failed to update comments.');
 		}
 	};
 
 	const handleAddComment = () => {
-		if (newComment.trim() && stompClient && user) {
+		if (newComment.trim() && stompClientRef.current && user) {
 			const commentData: CommentRequest = {
 				id: -1,
 				chatId: chatId,
 				userId: user.id,
 				content: newComment,
 			};
-			stompClient.send(
+			stompClientRef.current.send(
 				`/app/chat/${chatId}/comment`,
 				{},
 				JSON.stringify(commentData),
@@ -118,9 +110,8 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatId }) => {
 	};
 
 	useEffect(() => {
-		if (isInitialLoad.current && comments.length > 0) {
-			commentsEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-			isInitialLoad.current = false;
+		if (commentsEndRef.current) {
+			commentsEndRef.current.scrollIntoView({ behavior: 'smooth' });
 		}
 	}, [comments]);
 
@@ -163,7 +154,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatId }) => {
 								key={comment.id}
 								comment={comment}
 								chatId={chatId}
-								client={stompClient}
+								client={stompClientRef.current}
 								isCurrentUser={comment.user.id === user?.id}
 							/>
 						))}
@@ -207,3 +198,4 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatId }) => {
 };
 
 export default ChatBox;
+
