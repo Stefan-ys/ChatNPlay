@@ -11,6 +11,7 @@ import com.quizzard.app.exception.InvalidFileTypeException;
 import com.quizzard.app.exception.UserNotFoundException;
 import com.quizzard.app.repository.RoleRepository;
 import com.quizzard.app.repository.UserRepository;
+import com.quizzard.app.util.FileValidationUtil;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final ModelMapper modelMapper;
+    private final FileValidationUtil fileValidationUtil;
 
 
     @Override
@@ -57,7 +59,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String uploadAvatar(MultipartFile avatarFile) throws IOException {
-        if (!isValidImageFile(avatarFile)) {
+        if (!fileValidationUtil.isValidImageFile(avatarFile)) {
             throw new InvalidFileTypeException("Invalid image file");
         }
         try {
@@ -66,15 +68,8 @@ public class UserServiceImpl implements UserService {
             String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8);
             return "https://firebasestorage.googleapis.com/v0/b/" + bucket.getName() + "/o/" + encodedFileName + "?alt=media";
         } catch (Exception e) {
-            System.err.println("Error: " + e.getMessage());
-            throw e;
+            throw new RuntimeException("Failed to upload image file", e);
         }
-    }
-
-    private boolean isValidImageFile(MultipartFile avatarFile) {
-        String contentType = avatarFile.getContentType();
-        assert contentType != null;
-        return contentType.equals("image/jpeg") || contentType.equals("image/png");
     }
 
     @Override

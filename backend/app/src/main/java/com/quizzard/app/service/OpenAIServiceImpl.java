@@ -1,6 +1,7 @@
 package com.quizzard.app.service;
 
 import com.quizzard.app.domain.dto.response.OpenAIResponse;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -18,15 +19,15 @@ import java.util.Map;
 public class OpenAIServiceImpl implements OpenAIService {
 
     private final RestTemplate restTemplate;
-    private final String apiKey;
-    private final String apiUrl;
 
-    public OpenAIServiceImpl(RestTemplate restTemplate,
-                         @Value("${openai.api.key}") String apiKey,
-                         @Value("${openai.api.url}") String apiUrl) {
+    @Value("${openai.api.key}")
+    private String apiKey;
+
+    @Value("${openai.api.url}")
+    private String apiUrl;
+
+    public OpenAIServiceImpl(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
-        this.apiKey = apiKey;
-        this.apiUrl = apiUrl;
     }
 
 

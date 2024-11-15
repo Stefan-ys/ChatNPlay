@@ -31,6 +31,7 @@ public class QuestionServiceImpl implements QuestionService {
     private final FileValidationUtil fileValidationUtil;
 
     @Transactional
+    @Override
     public void createQuestion(QuestionRequestDTO questionRequestDTO) throws IOException {
         Question question = modelMapper.map(questionRequestDTO, Question.class);
 
@@ -40,12 +41,14 @@ public class QuestionServiceImpl implements QuestionService {
         questionRepository.save(question);
     }
 
+    @Override
     public QuestionResponseDTO getQuestionById(long questionId) {
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new IllegalArgumentException("Question not found with id: " + questionId));
         return modelMapper.map(question, QuestionResponseDTO.class);
     }
 
+    @Override
     public List<QuestionResponseDTO> getQuestionsByTopicId(long topicId) {
         List<Question> questions = questionRepository.findByTopicId(topicId);
         return questions.stream()
@@ -54,6 +57,7 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Transactional
+    @Override
     public void updateQuestion(Long questionId, QuestionRequestDTO questionRequestDTO) {
         Question existingQuestion = questionRepository.findById(questionId)
                 .orElseThrow(() -> new IllegalArgumentException("Question not found with id: " + questionId));
@@ -77,6 +81,7 @@ public class QuestionServiceImpl implements QuestionService {
         questionRepository.save(existingQuestion);
     }
 
+    @Override
     public void deleteQuestion(long questionId) {
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new IllegalArgumentException("Question not found with id: " + questionId));

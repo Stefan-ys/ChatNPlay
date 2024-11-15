@@ -1,5 +1,6 @@
 package com.quizzard.app.domain.dto.request;
 
+import com.quizzard.app.validator.UniqueTopicTitle;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -11,6 +12,8 @@ import org.springframework.web.multipart.MultipartFile;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TopicRequestDTO {
+
+    @UniqueTopicTitle
     @NotBlank
     @Size(min = 1, max = 50)
     private String title;

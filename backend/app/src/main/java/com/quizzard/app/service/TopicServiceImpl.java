@@ -28,12 +28,14 @@ public class TopicServiceImpl implements TopicService {
     private final FileValidationUtil fileValidationUtil;
 
     @Transactional
+    @Override
     public void createTopic(TopicRequestDTO topicRequestDTO) throws IOException {
         Topic topic = modelMapper.map(topicRequestDTO, Topic.class);
         topic.setImageUrl(uploadImage(topicRequestDTO.getImageFile()));
         topicRepository.save(topic);
     }
 
+    @Override
     public TopicResponseDTO getTopicById(long topicId) {
         Topic topic = topicRepository.findById(topicId).orElseThrow(
                 () -> new IllegalArgumentException("Topic not found with id: " + topicId)
@@ -42,6 +44,7 @@ public class TopicServiceImpl implements TopicService {
     }
 
     @Transactional
+    @Override
     public void updateTopic(long topicId, TopicRequestDTO topicRequestDTO) throws IOException {
         Topic topic = topicRepository.findById(topicId).orElseThrow(
                 () -> new IllegalArgumentException("Topic not found with id: " + topicId)
@@ -54,12 +57,12 @@ public class TopicServiceImpl implements TopicService {
         }
     }
 
+    @Override
     public void deleteTopic(long topicId) {
         Topic topic = topicRepository.findById(topicId)
                 .orElseThrow(() -> new IllegalArgumentException("Topic not found with id: " + topicId));
         topicRepository.delete(topic);
     }
-
 
     private String uploadImage(MultipartFile imageFile) throws IOException {
         if (!fileValidationUtil.isValidImageFile(imageFile)) {

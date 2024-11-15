@@ -21,8 +21,8 @@ public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
-    private final ModelMapper modelMapper;
     private final ChatRepository chatRepository;
+    private final ModelMapper modelMapper;
 
 
     @Override
