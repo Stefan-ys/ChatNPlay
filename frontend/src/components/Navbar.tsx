@@ -21,15 +21,8 @@ const Navbar: React.FC = () => {
 		<AppBar position='fixed'>
 			<Container>
 				<Toolbar>
-					<Typography
-						variant='h6'
-						component='div'
-						sx={{ flexGrow: 1 }}
-					>
-						<Link
-							to='/'
-							style={{ color: 'white', textDecoration: 'none' }}
-						>
+					<Typography variant='h6' component='div' sx={{ flexGrow: 1 }}>
+						<Link to='/' style={{ color: 'white', textDecoration: 'none' }}>
 							Home
 						</Link>
 					</Typography>
@@ -64,11 +57,7 @@ const Navbar: React.FC = () => {
 					{user && (
 						<>
 							<ToggleFlag />
-							<Typography
-								variant='h6'
-								component='div'
-								sx={{ marginLeft: 'auto' }}
-							>
+							<Typography variant='h6' component='div' sx={{ marginLeft: 'auto' }}>
 								Welcome, {user.username}!
 							</Typography>
 							<Button color='inherit'>
@@ -102,6 +91,17 @@ const Navbar: React.FC = () => {
 									}}
 								>
 									Lobby
+								</Link>
+							</Button>
+							<Button color='inherit'>
+								<Link
+									to='/quizz-factory'
+									style={{
+										color: 'white',
+										textDecoration: 'none',
+									}}
+								>
+									Quizz Factory
 								</Link>
 							</Button>
 							<Button color='inherit' onClick={handleLogout}>

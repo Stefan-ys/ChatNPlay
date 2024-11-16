@@ -75,7 +75,10 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatId }) => {
 
 	const handleCommentOperation = async (receivedComment: CommentResponse) => {
 		try {
-			if (receivedComment.type === 'ADD' || receivedComment.type === 'EDIT') {
+			if (
+				receivedComment.type === 'ADD' ||
+				receivedComment.type === 'EDIT'
+			) {
 				const updatedComments = await getChatById(chatId);
 				setComments(updatedComments.comments);
 			} else if (receivedComment.type === 'DELETE') {
@@ -198,4 +201,3 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatId }) => {
 };
 
 export default ChatBox;
-
