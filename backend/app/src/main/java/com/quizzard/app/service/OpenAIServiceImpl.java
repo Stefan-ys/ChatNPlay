@@ -40,7 +40,7 @@ public class OpenAIServiceImpl implements OpenAIService {
         headers.set("Content-Type", "application/json");
 
         Map<String, Object> requestBody = new HashMap<>();
-        requestBody.put("model", "text-davinci-003");
+        requestBody.put("model", "gpt-3.5-turbo");
         requestBody.put("prompt", prompt);
         requestBody.put("max_tokens", 1500);
         requestBody.put("temperature", 0.7);
