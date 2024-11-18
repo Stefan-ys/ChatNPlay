@@ -6,8 +6,10 @@ import com.google.firebase.cloud.StorageClient;
 import com.quizzard.app.domain.dto.request.QuestionRequestDTO;
 import com.quizzard.app.domain.dto.response.QuestionResponseDTO;
 import com.quizzard.app.domain.entity.Question;
+import com.quizzard.app.domain.entity.Topic;
 import com.quizzard.app.exception.InvalidFileTypeException;
 import com.quizzard.app.repository.QuestionRepository;
+import com.quizzard.app.repository.TopicRepository;
 import com.quizzard.app.util.FileValidationUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -22,11 +24,13 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+
 @Service
 @RequiredArgsConstructor
 public class QuestionServiceImpl implements QuestionService {
 
     private final QuestionRepository questionRepository;
+    private final TopicRepository topicRepository;
     private final ModelMapper modelMapper;
     private final FileValidationUtil fileValidationUtil;
 
@@ -34,11 +38,16 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     public void createQuestion(QuestionRequestDTO questionRequestDTO) throws IOException {
         Question question = modelMapper.map(questionRequestDTO, Question.class);
-
-        String imageUrl = uploadImage(questionRequestDTO.getImageFile());
-        question.setImageUrl(imageUrl);
-
+        Topic topic = topicRepository.findById(questionRequestDTO.getTopicId())
+                .orElseThrow(() -> new IllegalArgumentException("No topic found with id:" + questionRequestDTO.getTopicId()));
+        question.setTopic(topic);
         questionRepository.save(question);
+    }
+
+    @Transactional
+    @Override
+    public void createQuestionFromText(String text) {
+        //TODO
     }
 
     @Override
@@ -68,15 +77,6 @@ public class QuestionServiceImpl implements QuestionService {
         existingQuestion.setOption3(questionRequestDTO.getOption3());
         existingQuestion.setOption4(questionRequestDTO.getOption4());
         existingQuestion.setCorrectAnswer(questionRequestDTO.getCorrectAnswer());
-
-        if (questionRequestDTO.getImageFile() != null && !questionRequestDTO.getImageFile().isEmpty()) {
-            try {
-                String imageUrl = uploadImage(questionRequestDTO.getImageFile());
-                existingQuestion.setImageUrl(imageUrl);
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to upload image", e);
-            }
-        }
 
         questionRepository.save(existingQuestion);
     }

@@ -8,8 +8,12 @@ import java.io.IOException;
 import java.util.List;
 
 public interface QuestionService {
+
     @Transactional
     void createQuestion(QuestionRequestDTO questionRequestDTO) throws IOException;
+
+    @Transactional
+    void createQuestionFromText(String text);
 
     QuestionResponseDTO getQuestionById(long questionId);
 
