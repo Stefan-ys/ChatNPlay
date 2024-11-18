@@ -35,3 +35,11 @@ export const API_COMMENT_URL = `${API_URL}/comments`;
 // CHAT
 
 export const API_CHAT_URL = `${API_URL}/chats`;
+
+// QUESTIONS
+
+export const API_QUESTION_URL = `${API_URL}/questions`;
+
+// TOPICS
+
+export const API_TOPICS_URL = `${API_URL}/topics`;

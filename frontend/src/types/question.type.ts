@@ -1,8 +1,20 @@
+import { TopicResponse } from "./topic.type";
+
+export interface QuestionRequest {
+    id: number;
+    topicId: number;
+    questionText: string;
+    option1: string;
+    option2: string;
+    option3: string;
+    option4: string;
+    correctAnswer: string; 
+}
+
 export interface QuestionResponse {
     id: number;
-    topic: string;
+    topic: TopicResponse;
     questionText: string;
-    imageUrl: string;
     option1: string;
     option2: string;
     option3: string;
