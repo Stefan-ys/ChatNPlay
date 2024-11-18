@@ -5,7 +5,7 @@ import com.quizzard.app.domain.dto.response.CommentResponseDTO;
 import com.quizzard.app.domain.entity.Chat;
 import com.quizzard.app.domain.entity.Comment;
 import com.quizzard.app.domain.entity.User;
-import com.quizzard.app.domain.enums.OperationType;
+import com.quizzard.app.domain.enums.OperationTypeEnum;
 import com.quizzard.app.repository.ChatRepository;
 import com.quizzard.app.repository.CommentRepository;
 import com.quizzard.app.repository.UserRepository;
@@ -52,7 +52,7 @@ public class CommentServiceImpl implements CommentService {
         chatRepository.save(chat);
 
         CommentResponseDTO commentResponseDTO = modelMapper.map(comment, CommentResponseDTO.class);
-        commentResponseDTO.setType(OperationType.ADD.toString());
+        commentResponseDTO.setType(OperationTypeEnum.ADD.toString());
 
         return commentResponseDTO;
     }
@@ -65,7 +65,7 @@ public class CommentServiceImpl implements CommentService {
         existingComment.setContent(commentRequestDTO.getContent());
 
         CommentResponseDTO commentResponseDTO =  modelMapper.map(commentRepository.save(existingComment), CommentResponseDTO.class);
-        commentResponseDTO.setType(OperationType.EDIT.toString());
+        commentResponseDTO.setType(OperationTypeEnum.EDIT.toString());
 
         return  commentResponseDTO;
     }
@@ -80,7 +80,7 @@ public class CommentServiceImpl implements CommentService {
         chat.getComments().remove(comment);
 
         CommentResponseDTO commentResponseDTO = modelMapper.map(comment, CommentResponseDTO.class);
-        commentResponseDTO.setType(OperationType.DELETE.toString());
+        commentResponseDTO.setType(OperationTypeEnum.DELETE.toString());
 
         commentRepository.delete(comment);
 
