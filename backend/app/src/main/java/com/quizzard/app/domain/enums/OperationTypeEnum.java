@@ -1,5 +1,5 @@
 package com.quizzard.app.domain.enums;
 
-public enum OperationType {
+public enum OperationTypeEnum {
     ADD, EDIT, DELETE
 }

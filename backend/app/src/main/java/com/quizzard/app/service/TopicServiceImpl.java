@@ -17,7 +17,10 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
@@ -62,6 +65,13 @@ public class TopicServiceImpl implements TopicService {
         Topic topic = topicRepository.findById(topicId)
                 .orElseThrow(() -> new IllegalArgumentException("Topic not found with id: " + topicId));
         topicRepository.delete(topic);
+    }
+
+    @Override
+    public List<TopicResponseDTO> getAllTopics() {
+        return topicRepository.findAll().stream()
+                .map(topic -> modelMapper.map(topic, TopicResponseDTO.class))
+                .collect(Collectors.toList());
     }
 
     private String uploadImage(MultipartFile imageFile) throws IOException {

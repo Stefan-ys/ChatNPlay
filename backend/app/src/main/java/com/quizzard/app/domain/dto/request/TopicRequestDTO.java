@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,6 +21,4 @@ public class TopicRequestDTO {
     private MultipartFile imageFile;
     @NotBlank
     private String description;
-
-
 }

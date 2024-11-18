@@ -5,6 +5,7 @@ import com.quizzard.app.domain.dto.response.TopicResponseDTO;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.List;
 
 public interface TopicService {
     @Transactional
@@ -16,4 +17,6 @@ public interface TopicService {
     void updateTopic(long topicId, TopicRequestDTO topicRequestDTO) throws IOException;
 
     void deleteTopic(long topicId);
+
+    List<TopicResponseDTO> getAllTopics();
 }
