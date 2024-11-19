@@ -22,8 +22,7 @@ public class QuestionController {
 
     @PostMapping
     public ResponseEntity<Void> createQuestion(@RequestBody @Valid QuestionRequestDTO questionRequestDTO) {
-        System.out.println("text - " + questionRequestDTO.getQuestionText());
-        try {
+         try {
             questionService.createQuestion(questionRequestDTO);
             return ResponseEntity.status(HttpStatus.CREATED).build();
         } catch (IOException e) {
@@ -68,11 +67,5 @@ public class QuestionController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-    }
-
-    @PostMapping("/from-text")
-    public ResponseEntity<Void> createQuestionFromText(@RequestBody String text) {
-        questionService.createQuestionFromText(text);
-        return ResponseEntity.ok().build();
     }
 }

@@ -34,7 +34,6 @@ public class TopicServiceImpl implements TopicService {
     @Override
     public void createTopic(TopicRequestDTO topicRequestDTO) throws IOException {
         Topic topic = modelMapper.map(topicRequestDTO, Topic.class);
-        topic.setImageUrl(uploadImage(topicRequestDTO.getImageFile()));
         topicRepository.save(topic);
     }
 
@@ -48,16 +47,13 @@ public class TopicServiceImpl implements TopicService {
 
     @Transactional
     @Override
-    public void updateTopic(long topicId, TopicRequestDTO topicRequestDTO) throws IOException {
+    public void updateTopic(long topicId, TopicRequestDTO topicRequestDTO){
         Topic topic = topicRepository.findById(topicId).orElseThrow(
                 () -> new IllegalArgumentException("Topic not found with id: " + topicId)
         );
 
         topic.setTitle(topicRequestDTO.getTitle());
         topic.setDescription(topicRequestDTO.getDescription());
-        if (topicRequestDTO.getImageFile() != null && !topicRequestDTO.getImageFile().isEmpty()) {
-            topic.setImageUrl(uploadImage(topicRequestDTO.getImageFile()));
-        }
     }
 
     @Override

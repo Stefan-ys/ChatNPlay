@@ -12,9 +12,6 @@ public interface QuestionService {
     @Transactional
     void createQuestion(QuestionRequestDTO questionRequestDTO) throws IOException;
 
-    @Transactional
-    void createQuestionFromText(String text);
-
     QuestionResponseDTO getQuestionById(long questionId);
 
     List<QuestionResponseDTO> getQuestionsByTopicId(long topicId);

@@ -18,7 +18,6 @@ public class TopicRequestDTO {
     @NotBlank
     @Size(min = 1, max = 50)
     private String title;
-    private MultipartFile imageFile;
     @NotBlank
     private String description;
 }

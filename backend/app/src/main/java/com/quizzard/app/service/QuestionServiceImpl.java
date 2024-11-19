@@ -38,16 +38,10 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     public void createQuestion(QuestionRequestDTO questionRequestDTO) throws IOException {
         Question question = modelMapper.map(questionRequestDTO, Question.class);
-        Topic topic = topicRepository.findById(questionRequestDTO.getTopicId())
-                .orElseThrow(() -> new IllegalArgumentException("No topic found with id:" + questionRequestDTO.getTopicId()));
+        Topic topic = topicRepository.findTopicByTitle(questionRequestDTO.getTopicTitle())
+                .orElseThrow(() -> new IllegalArgumentException("No topic found with title:" + questionRequestDTO.getTopicTitle()));
         question.setTopic(topic);
         questionRepository.save(question);
-    }
-
-    @Transactional
-    @Override
-    public void createQuestionFromText(String text) {
-        //TODO
     }
 
     @Override

@@ -3,7 +3,6 @@ package com.quizzard.app.data;
 
 import com.quizzard.app.domain.dto.request.RegisterRequestDTO;
 import com.quizzard.app.domain.entity.*;
-import com.quizzard.app.domain.enums.QuizzTopicEnum;
 import com.quizzard.app.domain.enums.UserRoleEnum;
 import com.quizzard.app.repository.*;
 import com.quizzard.app.service.AuthService;
@@ -63,14 +62,6 @@ public class DataInitializer implements CommandLineRunner {
             Chat chat = new Chat();
             lobby.setChat(chatRepository.save(chat));
             lobbyRepository.save(lobby);
-        }
-
-        if (topicRepository.count() == 0) {
-            for (QuizzTopicEnum topicName : QuizzTopicEnum.values()) {
-                Topic topic = new Topic();
-                topic.setTitle(topicName.name());
-                topicRepository.save(topic);
-            }
         }
     }
 }

@@ -7,3 +7,6 @@
 firebase-admin-sdk.json
 /backend/target  
 backend/app/src/main/resources/.env
+localhost.crt
+localhost.key
+ProjectsQuizzardkeystore.jks

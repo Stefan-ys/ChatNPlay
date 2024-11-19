@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class QuestionRequestDTO {
 
     @NotBlank(message = "question must have topic")
-    private Long topicId;
+    private String topicTitle;
     @NotBlank(message = "question must have text content")
     private String questionText;
     private String option1;
