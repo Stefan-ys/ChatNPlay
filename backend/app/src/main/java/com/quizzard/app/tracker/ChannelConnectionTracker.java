@@ -10,16 +10,16 @@ import java.util.*;
 @RequiredArgsConstructor
 public class ChannelConnectionTracker {
 
-    private final Map<Long, Set<Long>> lobbyConnections = new HashMap<>();
+    private final Map<Long, Map<Long, Boolean>> lobbyConnections = new HashMap<>();
 
 
     public void addUserToLobby(long lobbyId, long userId) {
-        lobbyConnections.putIfAbsent(lobbyId, new LinkedHashSet<>());
-        lobbyConnections.get(lobbyId).add(userId);
+        lobbyConnections.putIfAbsent(lobbyId, new LinkedHashMap<>());
+        lobbyConnections.get(lobbyId).put(userId, false);
     }
 
     public void removeUserFromLobby(long lobbyId, long userId) {
-        Set<Long> users = lobbyConnections.get(lobbyId);
+        Map<Long, Boolean> users = lobbyConnections.get(lobbyId);
         if (users != null) {
             users.remove(userId);
             if (users.isEmpty()) {
@@ -28,7 +28,11 @@ public class ChannelConnectionTracker {
         }
     }
 
-    public Set<Long> getUsersInLobby(long lobbyId) {
-        return lobbyConnections.getOrDefault(lobbyId, Collections.emptySet());
+    public void changeUserStatus(long lobbyId, long userId) {
+        lobbyConnections.get(lobbyId).put(userId, !lobbyConnections.get(lobbyId).get(userId));
+    }
+
+    public Map<Long, Boolean> getUsersInLobby(long lobbyId) {
+        return lobbyConnections.getOrDefault(lobbyId, new LinkedHashMap<>());
     }
 }

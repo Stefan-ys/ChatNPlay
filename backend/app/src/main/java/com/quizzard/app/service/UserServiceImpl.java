@@ -3,6 +3,7 @@ package com.quizzard.app.service;
 import com.google.cloud.storage.Bucket;
 import com.google.firebase.cloud.StorageClient;
 import com.quizzard.app.domain.dto.request.MyProfileRequestDTO;
+import com.quizzard.app.domain.dto.response.UserLobbyResponseDTO;
 import com.quizzard.app.domain.dto.response.UserResponseDTO;
 import com.quizzard.app.domain.entity.Role;
 import com.quizzard.app.domain.entity.User;
@@ -115,11 +116,16 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+
     @Override
-    public List<UserResponseDTO> getUsersByIds(Set<Long> usersIds){
-        List<User> users = userRepository.findAllById(usersIds);
+    public List<UserLobbyResponseDTO> getLobbyUsersByIds(Map<Long, Boolean> lobbyUsers) {
+        List<User> users = userRepository.findAllById(lobbyUsers.keySet());
         return users.stream()
-                .map(user -> modelMapper.map(user, UserResponseDTO.class))
+                .map(user -> {
+                    UserLobbyResponseDTO userLobbyResponseDTO = modelMapper.map(user, UserLobbyResponseDTO.class);
+                    userLobbyResponseDTO.setReady(lobbyUsers.get(user.getId()));
+                    return userLobbyResponseDTO;
+                })
                 .collect(Collectors.toList());
     }
 }

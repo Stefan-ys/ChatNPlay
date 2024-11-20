@@ -22,7 +22,6 @@ public class DataInitializer implements CommandLineRunner {
     private final RoleRepository roleRepository;
     private final LobbyRepository lobbyRepository;
     private final ChatRepository chatRepository;
-    private final TopicRepository topicRepository;
 
     @Override
     public void run(String... args) {
