@@ -1,4 +1,4 @@
 export interface OpenAIQuestionTopicRequest {
-    topic: string;
+    topicTitle: string;
     count: number;
 }

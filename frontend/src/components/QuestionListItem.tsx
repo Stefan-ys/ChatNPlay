@@ -2,10 +2,10 @@ import React from 'react';
 import { ListItem, ListItemText, Typography, IconButton, CircularProgress } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SaveIcon from '@mui/icons-material/Save';
-import { QuestionResponse } from '../types/question.type';
+import { QuestionRequest, QuestionResponse } from '../types/question.type';
 
 interface QuestionListItemProps {
-	question: QuestionResponse;
+	question: QuestionRequest;
 	loading: boolean;
 	onSave: (id: number) => void;
 	onRemove: (id: number) => void;

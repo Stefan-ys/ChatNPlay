@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Tab, Tabs, TextField, Button, Grid, List, Typography, CircularProgress, MenuItem, Modal } from '@mui/material';
 import { generateQuestions } from '../services/openai.service';
-import { QuestionRequest, QuestionResponse } from '../types/question.type';
+import { QuestionRequest } from '../types/question.type';
 import { createQuestion } from '../services/question.service';
 import { TopicRequest, TopicResponse } from '../types/topic.type';
 import { createTopic, getTopics } from '../services/topic.service';
 import QuestionListItem from '../components/QuestionListItem';
 import { convertTextToQuestions } from '../assets/textToQuestionConverter';
 
-const QuizzFactoryPage: React.FC = () => {
+const QuizFactoryPage: React.FC = () => {
 	const [errorMessage, setErrorMessage] = useState('');
 	const [loading, setLoading] = useState<boolean>(false);
 	const [activeTab, setActiveTab] = useState(1);
@@ -384,4 +384,4 @@ const handleCreateFromText = async () => {
 	);
 };
 
-export default QuizzFactoryPage;
+export default QuizFactoryPage;
