@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-
 @Service
 @RequiredArgsConstructor
 public class TopicServiceImpl implements TopicService {
@@ -39,9 +38,8 @@ public class TopicServiceImpl implements TopicService {
 
     @Override
     public TopicResponseDTO getTopicById(long topicId) {
-        Topic topic = topicRepository.findById(topicId).orElseThrow(
-                () -> new IllegalArgumentException("Topic not found with id: " + topicId)
-        );
+        Topic topic = topicRepository.findById(topicId)
+                .orElseThrow(() -> new IllegalArgumentException("Topic not found with id: " + topicId));
         return modelMapper.map(topic, TopicResponseDTO.class);
     }
 

@@ -36,8 +36,12 @@ public class QuizMazeServiceImpl implements QuizMazeService {
         quizMazeGame.setPlayer1(player1);
         quizMazeGame.setPlayer2(player2);
 
+        gameTracker.createGame(quizMazeGame);
+
         return gameId;
     }
+
+
 
 
 }
