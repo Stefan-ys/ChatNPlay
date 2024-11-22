@@ -1,58 +1,52 @@
 package com.quizzard.app.domain.model;
 
 
-import com.quizzard.app.domain.entity.Question;
 import com.quizzard.app.domain.entity.QuizMazeResult;
-import com.quizzard.app.domain.enums.GameNameEnum;
+import com.quizzard.app.domain.entity.User;
 import com.quizzard.app.domain.enums.GameResultEnum;
-import com.quizzard.app.domain.enums.PerkEnum;
 import com.quizzard.app.exception.IllegalMoveException;
-import com.quizzard.app.service.UserService;
 import lombok.*;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Setter
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
 public class QuizMazeGame extends Game {
 
-
-    public static final GameNameEnum TITLE = GameNameEnum.QUIZ_MAZE;
+    public static final String TITLE = "Quiz Maze";
     public static final String VERSION = "1.0";
     public static final String DESCRIPTION = "todo description";
     public static final String RULES = "todo rules";
 
+    public static final byte TIME_TO_ANSWER = 30;
+    public static final byte TOTAL_MOVES = 16;
+    public static final byte TIME_TO_MOVE = 60;
     private static final byte FIELD_SCALE = 5;
-    private static final byte TOTAL_MOVES = 16;
-    private static final byte TIME_TO_ANSWER = 30;
-    private static final byte TIMO_TO_MOVE = 60;
-
-    private UserService userService;
 
     private Player player1;
     private Player player2;
-    private boolean isPlayer1Turn = true;
-    private byte moves = 0;
-    private List<Question> questionList = new ArrayList<>();
-    private long currentQuestionIndex;
+    private boolean isPlayer1Turn;
+    private byte moves;
 
-    private List<PerkEnum> perks = new LinkedList<>(Arrays.asList(
-            PerkEnum.CASTLE,
-            PerkEnum.FIFTY_FIFTY,
-            PerkEnum.FREE_PASS,
-            PerkEnum.CASTLE,
-            PerkEnum.FIFTY_FIFTY,
-            PerkEnum.FREE_PASS
-    ));
+    private List<Perk> perks;
 
-    /*
+    private byte[][] field;
+
+    public QuizMazeGame(Player player1, Player player2) {
+        super.setId("<*" + QuizMazeGame.TITLE + "*> " + player1.getUsername() + "-vs-" + player2.getUsername());
+        this.player1 = player1;
+        this.player2 = player2;
+        this.isPlayer1Turn = true;
+        this.moves = 0;
+        this.field = this.initializeField();
+        this.perks = this.initializePerks();
+    }
+
+    private byte[][] initializeField() {
+        /*
         FIELD SYMBOLS
         1 - PLAYER 1
         2 - PLAYER 2
@@ -64,16 +58,37 @@ public class QuizMazeGame extends Game {
         -1 - PLAYER 1 ATTEMPT + 30
         -2 - PLAYER 2 ATTEMPT + 60
     */
-    private byte[][] field = new byte[][]{
-            {0, 0, 0, 0, 0},
-            {0, 10, 3, 3, 0},
-            {0, 3, 0, 3, 0},
-            {0, 3, 3, 20, 0},
-            {0, 0, 0, 0, 0}
-    };
+        return new byte[][]{
+                {0, 0, 0, 0, 0},
+                {0, 10, 3, 3, 0},
+                {0, 3, 0, 3, 0},
+                {0, 3, 3, 20, 0},
+                {0, 0, 0, 0, 0}
+        };
+    }
+
+    private List<Perk> initializePerks() {
+        List<Perk> perksList = new LinkedList<>();
+        byte perkEncounter = 0;
+
+        for (byte i = 0; i < FIELD_SCALE; i++) {
+            for (byte j = 0; j < FIELD_SCALE; j++) {
+                if (field[i][j] == 3) {
+                    perkEncounter++;
+                    if (perkEncounter % 3 == 0) {
+                        perksList.add(new CastlePerk());
+                    } else if (perkEncounter % 2 == 0) {
+                        perksList.add(new FreePassPerk());
+                    } else {
+                        perksList.add(new FiftyFiftyPerk());
+                    }
+                }
+            }
+        }
+        return perksList;
+    }
 
     public byte[][] playerAttemptMove(byte x, byte y) {
-
         if (!isLegalMove((byte) (isPlayer1Turn ? 1 : 2), x, y)) {
             throw new IllegalMoveException((byte) (isPlayer1Turn ? 1 : 2));
         }
@@ -96,7 +111,7 @@ public class QuizMazeGame extends Game {
             field[x][y]--;
         } else {
             if (field[x][y] == 3) {
-                PerkEnum perk = getPerk();
+                Perk perk = getPerk();
                 if (isPlayer1Turn) {
                     player1.addPerk(perk);
                 } else {
@@ -114,12 +129,11 @@ public class QuizMazeGame extends Game {
         this.moves++;
     }
 
-
-    public QuizMazeResult EndGame() {
+    public QuizMazeResult EndGame(User user1, User user2) {
         QuizMazeResult result = new QuizMazeResult();
 
-        result.setPlayer1(userService.findById(player1.getId()));
-        result.setPlayer2(userService.findById(player2.getId()));
+        result.setPlayer1(player1.getUsername());
+        result.setPlayer2(player2.getUsername());
         result.setPlayer1Score(player1.getGameScore());
         result.setPlayer2Score(player2.getGameScore());
 
@@ -163,12 +177,12 @@ public class QuizMazeGame extends Game {
         }
     }
 
-    private PerkEnum getPerk() {
+    private Perk getPerk() {
         if (perks.isEmpty()) {
             throw new IllegalStateException("No perks available.");
         }
         int randomIndex = ThreadLocalRandom.current().nextInt(0, perks.size());
-        PerkEnum perk = perks.get(randomIndex);
+        Perk perk = perks.get(randomIndex);
         perks.remove(randomIndex);
 
         return perk;
