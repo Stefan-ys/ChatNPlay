@@ -15,10 +15,8 @@ import lombok.Setter;
 @Table(name = "quiz-maze-results")
 public class QuizMazeResult extends BaseEntity {
 
-    @ManyToOne
-    private User player1;
-    @ManyToOne
-    private User player2;
+    private String player1;
+    private String player2;
     private int player1Score;
     private int player2Score;
     @Enumerated(EnumType.STRING)

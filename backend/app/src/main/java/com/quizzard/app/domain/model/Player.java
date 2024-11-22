@@ -1,6 +1,5 @@
 package com.quizzard.app.domain.model;
 
-import com.quizzard.app.domain.enums.PerkEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,13 +15,13 @@ public class Player {
     private String username;
     private long id;
     private int gameScore;
-    private List<PerkEnum> perks = new ArrayList<>();
+    private List<Perk> perks = new ArrayList<>();
 
-    public void addPerk(PerkEnum perk) {
+    public void addPerk(Perk perk) {
         this.perks.add(perk);
     }
 
-    public void removePerk(PerkEnum perk) {
+    public void removePerk(Perk perk) {
         this.perks.remove(perk);
     }
 }

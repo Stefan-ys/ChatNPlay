@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Data
@@ -14,9 +15,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class GameTracker {
     private final Map<String, Game> activeGames = new ConcurrentHashMap<>();
 
-    public Game createGame(Game game) {
+    public void createGame(Game game) {
         activeGames.put(game.getId(), game);
-        return game;
     }
 
     public Game getGame(String gameId) {
