@@ -118,12 +118,12 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public List<UserLobbyResponseDTO> getLobbyUsersByIds(Map<Long, Boolean> lobbyUsers) {
-        List<User> users = userRepository.findAllById(lobbyUsers.keySet());
+    public List<UserLobbyResponseDTO> getLobbyUsersByIds(Set<Long> lobbyUsers, Set<Long> readyUsers) {
+        List<User> users = userRepository.findAllById(lobbyUsers);
         return users.stream()
                 .map(user -> {
                     UserLobbyResponseDTO userLobbyResponseDTO = modelMapper.map(user, UserLobbyResponseDTO.class);
-                    userLobbyResponseDTO.setReady(lobbyUsers.get(user.getId()));
+                    userLobbyResponseDTO.setReady(readyUsers.contains(user.getId()));
                     return userLobbyResponseDTO;
                 })
                 .collect(Collectors.toList());
