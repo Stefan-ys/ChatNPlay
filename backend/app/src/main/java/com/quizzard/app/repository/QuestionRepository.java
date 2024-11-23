@@ -13,6 +13,6 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 
     List<Question> findByTopicId(long topicId);
 
-    @Query(value = "SELECT * FROM questions LIMIT 1 OFFSET :offset", nativeQuery = true)
-    Optional<Question> findRandomQuestion(long randomOffset);
+    @Query(value = "SELECT * FROM questions ORDER BY RAND() LIMIT 1", nativeQuery = true)
+    Optional<Question> findRandomQuestion();
 }

@@ -40,13 +40,32 @@ public class QuizMazeServiceImpl implements QuizMazeService {
         return gameId;
     }
 
-    public QuestionResponseDTO getRandomQuestion() {
+    public byte[] markPlayerMove(String gameId, byte x, byte y) {
+        ((QuizMazeGame) gameTracker.getGame(gameId)).playerAttemptMove(x, y);
+        return new byte[]{x, y};
+    }
+
+    public QuestionResponseDTO getRandomQuestion(String gameId) {
         long totalQuestions = questionRepository.count();
         long randomOffset = ThreadLocalRandom.current().nextLong(totalQuestions);
 
-        Question question =  questionRepository.findRandomQuestion(randomOffset)
+        Question question = questionRepository.findRandomQuestion()
                 .orElseThrow(() -> new IllegalArgumentException("Question not found"));
 
+        ((QuizMazeGame) gameTracker.getGame(gameId)).setCurentQuestion(question);
+
         return modelMapper.map(question, QuestionResponseDTO.class);
+    }
+
+    public void questionAnswerCheck(String gameId, String response, byte x, byte y) {
+        QuizMazeGame game = (QuizMazeGame) gameTracker.getGame(gameId);
+
+        if (game.getCurentQuestion().getCorrectAnswer().equals(response)) {
+            game.playerSuccessfulAnswer(x, y);
+        }
+
+        game.setCurentQuestion(null);
+        game.switchPlayers();
+
     }
 }

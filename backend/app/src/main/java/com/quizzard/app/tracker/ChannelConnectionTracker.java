@@ -4,35 +4,41 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 @Component
 @RequiredArgsConstructor
 public class ChannelConnectionTracker {
 
-    private final Map<Long, Map<Long, Boolean>> lobbyConnections = new HashMap<>();
-
+    // Map <LobbyId, Map<UserId, isUserReadyToPlay>>
+    private final Map<Long, Set<Long>> lobbyConnections = new ConcurrentHashMap<>();
+    private final Map<Long, Set<Long>> readyUsers = new ConcurrentHashMap<>();
 
     public void addUserToLobby(long lobbyId, long userId) {
-        lobbyConnections.putIfAbsent(lobbyId, new LinkedHashMap<>());
-        lobbyConnections.get(lobbyId).put(userId, false);
+        lobbyConnections.putIfAbsent(lobbyId, new LinkedHashSet<>());
+        lobbyConnections.get(lobbyId).add(userId);
     }
 
     public void removeUserFromLobby(long lobbyId, long userId) {
-        Map<Long, Boolean> users = lobbyConnections.get(lobbyId);
-        if (users != null) {
-            users.remove(userId);
-            if (users.isEmpty()) {
-                lobbyConnections.remove(lobbyId);
-            }
-        }
+        lobbyConnections.get(lobbyId).remove(userId);
+        readyUsers.get(lobbyId).remove(userId);
     }
 
     public void changeUserStatus(long lobbyId, long userId) {
-        lobbyConnections.get(lobbyId).put(userId, !lobbyConnections.get(lobbyId).get(userId));
+        readyUsers.putIfAbsent(lobbyId, new LinkedHashSet<>());
+        if (!readyUsers.get(lobbyId).contains(userId)) {
+            readyUsers.get(lobbyId).add(userId);
+        } else {
+            readyUsers.get(lobbyId).remove(userId);
+        }
     }
 
-    public Map<Long, Boolean> getUsersInLobby(long lobbyId) {
-        return lobbyConnections.getOrDefault(lobbyId, new LinkedHashMap<>());
+    public Set<Long> getUsersInLobby(long lobbyId) {
+        return lobbyConnections.getOrDefault(lobbyId, new LinkedHashSet<>());
+    }
+
+    public Set<Long> getReadyUsersInLobby(long lobbyId) {
+        return readyUsers.getOrDefault(lobbyId, new LinkedHashSet<>());
     }
 }

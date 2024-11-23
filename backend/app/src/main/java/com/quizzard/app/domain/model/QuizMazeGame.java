@@ -1,13 +1,14 @@
 package com.quizzard.app.domain.model;
 
-
+import com.quizzard.app.domain.entity.Question;
 import com.quizzard.app.domain.entity.QuizMazeResult;
 import com.quizzard.app.domain.entity.User;
 import com.quizzard.app.domain.enums.GameResultEnum;
 import com.quizzard.app.exception.IllegalMoveException;
 import lombok.*;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -31,11 +32,13 @@ public class QuizMazeGame extends Game {
     private boolean isPlayer1Turn;
     private byte moves;
 
-    private List<Perk> perks;
+    private Question curentQuestion;
 
     private byte[][] field;
+    private List<Perk> perks;
 
-    public QuizMazeGame(Player player1, Player player2) {
+
+    public QuizMazeGame(@NotNull Player player1, @NotNull Player player2) {
         super.setId("<*" + QuizMazeGame.TITLE + "*> " + player1.getUsername() + "-vs-" + player2.getUsername());
         this.player1 = player1;
         this.player2 = player2;
@@ -45,48 +48,6 @@ public class QuizMazeGame extends Game {
         this.perks = this.initializePerks();
     }
 
-    private byte[][] initializeField() {
-        /*
-        FIELD SYMBOLS
-        1 - PLAYER 1
-        2 - PLAYER 2
-        3 - PERK
-        10 - PLAYER 1 CASTLE + 1
-        11 - PLAYER 1 CASTLE + 2
-        20 - PLAYER 2 CASTLE + 1
-        21 - PLAYER 2 CASTLE + 2
-        -1 - PLAYER 1 ATTEMPT + 30
-        -2 - PLAYER 2 ATTEMPT + 60
-    */
-        return new byte[][]{
-                {0, 0, 0, 0, 0},
-                {0, 10, 3, 3, 0},
-                {0, 3, 0, 3, 0},
-                {0, 3, 3, 20, 0},
-                {0, 0, 0, 0, 0}
-        };
-    }
-
-    private List<Perk> initializePerks() {
-        List<Perk> perksList = new LinkedList<>();
-        byte perkEncounter = 0;
-
-        for (byte i = 0; i < FIELD_SCALE; i++) {
-            for (byte j = 0; j < FIELD_SCALE; j++) {
-                if (field[i][j] == 3) {
-                    perkEncounter++;
-                    if (perkEncounter % 3 == 0) {
-                        perksList.add(new CastlePerk());
-                    } else if (perkEncounter % 2 == 0) {
-                        perksList.add(new FreePassPerk());
-                    } else {
-                        perksList.add(new FiftyFiftyPerk());
-                    }
-                }
-            }
-        }
-        return perksList;
-    }
 
     public byte[][] playerAttemptMove(byte x, byte y) {
         if (!isLegalMove((byte) (isPlayer1Turn ? 1 : 2), x, y)) {
@@ -147,6 +108,52 @@ public class QuizMazeGame extends Game {
         return result;
     }
 
+    @NotNull
+    @Contract(value = " -> new", pure = true)
+    private byte[][] initializeField() {
+        /*
+        FIELD SYMBOLS
+        1 - PLAYER 1
+        2 - PLAYER 2
+        3 - PERK
+        10 - PLAYER 1 CASTLE + 1
+        11 - PLAYER 1 CASTLE + 2
+        20 - PLAYER 2 CASTLE + 1
+        21 - PLAYER 2 CASTLE + 2
+        -1 - PLAYER 1 ATTEMPT + 30
+        -2 - PLAYER 2 ATTEMPT + 60
+    */
+        return new byte[][]{
+                {3, 0, 3, 0, 3},
+                {0, 10, 0, 0, 0},
+                {3, 0, 0, 0, 3},
+                {0, 0, 0, 20, 0},
+                {3, 0, 3, 0, 3}
+        };
+    }
+
+    @NotNull
+    private List<Perk> initializePerks() {
+        List<Perk> perksList = new LinkedList<>();
+        byte perkEncounter = 0;
+
+        for (byte i = 0; i < FIELD_SCALE; i++) {
+            for (byte j = 0; j < FIELD_SCALE; j++) {
+                if (field[i][j] == 3) {
+                    perkEncounter++;
+                    if (perkEncounter % 3 == 0) {
+                        perksList.add(new CastlePerk());
+                    } else if (perkEncounter % 2 == 0) {
+                        perksList.add(new FreePassPerk());
+                    } else {
+                        perksList.add(new FiftyFiftyPerk());
+                    }
+                }
+            }
+        }
+        return perksList;
+    }
+
     private boolean isGameOver() {
         if (moves == TOTAL_MOVES) return true;
 
@@ -188,6 +195,7 @@ public class QuizMazeGame extends Game {
         return perk;
     }
 
+    @NotNull
     private byte[][] copyField() {
         byte[][] fieldCopy = new byte[FIELD_SCALE][FIELD_SCALE];
         for (int i = 0; i < FIELD_SCALE; i++) {
@@ -220,7 +228,8 @@ public class QuizMazeGame extends Game {
         return false;
     }
 
-    private boolean isValidCell(byte cell, byte[] validValues) {
+    @Contract(pure = true)
+    private boolean isValidCell(byte cell, @NotNull byte[] validValues) {
         for (byte value : validValues) {
             if (cell == value) return true;
         }

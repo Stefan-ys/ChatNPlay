@@ -9,4 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class QuizMazePerkResponseDTO {
 
+    private String name;
+    private String description;
 }
