@@ -4,7 +4,6 @@ import com.quizzard.app.domain.dto.response.LobbyResponseDTO;
 import com.quizzard.app.domain.dto.response.UserLobbyResponseDTO;
 import com.quizzard.app.service.LobbyService;
 import com.quizzard.app.service.UserService;
-import com.quizzard.app.tracker.ChannelConnectionTracker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -22,7 +21,6 @@ public class LobbyController {
 
     private final LobbyService lobbyService;
     private final UserService userService;
-    private final ChannelConnectionTracker connectionTracker;
 
     @GetMapping("/{lobbyId}")
     public ResponseEntity<LobbyResponseDTO> getLobby(@PathVariable Long lobbyId) {
@@ -41,8 +39,8 @@ public class LobbyController {
     public List<UserLobbyResponseDTO> addUserToLobby(
             @DestinationVariable Long lobbyId,
             @Payload Long userId) {
-        connectionTracker.addUserToLobby(lobbyId, userId);
-        return userService.getLobbyUsersByIds(connectionTracker.getUsersInLobby(lobbyId));
+        lobbyService.addLobbyUser(lobbyId, userId);
+        return userService.getLobbyUsersByIds(lobbyService.getUsersInLobby(lobbyId), lobbyService.getReadyUsersInLobby(lobbyId));
     }
 
     @MessageMapping("/lobby/{lobbyId}/removeUser")
@@ -50,8 +48,8 @@ public class LobbyController {
     public List<UserLobbyResponseDTO> removeUserFromLobby(
             @DestinationVariable Long lobbyId,
             @Payload Long userId) {
-        connectionTracker.removeUserFromLobby(lobbyId, userId);
-        return userService.getLobbyUsersByIds(connectionTracker.getUsersInLobby(lobbyId));
+        lobbyService.removeLobbyUser(lobbyId, userId);
+        return userService.getLobbyUsersByIds(lobbyService.getUsersInLobby(lobbyId), lobbyService.getReadyUsersInLobby(lobbyId));
     }
 
     @MessageMapping("/lobby/{lobbyId}/changeStatus")
@@ -59,15 +57,7 @@ public class LobbyController {
     public List<UserLobbyResponseDTO> changeUserStatus(
             @DestinationVariable Long lobbyId,
             @Payload Long userId) {
-        connectionTracker.changeUserStatus(lobbyId, userId);
-        List<UserLobbyResponseDTO> userLobbyResponseDTOList =  userService.getLobbyUsersByIds(connectionTracker.getUsersInLobby(lobbyId));
-        List<UserLobbyResponseDTO> readyUser = userLobbyResponseDTOList.stream().filter(UserLobbyResponseDTO::isReady).toList();
-        if(readyUser.size() > 1){
-            Long player1Id = readyUser.get(0).getId();
-            Long player2Id = readyUser.get(1).getId();
-            // TODO call start a game service
-        }
-
-        return userLobbyResponseDTOList;
+        lobbyService.changeLobbyUserStatus(lobbyId, userId);
+        return userService.getLobbyUsersByIds(lobbyService.getUsersInLobby(lobbyId), lobbyService.getReadyUsersInLobby(lobbyId));
     }
 }
