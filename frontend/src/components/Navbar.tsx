@@ -26,7 +26,12 @@ const Navbar: React.FC = () => {
 							Home
 						</Link>
 					</Typography>
-
+					<Typography variant='h6' component='div' sx={{ flexGrow: 1 }}>
+						<Link to='/quiz-maze' style={{ color: 'white', textDecoration: 'none' }}>
+							Quiz Maze
+						</Link>
+					</Typography>
+					
 					{!user && (
 						<>
 							<Button color='inherit'>
