@@ -1,16 +1,9 @@
 import React from 'react';
-import { UserResponse } from '../types/user.type';
-import {
-	List,
-	ListItem,
-	ListItemText,
-	Typography,
-	Avatar,
-	Box,
-} from '@mui/material';
+import { UserLobbyResponse } from '../types/user.type';
+import { List, ListItem, ListItemText, Typography, Avatar, Box, Chip } from '@mui/material';
 
 interface LobbyUsersListProps {
-	users: UserResponse[];
+	users: UserLobbyResponse[];
 }
 
 const LobbyUsersList: React.FC<LobbyUsersListProps> = ({ users }) => {
@@ -40,17 +33,12 @@ const LobbyUsersList: React.FC<LobbyUsersListProps> = ({ users }) => {
 								mb: 1,
 							}}
 						>
-							<Avatar
-								src={user.avatarUrl}
-								sx={{ mr: 2, width: 40, height: 40 }}
-							/>
-							<ListItemText primary={user.username} />
+							<Avatar src={user.avatarUrl} sx={{ mr: 2, width: 40, height: 40 }} />
+							<ListItemText primary={user.username} secondary={user.ready ? <Chip label='Ready' color='success' size='small' /> : <Chip label='Idle' color='info' size='small' />} />
 						</ListItem>
 					))
 				) : (
-					<Typography variant='body2'>
-						No users in this lobby.
-					</Typography>
+					<Typography variant='body2'>No users in this lobby.</Typography>
 				)}
 			</List>
 		</Box>

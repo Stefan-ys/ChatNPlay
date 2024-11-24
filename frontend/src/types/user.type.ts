@@ -7,3 +7,7 @@ export interface UserResponse {
     score: number;
     isOnline: boolean;
 }
+
+export interface UserLobbyResponse extends UserResponse{
+    isReady: boolean;
+}

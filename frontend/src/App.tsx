@@ -12,7 +12,8 @@ import HomePage from './pages/HomePage';
 import LobbyPage from './pages/LobbyPage';
 import Navbar from './components/Navbar';
 import './App.css';
-import QuizFactoryPage from './pages/QuizzFactoryPage';
+import QuizFactoryPage from './pages/QuizFactoryPage';
+import QuizMazePage from './pages/QuizMazePage';
 
 const theme = createTheme(themeOptions);
 
@@ -40,7 +41,8 @@ const App: React.FC = () => {
 								<Route path='/users' element={<UsersPage />} />
 								<Route path='/profile' element={<ProfilePage />} />
 								<Route path='/lobby' element={<LobbyPage lobbyName={'Quiz Maze Lobby'} />} />
-								<Route path='/quizz-factory' element={<QuizFactoryPage />} />
+								<Route path='/quiz-factory' element={<QuizFactoryPage />} />
+								<Route path='/quiz-maze' element={<QuizMazePage />}/>
 							</Route>
 						</Routes>
 					</Router>

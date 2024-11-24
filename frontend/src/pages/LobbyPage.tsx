@@ -2,16 +2,9 @@ import React, { useEffect, useState, useRef } from 'react';
 import ChatBox from '../components/ChatBox';
 import LobbyUsersList from '../components/LobbyUsersList';
 import { LobbyResponse } from '../types/lobby.type';
-import { UserResponse } from '../types/user.type';
+import { UserLobbyResponse } from '../types/user.type';
 import { WebSocketReceivedData } from '../types/websocket.type';
-import {
-	Container,
-	Grid,
-	Typography,
-	Box,
-	CircularProgress,
-	Alert,
-} from '@mui/material';
+import { Container, Grid, Typography, Box, CircularProgress, Alert, Button } from '@mui/material';
 import { useAuth } from '../hooks/useAuth';
 import { getLobbyByName } from '../services/lobby.service';
 import { createWebSocketClient } from '../utils/websocketUtil';
@@ -20,7 +13,7 @@ const LobbyPage: React.FC<{ lobbyName: string }> = ({ lobbyName }) => {
 	const [lobby, setLobby] = useState<LobbyResponse | null>(null);
 	const [error, setError] = useState<string | null>(null);
 	const [isLoading, setIsLoading] = useState<boolean>(true);
-	const [activeUsers, setActiveUsers] = useState<UserResponse[]>([]);
+	const [usersInLobby, setUsersInLobby] = useState<UserLobbyResponse[]>([]);
 	const { user } = useAuth();
 	const stompClientRef = useRef<any>(null);
 
@@ -50,13 +43,9 @@ const LobbyPage: React.FC<{ lobbyName: string }> = ({ lobbyName }) => {
 			try {
 				const client = await createWebSocketClient(
 					topic,
-					(receivedData: WebSocketReceivedData) =>
-						handleWebSocketMessage(receivedData),
+					(receivedData: WebSocketReceivedData) => handleWebSocketMessage(receivedData),
 					(error) => {
-						console.error(
-							'WebSocket connection error:',
-							error.message,
-						);
+						console.error('WebSocket connection error:', error.message);
 						setError('WebSocket connection failed.');
 					},
 				);
@@ -85,28 +74,27 @@ const LobbyPage: React.FC<{ lobbyName: string }> = ({ lobbyName }) => {
 		if (typeof receivedData === 'string') {
 			setError(receivedData);
 		} else if (Array.isArray(receivedData)) {
-			setActiveUsers(receivedData);
+			console.log(receivedData);
+			setUsersInLobby(receivedData as UserLobbyResponse[]);
 			setError('');
 		}
 	};
 
 	const handleAddUserToLobby = () => {
 		if (stompClientRef.current?.connected && user && lobby) {
-			stompClientRef.current.send(
-				`/app/lobby/${lobby.id}/addUser`,
-				{},
-				JSON.stringify(user.id),
-			);
+			stompClientRef.current.send(`/app/lobby/${lobby.id}/addUser`, {}, JSON.stringify(user.id));
 		}
 	};
 
 	const handleRemoveUserFromLobby = () => {
 		if (user && lobby) {
-			stompClientRef.current.send(
-				`/app/lobby/${lobby.id}/removeUser`,
-				{},
-				JSON.stringify(user.id),
-			);
+			stompClientRef.current.send(`/app/lobby/${lobby.id}/removeUser`, {}, JSON.stringify(user.id));
+		}
+	};
+
+	const handleChangeUserStatus = () => {
+		if (stompClientRef.current?.connected && user && lobby) {
+			stompClientRef.current.send(`/app/lobby/${lobby.id}/changeStatus`, {}, JSON.stringify(user.id));
 		}
 	};
 
@@ -116,12 +104,7 @@ const LobbyPage: React.FC<{ lobbyName: string }> = ({ lobbyName }) => {
 				{lobby?.name || 'Loading lobby...'}
 			</Typography>
 			{isLoading ? (
-				<Box
-					display='flex'
-					justifyContent='center'
-					alignItems='center'
-					height='50vh'
-				>
+				<Box display='flex' justifyContent='center' alignItems='center' height='50vh'>
 					<CircularProgress />
 				</Box>
 			) : error ? (
@@ -131,18 +114,20 @@ const LobbyPage: React.FC<{ lobbyName: string }> = ({ lobbyName }) => {
 			) : (
 				<Grid container spacing={2}>
 					<Grid item xs={8}>
-						<Box mb={4}>
-							{lobby ? (
-								<ChatBox chatId={lobby.chatId} />
-							) : (
-								<Typography variant='body1'>
-									Loading chat...
-								</Typography>
-							)}
-						</Box>
+						<Box mb={4}>{lobby ? <ChatBox chatId={lobby.chatId} /> : <Typography variant='body1'>Loading chat...</Typography>}</Box>
 					</Grid>
 					<Grid item xs={4}>
-						<LobbyUsersList users={activeUsers} />
+						<LobbyUsersList users={usersInLobby} />
+						<Box display='flex' justifyContent='center' alignItems='center' mt={2}>
+							<Button
+								variant='contained'
+								color={usersInLobby.find((u) => u.id === user.id)?.ready ? 'info' : 'success'}
+								onClick={handleChangeUserStatus}
+								sx={{ width: '150px' }}
+							>
+								{usersInLobby.find((u) => u.id === user.id)?.ready ? 'Idle' : 'Ready'}
+							</Button>
+						</Box>
 					</Grid>
 				</Grid>
 			)}
