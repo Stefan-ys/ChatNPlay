@@ -22,6 +22,12 @@ const Hexagon: React.FC<HexagonProps> = ({ value, row, col, isHighlighted, onHov
 		return 'lightgreen';
 	};
 
+	const getHighlightColor = () => {
+		if (currentPlayer === 1) return 'rgba(255, 255, 0)';
+		if (currentPlayer === 2) return 'rgba(255, 0, 0)';
+		return 'transparent';
+	};
+
 	const renderIcon = () => {
 		if (value === 8) {
 			return <LandscapeIcon sx={{ fontSize: 40, color: 'gray' }} />;
@@ -62,9 +68,10 @@ const Hexagon: React.FC<HexagonProps> = ({ value, row, col, isHighlighted, onHov
 	return (
 		<Box
 			sx={{
-				'width': 80,
-				'height': 80,
-				'backgroundColor': getColor(),
+				'position': 'relative',
+				'width': 95,
+				'height': 95,
+				'backgroundColor': isHighlighted ? getHighlightColor() : getColor(),
 				'clipPath': 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)',
 				'margin': '5px',
 				'marginBottom': '-10px',
@@ -72,19 +79,33 @@ const Hexagon: React.FC<HexagonProps> = ({ value, row, col, isHighlighted, onHov
 				'flexDirection': 'column',
 				'justifyContent': 'center',
 				'alignItems': 'center',
-				'boxShadow': isHighlighted ? `0 0 0 5px ${currentPlayer === 1 ? 'yellow' : 'red'}` : 'px 2px 4px rgba(0, 0, 0, 0.2)',
-				'fontWeight': 'bold',
-				'color': 'black',
+				'boxShadow': isHighlighted ? `0 0 0 5px ${getHighlightColor()}` : '2px 4px rgba(0, 0, 0, 0.2)',
 				'transition': 'transform 0.2s ease, box-shadow 0.2s ease',
 				'&:hover': {
 					transform: 'scale(1.1)',
-					boxShadow: isHighlighted ? `0 0 0 10px ${currentPlayer === 1 ? 'yellow' : 'red'}` : '0px 8px 16px rgba(0, 0, 0, 0.4)',
 				},
 			}}
 			onMouseEnter={() => onHover(row, col)}
 			onMouseLeave={onLeave}
 		>
-			{renderIcon() || <Typography variant='body2' sx={{ pointerEvents: 'none' }}></Typography>}
+			<Box
+				sx={{
+					'width': 80,
+					'height': 80,
+					'backgroundColor': getColor(),
+					'clipPath': 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)',
+					'margin': '5px',
+					'display': 'flex',
+					'flexDirection': 'column',
+					'justifyContent': 'center',
+					'alignItems': 'center',
+					'transition': 'transform 0.2s ease, box-shadow 0.2s ease',
+				}}
+				onMouseEnter={() => onHover(row, col)}
+				onMouseLeave={onLeave}
+			>
+				{renderIcon() || <Typography variant='body2' sx={{ pointerEvents: 'none' }}></Typography>}
+			</Box>
 		</Box>
 	);
 };
