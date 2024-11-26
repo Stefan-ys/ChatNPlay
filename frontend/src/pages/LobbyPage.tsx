@@ -74,7 +74,6 @@ const LobbyPage: React.FC<{ lobbyName: string }> = ({ lobbyName }) => {
 		if (typeof receivedData === 'string') {
 			setError(receivedData);
 		} else if (Array.isArray(receivedData)) {
-			console.log(receivedData);
 			setUsersInLobby(receivedData as UserLobbyResponse[]);
 			setError('');
 		}

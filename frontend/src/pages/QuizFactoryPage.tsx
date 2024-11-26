@@ -125,30 +125,29 @@ const QuizFactoryPage: React.FC = () => {
 		setErrorMessage('');
 	};
 
-const handleCreateFromText = async () => {
-    if (!textInput.trim() || !selectedTopicTitle) {
-        setErrorMessage('Text input and topic selection are required.');
-        return;
-    }
-    setLoading(true);
-    try {
-        const newQuestions = convertTextToQuestions(textInput).map((question, index) => ({
-            ...question,
-            id: tmpId + index + 1, 
-        }));
+	const handleCreateFromText = async () => {
+		if (!textInput.trim() || !selectedTopicTitle) {
+			setErrorMessage('Text input and topic selection are required.');
+			return;
+		}
+		setLoading(true);
+		try {
+			const newQuestions = convertTextToQuestions(textInput).map((question, index) => ({
+				...question,
+				id: tmpId + index + 1,
+			}));
 
-        setQuestions((prev) => [...prev, ...newQuestions]);
-        setTmpId(tmpId + newQuestions.length);
-        setTextInput('');
-        alert('Questions created successfully!');
-    } catch (error) {
-        console.error('Error:', error);
-        setErrorMessage('Failed to create questions.');
-    } finally {
-        setLoading(false);
-    }
-};
-
+			setQuestions((prev) => [...prev, ...newQuestions]);
+			setTmpId(tmpId + newQuestions.length);
+			setTextInput('');
+			alert('Questions created successfully!');
+		} catch (error) {
+			console.error('Error:', error);
+			setErrorMessage('Failed to create questions.');
+		} finally {
+			setLoading(false);
+		}
+	};
 
 	const handleSaveQuestion = async (id: number) => {
 		const questionToSave = questions.find((q) => q.id === id);

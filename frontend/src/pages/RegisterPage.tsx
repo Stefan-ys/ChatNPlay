@@ -1,13 +1,5 @@
 import React, { useState } from 'react';
-import {
-	Button,
-	TextField,
-	Grid,
-	Paper,
-	Typography,
-	Alert,
-	CircularProgress,
-} from '@mui/material';
+import { Button, TextField, Grid, Paper, Typography, Alert, CircularProgress } from '@mui/material';
 import { register } from '../services/auth.service';
 
 const RegisterPage: React.FC = () => {
@@ -24,7 +16,6 @@ const RegisterPage: React.FC = () => {
 		try {
 			await register({ username, email, password, confirmPassword });
 		} catch (err) {
-			console.log('ss-<' , err)
 			if (Array.isArray(err)) {
 				setError(err.map((x) => '* ' + x + ' *'));
 			} else {
@@ -42,20 +33,8 @@ const RegisterPage: React.FC = () => {
 					<Typography variant='h5' gutterBottom>
 						Register
 					</Typography>
-					<TextField
-						fullWidth
-						margin='normal'
-						label='Username'
-						value={username}
-						onChange={(e) => setUsername(e.target.value)}
-					/>
-					<TextField
-						fullWidth
-						margin='normal'
-						label='Email'
-						value={email}
-						onChange={(e) => setEmail(e.target.value)}
-					/>
+					<TextField fullWidth margin='normal' label='Username' value={username} onChange={(e) => setUsername(e.target.value)} />
+					<TextField fullWidth margin='normal' label='Email' value={email} onChange={(e) => setEmail(e.target.value)} />
 					<TextField
 						fullWidth
 						margin='normal'
@@ -72,19 +51,8 @@ const RegisterPage: React.FC = () => {
 						value={confirmPassword}
 						onChange={(e) => setConfirmPassword(e.target.value)}
 					/>
-					<Button
-						fullWidth
-						variant='contained'
-						color='success'
-						onClick={handleSubmit}
-						disabled={isLoading}
-						style={{ marginTop: '20px' }}
-					>
-						{isLoading ? (
-							<CircularProgress size={24} color='inherit' />
-						) : (
-							'Register'
-						)}
+					<Button fullWidth variant='contained' color='success' onClick={handleSubmit} disabled={isLoading} style={{ marginTop: '20px' }}>
+						{isLoading ? <CircularProgress size={24} color='inherit' /> : 'Register'}
 					</Button>
 					{error && (
 						<Alert severity='error' style={{ marginTop: '20px' }}>

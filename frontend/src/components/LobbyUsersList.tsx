@@ -34,7 +34,12 @@ const LobbyUsersList: React.FC<LobbyUsersListProps> = ({ users }) => {
 							}}
 						>
 							<Avatar src={user.avatarUrl} sx={{ mr: 2, width: 40, height: 40 }} />
-							<ListItemText primary={user.username} secondary={user.ready ? <Chip label='Ready' color='success' size='small' /> : <Chip label='Idle' color='info' size='small' />} />
+							<ListItemText
+								primary={user.username}
+								secondary={
+									user.ready ? <Chip label='Ready' color='success' size='small' /> : <Chip label='Idle' color='info' size='small' />
+								}
+							/>
 						</ListItem>
 					))
 				) : (

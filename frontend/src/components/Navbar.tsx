@@ -31,7 +31,7 @@ const Navbar: React.FC = () => {
 							Quiz Maze
 						</Link>
 					</Typography>
-					
+
 					{!user && (
 						<>
 							<Button color='inherit'>

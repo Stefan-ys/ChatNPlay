@@ -12,13 +12,9 @@ interface AuthContextType {
 	logout: () => Promise<void>;
 }
 
-export const AuthContext = createContext<AuthContextType | undefined>(
-	undefined,
-);
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: ReactNode }> = ({
-	children,
-}) => {
+export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 	const [user, setUser] = useState<UserResponse | null>(() => {
 		const storedUser = localStorage.getItem('user');
 		if (storedUser) {
@@ -53,7 +49,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 		localStorage.setItem('accessToken', token);
 		localStorage.setItem('refreshToken', refreshToken);
 		localStorage.setItem('user', JSON.stringify(user));
-		axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+		axios.defaults.headers.common.Authorization = `Bearer ${token}`;
 		setUser(user);
 	};
 
@@ -75,7 +71,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 		localStorage.removeItem('accessToken');
 		localStorage.removeItem('refreshToken');
 		localStorage.removeItem('user');
-		delete axios.defaults.headers.common['Authorization'];
+		delete axios.defaults.headers.common.Authorization;
 		setUser(null);
 	};
 

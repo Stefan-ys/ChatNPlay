@@ -1,8 +1,8 @@
 import React from 'react';
-import { ListItem, ListItemText, Typography, IconButton, CircularProgress } from '@mui/material';
+import { ListItem, ListItemText, Typography, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SaveIcon from '@mui/icons-material/Save';
-import { QuestionRequest, QuestionResponse } from '../types/question.type';
+import { QuestionRequest } from '../types/question.type';
 
 interface QuestionListItemProps {
 	question: QuestionRequest;

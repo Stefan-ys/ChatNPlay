@@ -2,16 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { CommentRequest, CommentResponse } from '../types/comment.type';
 import { useAuth } from '../hooks/useAuth';
 import Comment from './Comment';
-import {
-	Box,
-	Card,
-	CardContent,
-	Typography,
-	TextField,
-	Button,
-	List,
-	Snackbar,
-} from '@mui/material';
+import { Box, Card, CardContent, Typography, TextField, Button, List, Snackbar } from '@mui/material';
 import { createWebSocketClient } from '../utils/websocketUtil';
 import { getChatById } from '../services/chat.service';
 import { WebSocketReceivedData } from '../types/websocket.type';
@@ -43,14 +34,10 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatId }) => {
 	useEffect(() => {
 		const setupWebSocket = async () => {
 			const topic = `/topic/chat/${chatId}`;
-			const client = await createWebSocketClient(
-				topic,
-				handleWebSocketMessage,
-				(error) => {
-					console.error('WebSocket error:', error.message);
-					setErrorMessage(error.message);
-				},
-			);
+			const client = await createWebSocketClient(topic, handleWebSocketMessage, (error) => {
+				console.error('WebSocket error:', error.message);
+				setErrorMessage(error.message);
+			});
 			stompClientRef.current = client;
 		};
 
@@ -75,10 +62,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatId }) => {
 
 	const handleCommentOperation = async (receivedComment: CommentResponse) => {
 		try {
-			if (
-				receivedComment.type === 'ADD' ||
-				receivedComment.type === 'EDIT'
-			) {
+			if (receivedComment.type === 'ADD' || receivedComment.type === 'EDIT') {
 				const updatedComments = await getChatById(chatId);
 				setComments(updatedComments.comments);
 			} else if (receivedComment.type === 'DELETE') {
@@ -99,11 +83,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatId }) => {
 				userId: user.id,
 				content: newComment,
 			};
-			stompClientRef.current.send(
-				`/app/chat/${chatId}/comment`,
-				{},
-				JSON.stringify(commentData),
-			);
+			stompClientRef.current.send(`/app/chat/${chatId}/comment`, {}, JSON.stringify(commentData));
 			setNewComment('');
 		}
 	};
@@ -180,21 +160,11 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatId }) => {
 							},
 						}}
 					/>
-					<Button
-						onClick={handleAddComment}
-						variant='contained'
-						color='primary'
-						sx={{ ml: 2, backgroundColor: '#1976d2' }}
-					>
+					<Button onClick={handleAddComment} variant='contained' color='primary' sx={{ ml: 2, backgroundColor: '#1976d2' }}>
 						Send
 					</Button>
 				</Box>
-				<Snackbar
-					open={!!errorMessage}
-					autoHideDuration={6000}
-					onClose={handleCloseSnackbar}
-					message={errorMessage}
-				/>
+				<Snackbar open={!!errorMessage} autoHideDuration={6000} onClose={handleCloseSnackbar} message={errorMessage} />
 			</CardContent>
 		</Card>
 	);

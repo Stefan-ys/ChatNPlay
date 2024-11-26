@@ -1,15 +1,6 @@
 import React, { useState } from 'react';
 import { CommentRequest, CommentResponse } from '../types/comment.type';
-import {
-	Typography,
-	IconButton,
-	TextField,
-	Button,
-	Box,
-	Card,
-	CardContent,
-	Snackbar,
-} from '@mui/material';
+import { Typography, IconButton, TextField, Button, Box, Card, CardContent, Snackbar } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import UserAvatar from './UserAvatar';
@@ -21,12 +12,7 @@ interface CommentProps {
 	isCurrentUser: boolean;
 }
 
-const Comment: React.FC<CommentProps> = ({
-	comment,
-	chatId,
-	client,
-	isCurrentUser,
-}) => {
+const Comment: React.FC<CommentProps> = ({ comment, chatId, client, isCurrentUser }) => {
 	const [isEditing, setIsEditing] = useState(false);
 	const [editedContent, setEditedContent] = useState(comment.content);
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -39,11 +25,7 @@ const Comment: React.FC<CommentProps> = ({
 				userId: comment.user.id,
 				content: editedContent,
 			};
-			client.send(
-				`/app/chat/${chatId}/edit-comment`,
-				{},
-				JSON.stringify(updatedComment),
-			);
+			client.send(`/app/chat/${chatId}/edit-comment`, {}, JSON.stringify(updatedComment));
 			setIsEditing(false);
 		}
 	};
@@ -56,11 +38,7 @@ const Comment: React.FC<CommentProps> = ({
 				userId: comment.user.id,
 				content: '',
 			};
-			client.send(
-				`/app/chat/${chatId}/delete-comment`,
-				{},
-				JSON.stringify(deletedComment),
-			);
+			client.send(`/app/chat/${chatId}/delete-comment`, {}, JSON.stringify(deletedComment));
 		}
 	};
 
@@ -79,19 +57,11 @@ const Comment: React.FC<CommentProps> = ({
 			}}
 		>
 			{isCurrentUser && (
-				<Box
-					display='flex'
-					flexDirection='column'
-					alignItems='center'
-					width='80px'
-				>
+				<Box display='flex' flexDirection='column' alignItems='center' width='80px'>
 					<Typography variant='subtitle2' color='textSecondary'>
 						{comment.user.username}
 					</Typography>
-					<UserAvatar
-						avatarUrl={comment.user.avatarUrl}
-						userId={comment.user.id}
-					/>
+					<UserAvatar avatarUrl={comment.user.avatarUrl} userId={comment.user.id} />
 				</Box>
 			)}
 			<Card
@@ -109,43 +79,25 @@ const Comment: React.FC<CommentProps> = ({
 						<Box display='flex' alignItems='center'>
 							<TextField
 								value={editedContent}
-								onChange={(e) =>
-									setEditedContent(e.target.value)
-								}
+								onChange={(e) => setEditedContent(e.target.value)}
 								variant='outlined'
 								size='small'
 								fullWidth
 								sx={{ mr: 1 }}
 							/>
-							<Button
-								onClick={handleEdit}
-								color='primary'
-								variant='contained'
-							>
+							<Button onClick={handleEdit} color='primary' variant='contained'>
 								Save
 							</Button>
 						</Box>
 					) : (
-						<Typography variant='body1'>
-							{comment.content}
-						</Typography>
+						<Typography variant='body1'>{comment.content}</Typography>
 					)}
 					{isCurrentUser && !isEditing && (
 						<Box display='flex' justifyContent='flex-end' mt={1}>
-							<IconButton
-								onClick={() => setIsEditing(true)}
-								aria-label='edit'
-								color='inherit'
-								size='small'
-							>
+							<IconButton onClick={() => setIsEditing(true)} aria-label='edit' color='inherit' size='small'>
 								<EditIcon fontSize='small' />
 							</IconButton>
-							<IconButton
-								onClick={handleDelete}
-								aria-label='delete'
-								color='inherit'
-								size='small'
-							>
+							<IconButton onClick={handleDelete} aria-label='delete' color='inherit' size='small'>
 								<DeleteIcon fontSize='small' />
 							</IconButton>
 						</Box>
@@ -156,27 +108,14 @@ const Comment: React.FC<CommentProps> = ({
 				</CardContent>
 			</Card>
 			{!isCurrentUser && (
-				<Box
-					display='flex'
-					flexDirection='column'
-					alignItems='center'
-					width='80px'
-				>
+				<Box display='flex' flexDirection='column' alignItems='center' width='80px'>
 					<Typography variant='subtitle2' color='textSecondary'>
 						{comment.user.username}
 					</Typography>
-					<UserAvatar
-						avatarUrl={comment.user.avatarUrl}
-						userId={comment.user.id}
-					/>
+					<UserAvatar avatarUrl={comment.user.avatarUrl} userId={comment.user.id} />
 				</Box>
 			)}
-			<Snackbar
-				open={!!errorMessage}
-				autoHideDuration={6000}
-				onClose={handleCloseSnackbar}
-				message={errorMessage}
-			/>
+			<Snackbar open={!!errorMessage} autoHideDuration={6000} onClose={handleCloseSnackbar} message={errorMessage} />
 		</Box>
 	);
 };
