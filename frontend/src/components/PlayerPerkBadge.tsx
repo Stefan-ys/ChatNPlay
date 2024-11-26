@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Tooltip, Typography } from '@mui/material';
-import { QuizMazePerkResponse } from '../interfaces/QuizMazePerkResponse';
+import { QuizMazePerkResponse } from '../types/quiz-maze.type';
 
 interface PlayerPerkBadgeProps {
 	perk: QuizMazePerkResponse;

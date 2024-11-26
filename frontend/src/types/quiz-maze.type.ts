@@ -1,5 +1,8 @@
 export interface QuizMazePlayerResponse{
     id: number;
+    playerNumber: number;
+    avatarUrl: string;
+    rank: string;
     username: string;
     gameScore: number;
     perks: QuizMazePerkResponse[];
