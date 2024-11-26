@@ -1,4 +1,4 @@
-import { TopicResponse } from "./topic.type";
+import { TopicResponse } from './topic.type';
 
 export interface QuestionRequest {
     id: number;
@@ -9,7 +9,7 @@ export interface QuestionRequest {
     option3: string;
     option4: string;
     correctAnswer: string;
-    saved: boolean; 
+    saved: boolean;
 }
 
 export interface QuestionResponse extends QuestionRequest {
