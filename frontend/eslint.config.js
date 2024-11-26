@@ -4,6 +4,7 @@ import jsdoc from 'eslint-plugin-jsdoc';
 import pluginReact from 'eslint-plugin-react';
 import pluginReactHooks from 'eslint-plugin-react-hooks';
 import typescriptEslintPlugin from '@typescript-eslint/eslint-plugin';
+import tsParser from '@typescript-eslint/parser';
 
 /** @type {import('eslint').Linter.Config} */
 export default [
@@ -13,9 +14,10 @@ export default [
             globals: { ...globals.browser, ...globals.node },
             ecmaVersion: 'latest',
             sourceType: 'module',
-            parser: '@typescript-eslint/parser',
+            parser: tsParser,
             parserOptions: {
                 project: './tsconfig.json',
+                ecmaFeatures: { jsx: true },
             },
         },
         plugins: {
@@ -26,7 +28,17 @@ export default [
         },
         rules: {
             ...typescriptEslintPlugin.configs.recommended.rules,
-            'max-len': ['error', { code: 250, tabWidth: 4, ignoreComments: true, ignoreTrailingComments: true, ignoreUrls: true, ignoreStrings: true }],
+            'max-len': [
+                'error',
+                {
+                    code: 250,
+                    tabWidth: 4,
+                    ignoreComments: true,
+                    ignoreTrailingComments: true,
+                    ignoreUrls: true,
+                    ignoreStrings: true,
+                },
+            ],
             'no-console': ['error', { allow: ['warn', 'error'] }],
             'object-curly-spacing': ['error', 'always'],
             quotes: ['error', 'single'],
@@ -59,7 +71,7 @@ export default [
             'no-undef-init': 'error',
             'no-undefined': 'error',
             'no-unused-vars': 'warn',
-            indent: ['error', 4, { SwitchCase: 1 }],
+            indent: ['error', 'tab', { SwitchCase: 1 }],
             'keyword-spacing': ['error', { before: true, after: true }],
             'space-before-blocks': ['error', 'always'],
             'space-in-parens': ['error', 'never'],
