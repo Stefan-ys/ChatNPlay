@@ -1,9 +1,9 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
 import CastleIcon from '@mui/icons-material/Castle';
-import Inventory2Icon from '@mui/icons-material/Inventory2';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import LandscapeIcon from '@mui/icons-material/Landscape';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 
 interface HexagonProps {
 	value: number;
@@ -15,16 +15,19 @@ interface HexagonProps {
 	currentPlayer: number;
 }
 
+const PLAYER_1_COLOR = '#ffec3e';
+const PLAYER_2_COLOR = '#FF6F6F';
+
 const Hexagon: React.FC<HexagonProps> = ({ value, row, col, isHighlighted, onHover, onLeave, currentPlayer }) => {
 	const getColor = () => {
-		if (value === 1 || (value >= 10 && value <= 19)) return 'yellow';
-		if (value === 2 || (value >= 20 && value <= 29)) return '#FF9999';
+		if (value === 1 || (value >= 10 && value <= 19)) return PLAYER_1_COLOR;
+		if (value === 2 || (value >= 20 && value <= 29)) return PLAYER_2_COLOR;
 		return 'lightgreen';
 	};
 
 	const getHighlightColor = () => {
-		if (currentPlayer === 1) return 'rgba(255, 255, 0)';
-		if (currentPlayer === 2) return 'rgba(255, 0, 0)';
+		if (currentPlayer === 1) return PLAYER_1_COLOR;
+		if (currentPlayer === 2) return PLAYER_2_COLOR;
 		return 'transparent';
 	};
 
@@ -59,7 +62,7 @@ const Hexagon: React.FC<HexagonProps> = ({ value, row, col, isHighlighted, onHov
 		}
 
 		if (value === 3) {
-			return <Inventory2Icon sx={{ fontSize: 40, color: 'goldenrod' }} />;
+			return <AutoAwesomeIcon sx={{ fontSize: 40, color: 'goldenrod' }} />;
 		}
 
 		return null;
@@ -79,7 +82,6 @@ const Hexagon: React.FC<HexagonProps> = ({ value, row, col, isHighlighted, onHov
 				'flexDirection': 'column',
 				'justifyContent': 'center',
 				'alignItems': 'center',
-				'boxShadow': isHighlighted ? `0 0 0 5px ${getHighlightColor()}` : '2px 4px rgba(0, 0, 0, 0.2)',
 				'transition': 'transform 0.2s ease, box-shadow 0.2s ease',
 				'&:hover': {
 					transform: 'scale(1.1)',
@@ -101,8 +103,6 @@ const Hexagon: React.FC<HexagonProps> = ({ value, row, col, isHighlighted, onHov
 					'alignItems': 'center',
 					'transition': 'transform 0.2s ease, box-shadow 0.2s ease',
 				}}
-				onMouseEnter={() => onHover(row, col)}
-				onMouseLeave={onLeave}
 			>
 				{renderIcon() || <Typography variant='body2' sx={{ pointerEvents: 'none' }}></Typography>}
 			</Box>
