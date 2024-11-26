@@ -7,7 +7,12 @@ import axiosUtil from '../utils/axiosUtil';
  * @param questionData The data for the new question.
  */
 export const createQuestion = async (questionData: QuestionRequest): Promise<void> => {
-	await axiosUtil.post(API_QUESTION_URL, questionData);
+	try {
+		await axiosUtil.post(API_QUESTION_URL, questionData);
+	} catch (error) {
+		console.error('Error creating question:', error);
+		throw error;
+	}
 };
 
 /**
@@ -16,8 +21,13 @@ export const createQuestion = async (questionData: QuestionRequest): Promise<voi
  * @returns A `QuestionResponse` object.
  */
 export const getQuestionById = async (questionId: number): Promise<QuestionResponse> => {
-	const response = await axiosUtil.get<QuestionResponse>(`${API_QUESTION_URL}/${questionId}`);
-	return response.data;
+	try {
+		const response = await axiosUtil.get<QuestionResponse>(`${API_QUESTION_URL}/${questionId}`);
+		return response.data;
+	} catch (error) {
+		console.error(`Error fetching question with ID ${questionId}:`, error);
+		throw error;
+	}
 };
 
 /**
@@ -26,8 +36,13 @@ export const getQuestionById = async (questionId: number): Promise<QuestionRespo
  * @returns An array of `QuestionResponse` objects.
  */
 export const getQuestionsByTopicId = async (topicId: number): Promise<QuestionResponse[]> => {
-	const response = await axiosUtil.get<QuestionResponse[]>(`${API_QUESTION_URL}/topic/${topicId}`);
-	return response.data;
+	try {
+		const response = await axiosUtil.get<QuestionResponse[]>(`${API_QUESTION_URL}/topic/${topicId}`);
+		return response.data;
+	} catch (error) {
+		console.error(`Error fetching questions for topic ID ${topicId}:`, error);
+		throw error;
+	}
 };
 
 /**
@@ -36,7 +51,12 @@ export const getQuestionsByTopicId = async (topicId: number): Promise<QuestionRe
  * @param questionData The new data for the question.
  */
 export const updateQuestion = async (questionId: number, questionData: QuestionRequest): Promise<void> => {
-	await axiosUtil.put(`${API_QUESTION_URL}/${questionId}`, questionData);
+	try {
+		await axiosUtil.put(`${API_QUESTION_URL}/${questionId}`, questionData);
+	} catch (error) {
+		console.error(`Error updating question with ID ${questionId}:`, error);
+		throw error;
+	}
 };
 
 /**
@@ -44,13 +64,23 @@ export const updateQuestion = async (questionId: number, questionData: QuestionR
  * @param questionId The ID of the question to delete.
  */
 export const deleteQuestion = async (questionId: number): Promise<void> => {
-	await axiosUtil.delete(`${API_QUESTION_URL}/${questionId}`);
+	try {
+		await axiosUtil.delete(`${API_QUESTION_URL}/${questionId}`);
+	} catch (error) {
+		console.error(`Error deleting question with ID ${questionId}:`, error);
+		throw error;
+	}
 };
 
 /**
- * Creating questions from text.
+ * Creates questions from text.
  * @param text String text that holds questions in specified text format.
  */
 export const createQuestionFromText = async (text: string): Promise<void> => {
-	await axiosUtil.post(`${API_QUESTION_URL}/from-text`, { text });
+	try {
+		await axiosUtil.post(`${API_QUESTION_URL}/from-text`, { text });
+	} catch (error) {
+		console.error('Error creating questions from text:', error);
+		throw error;
+	}
 };
