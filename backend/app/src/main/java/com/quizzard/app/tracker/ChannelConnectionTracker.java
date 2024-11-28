@@ -11,9 +11,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequiredArgsConstructor
 public class ChannelConnectionTracker {
 
-    // Map <LobbyId, Map<UserId, isUserReadyToPlay>>
     private final Map<Long, Set<Long>> lobbyConnections = new ConcurrentHashMap<>();
     private final Map<Long, Set<Long>> readyUsers = new ConcurrentHashMap<>();
+
 
     public void addUserToLobby(long lobbyId, long userId) {
         lobbyConnections.putIfAbsent(lobbyId, new LinkedHashSet<>());
@@ -34,11 +34,11 @@ public class ChannelConnectionTracker {
         }
     }
 
-    public Set<Long> getUsersInLobby(long lobbyId) {
+    public Set<Long> getUsersByLobbyId(long lobbyId) {
         return lobbyConnections.getOrDefault(lobbyId, new LinkedHashSet<>());
     }
 
-    public Set<Long> getReadyUsersInLobby(long lobbyId) {
+    public Set<Long> getReadyUsersByLobbyId(long lobbyId) {
         return readyUsers.getOrDefault(lobbyId, new LinkedHashSet<>());
     }
 }

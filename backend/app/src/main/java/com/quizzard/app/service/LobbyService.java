@@ -1,8 +1,9 @@
 package com.quizzard.app.service;
 
 import com.quizzard.app.domain.dto.response.LobbyResponseDTO;
+import com.quizzard.app.domain.dto.response.UserLobbyResponseDTO;
 
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
 
 public interface LobbyService {
@@ -17,10 +18,9 @@ public interface LobbyService {
 
     void removeLobbyUser(long lobbyId, long userId);
 
+    void changeLobbyUserStatus(long lobbyId, long userId);
 
-    Set<Long> getUsersInLobby(long lobbyId);
+    List<UserLobbyResponseDTO> getUsersInLobby(long lobbyId);
 
     Set<Long> getReadyUsersInLobby(long lobbyId);
-
-    Set<Long> changeLobbyUserStatus(Long lobbyId, Long userId);
 }

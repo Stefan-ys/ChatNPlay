@@ -1,15 +1,20 @@
 package com.quizzard.app.service;
 
 import com.quizzard.app.domain.dto.response.LobbyResponseDTO;
+import com.quizzard.app.domain.dto.response.UserLobbyResponseDTO;
 import com.quizzard.app.domain.entity.Lobby;
+import com.quizzard.app.domain.entity.User;
 import com.quizzard.app.repository.LobbyRepository;
+import com.quizzard.app.repository.UserRepository;
 import com.quizzard.app.tracker.ChannelConnectionTracker;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -17,6 +22,7 @@ import java.util.Set;
 public class LobbyServiceImpl implements LobbyService {
 
     private final LobbyRepository lobbyRepository;
+    private final UserRepository userRepository;
     private final ChannelConnectionTracker connectionTracker;
     private final ModelMapper modelMapper;
 
@@ -56,19 +62,29 @@ public class LobbyServiceImpl implements LobbyService {
     }
 
     @Override
-    public Set<Long> getUsersInLobby(long lobbyId) {
-        return connectionTracker.getUsersInLobby(lobbyId);
+    public List<UserLobbyResponseDTO> getUsersInLobby(long lobbyId) {
+        Set<Long> usersInLobby = connectionTracker.getUsersByLobbyId(lobbyId);
+        Set<Long> readyUsers = connectionTracker.getReadyUsersByLobbyId(lobbyId);
+
+        return userRepository.findAllById(usersInLobby)
+                .stream()
+                .map(user -> {
+                    UserLobbyResponseDTO userLobbyResponseDTO = modelMapper.map(user, UserLobbyResponseDTO.class);
+                    userLobbyResponseDTO.setReady(readyUsers.contains(userLobbyResponseDTO.getId()));
+                    return userLobbyResponseDTO;
+                })
+                .collect(Collectors.toList());
     }
 
     @Override
     public Set<Long> getReadyUsersInLobby(long lobbyId) {
-        return connectionTracker.getReadyUsersInLobby(lobbyId);
+        return connectionTracker.getReadyUsersByLobbyId(lobbyId);
     }
 
     @Override
-    public Set<Long> changeLobbyUserStatus(Long lobbyId, Long userId) {
+    public void changeLobbyUserStatus(long lobbyId, long userId) {
         connectionTracker.changeUserStatus(lobbyId, userId);
-        Set<Long> readyUsers = connectionTracker.getReadyUsersInLobby(lobbyId);
+        Set<Long> readyUsers = connectionTracker.getReadyUsersByLobbyId(lobbyId);
 
         if (readyUsers.size() > 1) {
             Iterator<Long> iterator = readyUsers.iterator();
@@ -76,10 +92,9 @@ public class LobbyServiceImpl implements LobbyService {
             long playerOneId = iterator.next();
             long playerTwoId = iterator.next();
 
-            System.out.println("READY FOR GAME " + playerOneId + "vs" + playerTwoId );
+            System.out.println("READY FOR GAME " + playerOneId + "vs" + playerTwoId);
 
             // TODO call start a game service
         }
-        return connectionTracker.getUsersInLobby(lobbyId);
     }
 }

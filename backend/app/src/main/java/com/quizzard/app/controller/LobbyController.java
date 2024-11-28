@@ -24,13 +24,13 @@ public class LobbyController {
 
     @GetMapping("/{lobbyId}")
     public ResponseEntity<LobbyResponseDTO> getLobby(@PathVariable Long lobbyId) {
-        LobbyResponseDTO lobby = lobbyService.getLobbyById(lobbyId); // Exception handled globally
+        LobbyResponseDTO lobby = lobbyService.getLobbyById(lobbyId);
         return ResponseEntity.ok(lobby);
     }
 
     @GetMapping("/name/{lobbyName}")
     public ResponseEntity<LobbyResponseDTO> getLobbyByName(@PathVariable String lobbyName) {
-        LobbyResponseDTO lobby = lobbyService.getLobbyByName(lobbyName); // Exception handled globally
+        LobbyResponseDTO lobby = lobbyService.getLobbyByName(lobbyName);
         return ResponseEntity.ok(lobby);
     }
 
@@ -40,7 +40,7 @@ public class LobbyController {
             @DestinationVariable Long lobbyId,
             @Payload Long userId) {
         lobbyService.addLobbyUser(lobbyId, userId);
-        return userService.getLobbyUsersByIds(lobbyService.getUsersInLobby(lobbyId), lobbyService.getReadyUsersInLobby(lobbyId));
+        return lobbyService.getUsersInLobby(lobbyId);
     }
 
     @MessageMapping("/lobby/{lobbyId}/removeUser")
@@ -49,7 +49,7 @@ public class LobbyController {
             @DestinationVariable Long lobbyId,
             @Payload Long userId) {
         lobbyService.removeLobbyUser(lobbyId, userId);
-        return userService.getLobbyUsersByIds(lobbyService.getUsersInLobby(lobbyId), lobbyService.getReadyUsersInLobby(lobbyId));
+        return lobbyService.getUsersInLobby(lobbyId);
     }
 
     @MessageMapping("/lobby/{lobbyId}/changeStatus")
@@ -58,6 +58,6 @@ public class LobbyController {
             @DestinationVariable Long lobbyId,
             @Payload Long userId) {
         lobbyService.changeLobbyUserStatus(lobbyId, userId);
-        return userService.getLobbyUsersByIds(lobbyService.getUsersInLobby(lobbyId), lobbyService.getReadyUsersInLobby(lobbyId));
+        return lobbyService.getUsersInLobby(lobbyId);
     }
 }

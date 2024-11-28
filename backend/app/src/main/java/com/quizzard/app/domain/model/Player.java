@@ -1,8 +1,6 @@
 package com.quizzard.app.domain.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,10 +10,15 @@ import java.util.List;
 @AllArgsConstructor
 public class Player {
 
-    private String username;
     private long id;
-    private int gameScore;
+    private String username;
+    private String userAvatar;
+    private int score;
     private List<Perk> perks = new ArrayList<>();
+
+    public void addPoints(int points) {
+        this.score += points;
+    }
 
     public void addPerk(Perk perk) {
         this.perks.add(perk);

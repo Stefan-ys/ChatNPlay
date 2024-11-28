@@ -42,8 +42,11 @@ public class WebSocketAuthInterceptor implements ChannelInterceptor {
                     SecurityContextHolder.getContext().setAuthentication(authWithPrincipal);
                 }
             }
-        } else if (StompCommand.DISCONNECT.equals(accessor.getCommand())) {
-            SecurityContextHolder.clearContext();
+        } else {
+            assert accessor != null;
+            if (StompCommand.DISCONNECT.equals(accessor.getCommand())) {
+                SecurityContextHolder.clearContext();
+            }
         }
 
         return message;
