@@ -1,8 +1,8 @@
 export const getLegalMoves = (board: number[][]) => {
 	const movesField = board.map((row) => Array(row.length).fill(0));
 
-	const player1Values = [1, 10, 11, 12, 13, 14, 15, 16];
-	const player2Values = [2, 20, 21, 22, 23, 24, 25, 26];
+	const player1Values = new Set([1, 10, 11, 12, 13, 14, 15, 16]);
+	const player2Values = new Set([2, 20, 21, 22, 23, 24, 25, 26]);
 
 	const directionsEvenRow = [[-1, -1], [-1, 0], [0, -1], [0, 1], [1, -1], [1, 0]];
 
@@ -15,7 +15,7 @@ export const getLegalMoves = (board: number[][]) => {
 		const cellValue = board[r][c];
 
 		return cellValue !== 8 &&
-			!(player === 1 ? player1Values.includes(cellValue) : player2Values.includes(cellValue));
+			!(player === 1 ? player1Values.has(cellValue) : player2Values.has(cellValue));
 	};
 
 	const markLegalMoves = (startRow: number, startCol: number, player: number) => {
@@ -39,9 +39,9 @@ export const getLegalMoves = (board: number[][]) => {
 	for (let r = 0; r < board.length; r++) {
 		for (let c = 0; c < board[r].length; c++) {
 			const cellValue = board[r][c];
-			if (player1Values.includes(cellValue)) {
+			if (player1Values.has(cellValue)) {
 				markLegalMoves(r, c, 1);
-			} else if (player2Values.includes(cellValue)) {
+			} else if (player2Values.has(cellValue)) {
 				markLegalMoves(r, c, 2);
 			}
 		}

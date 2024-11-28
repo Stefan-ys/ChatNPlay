@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Setter
@@ -22,9 +23,9 @@ public class QuizMazeGame extends Game {
     public static final String DESCRIPTION = "todo description";
     public static final String RULES = "todo rules";
 
-    public static final byte TIME_TO_ANSWER = 30;
+    public static final byte TIME_FOR_ANSWER = 30;
     public static final byte TOTAL_MOVES = 16;
-    public static final byte TIME_TO_MOVE = 60;
+    public static final byte TIME_FOR_MOVE = 60;
     private static final byte FIELD_SCALE = 5;
 
     private Player player1;
@@ -53,14 +54,8 @@ public class QuizMazeGame extends Game {
         if (!isLegalMove((byte) (isPlayer1Turn ? 1 : 2), x, y)) {
             throw new IllegalMoveException((byte) (isPlayer1Turn ? 1 : 2));
         }
-
-        byte[][] fieldCopy = copyField();
-        if (isPlayer1Turn) {
-            fieldCopy[x][y] = -1;
-        } else {
-            fieldCopy[x][y] = -2;
-        }
-        return fieldCopy;
+        // TODO
+        return field;
     }
 
     public byte[][] playerSuccessfulAnswer(byte x, byte y) {
@@ -111,46 +106,24 @@ public class QuizMazeGame extends Game {
     @NotNull
     @Contract(value = " -> new", pure = true)
     private byte[][] initializeField() {
-        /*
-        FIELD SYMBOLS
-        1 - PLAYER 1
-        2 - PLAYER 2
-        3 - PERK
-        10 - PLAYER 1 CASTLE + 1
-        11 - PLAYER 1 CASTLE + 2
-        20 - PLAYER 2 CASTLE + 1
-        21 - PLAYER 2 CASTLE + 2
-        -1 - PLAYER 1 ATTEMPT + 30
-        -2 - PLAYER 2 ATTEMPT + 60
-    */
+
         return new byte[][]{
-                {3, 0, 3, 0, 3},
-                {0, 10, 0, 0, 0},
-                {3, 0, 0, 0, 3},
-                {0, 0, 0, 20, 0},
-                {3, 0, 3, 0, 3}
+                {3, 8, 3, 0},
+                {0, 13, 0, 8, 3},
+                {3, 0, 8, 0},
+                {8, 0, 0, 23, 0},
+                {3, 0, 3, 0}
         };
     }
 
     @NotNull
     private List<Perk> initializePerks() {
         List<Perk> perksList = new LinkedList<>();
-        byte perkEncounter = 0;
-
-        for (byte i = 0; i < FIELD_SCALE; i++) {
-            for (byte j = 0; j < FIELD_SCALE; j++) {
-                if (field[i][j] == 3) {
-                    perkEncounter++;
-                    if (perkEncounter % 3 == 0) {
-                        perksList.add(new CastlePerk());
-                    } else if (perkEncounter % 2 == 0) {
-                        perksList.add(new FreePassPerk());
-                    } else {
-                        perksList.add(new FiftyFiftyPerk());
-                    }
-                }
-            }
-        }
+        perksList.add(new FiftyFiftyPerk());
+        perksList.add(new CastlePerk());
+        perksList.add(new FreePassPerk());
+        perksList.add(new DragonPerk());
+        perksList.add(new CatapultPerk());
         return perksList;
     }
 
@@ -189,50 +162,41 @@ public class QuizMazeGame extends Game {
             throw new IllegalStateException("No perks available.");
         }
         int randomIndex = ThreadLocalRandom.current().nextInt(0, perks.size());
-        Perk perk = perks.get(randomIndex);
-        perks.remove(randomIndex);
-
-        return perk;
-    }
-
-    @NotNull
-    private byte[][] copyField() {
-        byte[][] fieldCopy = new byte[FIELD_SCALE][FIELD_SCALE];
-        for (int i = 0; i < FIELD_SCALE; i++) {
-            System.arraycopy(field[i], 0, fieldCopy[i], 0, FIELD_SCALE);
-        }
-        return fieldCopy;
+        return perks.get(randomIndex);
     }
 
     private boolean isLegalMove(byte player, byte x, byte y) {
-        if (x < 0 || x >= FIELD_SCALE || y < 0 || y >= FIELD_SCALE) {
+        if (x < 0 || x >= field.length || y < 0 || y >= field[x].length) {
             return false;
         }
 
-        final int[][] directions = {
-                {-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}
-        };
+        final byte[][] directionsEvenRow = {{-1, -1}, {-1, 0}, {0, -1}, {0, 1}, {1, -1}, {1, 0}};
+        final byte[][] directionsOddRow = {{-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, 0}, {1, 1}};
 
-        byte[] validValues = player == 1
-                ? new byte[]{1, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19}
-                : new byte[]{2, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29};
+        Set<Byte> validValues = player == 1
+                ? Set.of((byte)1, (byte)10, (byte)11, (byte)12, (byte)13, (byte)14, (byte)15, (byte)16)
+                : Set.of((byte)2, (byte)20, (byte)21, (byte)22, (byte)23, (byte)24, (byte)25, (byte)26);
 
-        for (int[] dir : directions) {
-            int nx = x + dir[0];
-            int ny = y + dir[1];
+        if (x % 2 == 0) {
+            for (byte[] dir : directionsEvenRow) {
+                int nx = x + dir[0];
+                int ny = y + dir[1];
 
-            if (nx >= 0 && nx < FIELD_SCALE && ny >= 0 && ny < FIELD_SCALE && isValidCell(field[nx][ny], validValues)) {
-                return true;
+                if (nx >= 0 && nx < field.length && ny >= 0 && ny < field[nx].length && validValues.contains(field[nx][ny])) {
+                    return true;
+                }
+            }
+        } else {
+            for (byte[] dir : directionsOddRow) {
+                int nx = x + dir[0];
+                int ny = y + dir[1];
+
+                if (nx >= 0 && nx < FIELD_SCALE && ny >= 0 && ny < FIELD_SCALE && validValues.contains(field[nx][ny])) {
+                    return true;
+                }
             }
         }
-        return false;
-    }
 
-    @Contract(pure = true)
-    private boolean isValidCell(byte cell, @NotNull byte[] validValues) {
-        for (byte value : validValues) {
-            if (cell == value) return true;
-        }
         return false;
     }
 }
