@@ -1,8 +1,11 @@
 package com.quizzard.app.domain.model;
 
-public class CastlePerk implements Perk{
+public class CastlePerk extends Perk {
 
-    public final static String NAME = "Castle Perk";
-    public final static String DESCRIPTION = "This perk add one point defence to player's castle";
+    private final static String NAME = "Castle Perk";
+    private final static String DESCRIPTION = "This perk add one point defence to player's castle";
 
+    public CastlePerk() {
+        super(NAME, DESCRIPTION);
+    }
 }

@@ -1,7 +1,11 @@
 package com.quizzard.app.domain.model;
 
-public class FreePassPerk implements Perk{
+public class FreePassPerk extends Perk {
 
-    public final static String NAME = "Free pass Perk";
-    public final static String DESCRIPTION = "This perk lets the player to pass the question as correct without answering it";
+    private final static String NAME = "Free pass Perk";
+    private final static String DESCRIPTION = "This perk lets you to pass question without providing an answer";
+
+    public FreePassPerk() {
+        super(NAME, DESCRIPTION);
+    }
 }

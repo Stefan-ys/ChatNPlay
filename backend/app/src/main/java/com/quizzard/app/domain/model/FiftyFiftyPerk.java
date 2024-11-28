@@ -1,7 +1,11 @@
 package com.quizzard.app.domain.model;
 
-public class FiftyFiftyPerk implements Perk {
+public class FiftyFiftyPerk extends Perk {
 
-    public final static String NAME = "Fifty Fifty Perk";
-    public final static String DESCRIPTION = "This perk eliminates half of the options";
+    private final static String NAME = "Fifty Fifty Perk";
+    private final static String DESCRIPTION = "This perk eliminates half of the question options";
+
+    public FiftyFiftyPerk() {
+        super(NAME, DESCRIPTION);
+    }
 }
