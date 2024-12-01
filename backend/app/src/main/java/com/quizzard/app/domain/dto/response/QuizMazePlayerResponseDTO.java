@@ -13,6 +13,7 @@ public class QuizMazePlayerResponseDTO {
 
     private long id;
     private String username;
+    private String avatarUrl;
     private int gameScore;
     private List<QuizMazePerkResponseDTO> perks;
 }

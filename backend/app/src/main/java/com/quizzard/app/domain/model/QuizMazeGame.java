@@ -1,5 +1,6 @@
 package com.quizzard.app.domain.model;
 
+import com.quizzard.app.common.QuizMazeGameConstants;
 import com.quizzard.app.domain.entity.Question;
 import com.quizzard.app.domain.entity.QuizMazeResult;
 import com.quizzard.app.domain.entity.User;
@@ -18,33 +19,24 @@ import java.util.concurrent.ThreadLocalRandom;
 @Getter
 public class QuizMazeGame extends Game {
 
-    public static final String TITLE = "Quiz Maze";
-    public static final String VERSION = "1.0";
-    public static final String DESCRIPTION = "todo description";
-    public static final String RULES = "todo rules";
-
-    public static final byte TIME_FOR_ANSWER = 30;
-    public static final byte TOTAL_MOVES = 16;
-    public static final byte TIME_FOR_MOVE = 60;
-    private static final byte FIELD_SCALE = 5;
 
     private Player player1;
     private Player player2;
-    private boolean isPlayer1Turn;
     private byte moves;
-
+    private boolean isPlayer1Turn;
+    private byte[] currentPlayerPosition;
     private Question curentQuestion;
 
     private byte[][] field;
     private List<Perk> perks;
 
-
     public QuizMazeGame(@NotNull Player player1, @NotNull Player player2) {
-        super.setId("<*" + QuizMazeGame.TITLE + "*> " + player1.getUsername() + "-vs-" + player2.getUsername());
-        this.player1 = player1;
-        this.player2 = player2;
-        this.isPlayer1Turn = true;
-        this.moves = 0;
+        super.setId("<*" + QuizMazeGameConstants.TITLE + "*> " + player1.getUsername() + "-vs-" + player2.getUsername());
+        setPlayer1(player1);
+        setPlayer2(player2);
+        setPlayer1Turn(true);
+        setMoves((byte) 0);
+        setCurrentPlayerPosition(new byte[]{-1, 1});
         this.field = this.initializeField();
         this.perks = this.initializePerks();
     }
@@ -90,12 +82,12 @@ public class QuizMazeGame extends Game {
 
         result.setPlayer1(player1.getUsername());
         result.setPlayer2(player2.getUsername());
-        result.setPlayer1Score(player1.getGameScore());
-        result.setPlayer2Score(player2.getGameScore());
+        result.setPlayer1Score(player1.getScore());
+        result.setPlayer2Score(player2.getScore());
 
-        if (player1.getGameScore() > player2.getGameScore()) {
+        if (player1.getScore() > player2.getScore()) {
             result.setGameResult(GameResultEnum.PLAYER1_WINS);
-        } else if (player2.getGameScore() > player1.getGameScore()) {
+        } else if (player2.getScore() > player1.getScore()) {
             result.setGameResult(GameResultEnum.PLAYER2_WINS);
         } else {
             result.setGameResult(GameResultEnum.DRAW);
@@ -116,7 +108,6 @@ public class QuizMazeGame extends Game {
         };
     }
 
-    @NotNull
     private List<Perk> initializePerks() {
         List<Perk> perksList = new LinkedList<>();
         perksList.add(new FiftyFiftyPerk());
@@ -128,32 +119,14 @@ public class QuizMazeGame extends Game {
     }
 
     private boolean isGameOver() {
-        if (moves == TOTAL_MOVES) return true;
-
-        boolean player1HasCells = false;
-        boolean player2HasCells = false;
-
-        for (byte[] row : field) {
-            for (byte cell : row) {
-                if (!player1HasCells && (cell == 1 || (cell >= 10 && cell <= 19))) {
-                    player1HasCells = true;
-                }
-                if (!player2HasCells && (cell == 2 || (cell >= 20 && cell <= 29))) {
-                    player2HasCells = true;
-                }
-
-                if (player1HasCells && player2HasCells) return false;
-            }
-        }
-
-        return true;
+        return moves == QuizMazeGameConstants.TOTAL_MOVES || field[1][1] == 10 || field[4][4] == 20;
     }
 
     private void addScore() {
         if (isPlayer1Turn) {
-            player1.setGameScore(player1.getGameScore() + 1);
+            player1.setScore(player1.getScore() + 1);
         } else {
-            player2.setGameScore(player2.getGameScore() + 1);
+            player2.setScore(player2.getScore() + 1);
         }
     }
 
@@ -174,8 +147,8 @@ public class QuizMazeGame extends Game {
         final byte[][] directionsOddRow = {{-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, 0}, {1, 1}};
 
         Set<Byte> validValues = player == 1
-                ? Set.of((byte)1, (byte)10, (byte)11, (byte)12, (byte)13, (byte)14, (byte)15, (byte)16)
-                : Set.of((byte)2, (byte)20, (byte)21, (byte)22, (byte)23, (byte)24, (byte)25, (byte)26);
+                ? Set.of((byte) 1, (byte) 10, (byte) 11, (byte) 12, (byte) 13, (byte) 14, (byte) 15, (byte) 16)
+                : Set.of((byte) 2, (byte) 20, (byte) 21, (byte) 22, (byte) 23, (byte) 24, (byte) 25, (byte) 26);
 
         if (x % 2 == 0) {
             for (byte[] dir : directionsEvenRow) {
@@ -191,7 +164,7 @@ public class QuizMazeGame extends Game {
                 int nx = x + dir[0];
                 int ny = y + dir[1];
 
-                if (nx >= 0 && nx < FIELD_SCALE && ny >= 0 && ny < FIELD_SCALE && validValues.contains(field[nx][ny])) {
+                if (nx >= 0 && nx < QuizMazeGameConstants.FIELD_SCALE && ny >= 0 && ny < QuizMazeGameConstants.FIELD_SCALE && validValues.contains(field[nx][ny])) {
                     return true;
                 }
             }

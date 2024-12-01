@@ -1,5 +1,6 @@
 package com.quizzard.app.domain.dto.response;
 
+import com.quizzard.app.common.QuizMazeGameConstants;
 import com.quizzard.app.domain.model.QuizMazeGame;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,13 +12,13 @@ import lombok.NoArgsConstructor;
 public class QuizMazeGameResponseDTO {
 
     private String id;
-    private String title = QuizMazeGame.TITLE;
-    private String version = QuizMazeGame.VERSION;
-    private String DESCRIPTION = QuizMazeGame.DESCRIPTION;
-    private String rules = QuizMazeGame.RULES;
-    private byte timeToAnswer = QuizMazeGame.TIME_TO_ANSWER;
-    private byte totalMovesAllowed = QuizMazeGame.TOTAL_MOVES;
-    private byte timeToMove = QuizMazeGame.TIME_TO_MOVE;
+    private String title = QuizMazeGameConstants.TITLE;
+    private String version = QuizMazeGameConstants.VERSION;
+    private String description = QuizMazeGameConstants.DESCRIPTION;
+    private String rules = QuizMazeGameConstants.RULES;
+    private byte timeToAnswer = QuizMazeGameConstants.TIME_FOR_ANSWER;
+    private byte totalMovesAllowed = QuizMazeGameConstants.TOTAL_MOVES;
+    private byte timeToMove = QuizMazeGameConstants.TIME_FOR_MOVE;
     private QuizMazePlayerResponseDTO player1;
     private QuizMazePlayerResponseDTO player2;
     private boolean isPlayer1Turn;
