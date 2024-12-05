@@ -11,3 +11,30 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+@keyframes flash-red {
+	0%, 100% {
+	  background-color: red;
+	}
+	50% {
+	  background-color: transparent;
+	}
+  }
+  
+  @keyframes flash-green {
+	0%, 100% {
+	  background-color: green;
+	}
+	50% {
+	  background-color: transparent;
+	}
+  }
+  
+  .flashRed {
+	animation: flash-red 0.6s infinite;
+  }
+  
+  .flashGreen {
+	animation: flash-green 0.6s infinite;
+  }
+  

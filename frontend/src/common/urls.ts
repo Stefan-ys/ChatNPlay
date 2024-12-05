@@ -43,3 +43,7 @@ export const API_QUESTION_URL = `${API_URL}/questions`;
 // TOPICS
 
 export const API_TOPICS_URL = `${API_URL}/topics`;
+
+// QUIZ MAZE
+
+export const API_QUIZ_MAZE_URL = `${API_URL}/quiz-maze`;

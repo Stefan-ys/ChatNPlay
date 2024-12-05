@@ -1,4 +1,4 @@
-import { CommentResponse } from "./comment.type";
+import { CommentResponse } from './comment.type';
 
 export interface ChatResponse {
     id: number;
