@@ -6,7 +6,7 @@ import com.quizzard.app.domain.dto.response.QuizMazeGameResponseDTO;
 import com.quizzard.app.domain.dto.response.QuizMazeGameResponseLightDTO;
 
 public interface QuizMazeService {
-    QuizMazeGameResponseDTO newGame(long player1Id, long player2Id);
+    String startNewGame(long player1Id, long player2Id);
 
     QuizMazeGameResponseLightDTO updateGame(QuizMazeRequestDTO quizMazeRequestDTO);
 
@@ -14,7 +14,9 @@ public interface QuizMazeService {
 
     int checkAnswer(String gameId, String submittedAnswer, int timeLeft);
 
-    byte[] markPlayerMove(String gameId, byte x, byte y);
-
     void questionAnswerCheck(String gameId, String response, byte x, byte y);
+
+    QuizMazeGameResponseDTO joinGame(String gameId, long playerId);
+
+    QuizMazeGameResponseDTO getGameData(QuizMazeRequestDTO quizMazeRequestDTO);
 }

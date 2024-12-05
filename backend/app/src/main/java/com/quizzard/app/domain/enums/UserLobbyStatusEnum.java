@@ -1,5 +1,5 @@
 package com.quizzard.app.domain.enums;
 
 public enum UserLobbyStatusEnum {
-    READY, IDLE
+    READY, IDLE, IN_GAME
 }

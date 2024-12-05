@@ -16,6 +16,8 @@ public class AppApplication {
         System.setProperty("DB_PASSWORD", dotenv.get("DB_PASSWORD"));
         System.setProperty("JWT_SECRET_KEY", dotenv.get("JWT_SECRET_KEY"));
         System.setProperty("DB_FIREBASE_STORAGE_BUCKET", dotenv.get("DB_FIREBASE_STORAGE_BUCKET"));
+        System.setProperty("OPENAI_API_KEY", dotenv.get("OPENAI_API_KEY"));
+        System.setProperty("OPENAI_URL", dotenv.get("OPENAI_URL"));
 
         SpringApplication.run(AppApplication.class, args);
     }

@@ -11,8 +11,6 @@ public class QuizMazeRequestDTO {
 
     private String id;
     private byte[] playerPosition;
-    private String questionAnswer;
-    private int timeAtAnswer;
 }
 
 

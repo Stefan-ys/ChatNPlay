@@ -26,7 +26,7 @@ public class QuizMazeServiceImpl implements QuizMazeService {
 
 
     @Override
-    public QuizMazeGameResponseDTO newGame(long player1Id, long player2Id) {
+    public String startNewGame(long player1Id, long player2Id) {
 
         Player player1 = modelMapper.map(userRepository.findById(player1Id), Player.class);
         Player player2 = modelMapper.map(userRepository.findById(player2Id), Player.class);
@@ -45,8 +45,9 @@ public class QuizMazeServiceImpl implements QuizMazeService {
         gameTracker.createGame(quizMazeGame);
 
 
-        return getGameResponseDTO(quizMazeGame);
+        return quizMazeGame.getId();
     }
+
 
     @Override
     public QuizMazeGameResponseLightDTO updateGame(QuizMazeRequestDTO quizMazeRequestDTO) {
@@ -74,13 +75,6 @@ public class QuizMazeServiceImpl implements QuizMazeService {
         return 0;
     }
 
-
-    @Override
-    public byte[] markPlayerMove(String gameId, byte x, byte y) {
-        ((QuizMazeGame) gameTracker.getGame(gameId)).playerAttemptMove(x, y);
-        return new byte[]{x, y};
-    }
-
     @Override
     public void questionAnswerCheck(String gameId, String response, byte x, byte y) {
         QuizMazeGame game = (QuizMazeGame) gameTracker.getGame(gameId);
@@ -91,6 +85,37 @@ public class QuizMazeServiceImpl implements QuizMazeService {
 
         game.setCurentQuestion(null);
         game.switchPlayers();
+    }
+
+    @Override
+    public QuizMazeGameResponseDTO joinGame(String gameId, long playerId) {
+        QuizMazeGame game = (QuizMazeGame) gameTracker.getGame(gameId);
+        if (game.getPlayer1().getId() == playerId) {
+            game.setPlayer1Present(true);
+        } else if (game.getPlayer2().getId() == playerId) {
+            game.setPlayer2present(true);
+        } else {
+            throw new IllegalArgumentException("Invalid player id");
+        }
+        return getGameResponseDTO(game);
+    }
+
+    public void leaveGame(String gameId, long playerId) {
+        QuizMazeGame game = (QuizMazeGame) gameTracker.getGame(gameId);
+        if (game.getPlayer1().getId() == playerId) {
+            game.setPlayer1Present(false);
+        } else if (game.getPlayer2().getId() == playerId) {
+            game.setPlayer2present(false);
+        } else {
+            throw new IllegalArgumentException("Invalid player id");
+        }
+    }
+
+    @Override
+    public QuizMazeGameResponseDTO getGameData(QuizMazeRequestDTO quizMazeRequestDTO) {
+        QuizMazeGame game = (QuizMazeGame) gameTracker.getGame(quizMazeRequestDTO.getId());
+        game.setCurrentPlayerPosition(quizMazeRequestDTO.getPlayerPosition());
+        return getGameResponseDTO(game);
     }
 
     private QuizMazeGameResponseDTO getGameResponseDTO(QuizMazeGame quizMazeGame) {
@@ -112,6 +137,5 @@ public class QuizMazeServiceImpl implements QuizMazeService {
         quizMazeGameResponseDTO.getPlayer2().setPerks(quizMazeGame.getPlayer2().getPerks().stream().map(perk -> modelMapper.map(perk, QuizMazePerkResponseDTO.class)).toList());
 
         return quizMazeGameResponseDTO;
-
     }
 }

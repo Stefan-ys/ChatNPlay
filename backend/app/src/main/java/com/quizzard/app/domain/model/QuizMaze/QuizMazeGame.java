@@ -24,6 +24,8 @@ public class QuizMazeGame extends Game {
 
     private Player player1;
     private Player player2;
+    private boolean player1Present;
+    private boolean player2present;
     private byte moves;
     private boolean isPlayer1Turn;
     private byte[] currentPlayerPosition;
@@ -44,13 +46,22 @@ public class QuizMazeGame extends Game {
     }
 
 
-    public byte[][] playerAttemptMove(byte x, byte y) {
+    public void playerAttemptMove(byte x, byte y) {
         if (!isLegalMove((byte) (isPlayer1Turn ? 1 : 2), x, y)) {
             throw new IllegalMoveException((byte) (isPlayer1Turn ? 1 : 2));
         }
-        // TODO
-        return field;
+        setCurrentPlayerPosition(new byte[]{x, y});
     }
+
+    private void conquerFiled(byte x, byte y) {
+        if (isPlayer1Turn) {
+            field[x][y] = 1;
+        } else {
+            field[x][y] = 2;
+        }
+        switchPlayers();
+    }
+
 
     public byte[][] playerSuccessfulAnswer(byte x, byte y) {
         if (field[x][y] == 10) {
@@ -71,6 +82,7 @@ public class QuizMazeGame extends Game {
             field[x][y] = (byte) (isPlayer1Turn ? 1 : 2);
             addScore();
         }
+        conquerFiled(x, y);
         return field;
     }
 

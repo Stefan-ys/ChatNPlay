@@ -22,5 +22,5 @@ public interface LobbyService {
 
     List<UserLobbyResponseDTO> getUsersInLobby(long lobbyId);
 
-    Set<Long> getReadyUsersInLobby(long lobbyId);
+    List<Long> getReadyUsersInLobby(long lobbyId);
 }

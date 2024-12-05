@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -77,8 +78,9 @@ public class LobbyServiceImpl implements LobbyService {
     }
 
     @Override
-    public Set<Long> getReadyUsersInLobby(long lobbyId) {
-        return connectionTracker.getReadyUsersByLobbyId(lobbyId);
+    public List<Long> getReadyUsersInLobby(long lobbyId) {
+        Set<Long> readyUsersSet = connectionTracker.getReadyUsersByLobbyId(lobbyId);
+        return new ArrayList<>(readyUsersSet);
     }
 
     @Override

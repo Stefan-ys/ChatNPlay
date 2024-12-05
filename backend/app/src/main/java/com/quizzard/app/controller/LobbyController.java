@@ -3,7 +3,7 @@ package com.quizzard.app.controller;
 import com.quizzard.app.domain.dto.response.LobbyResponseDTO;
 import com.quizzard.app.domain.dto.response.UserLobbyResponseDTO;
 import com.quizzard.app.service.LobbyService;
-import com.quizzard.app.service.UserService;
+import com.quizzard.app.service.QuizMazeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -20,7 +20,7 @@ import java.util.List;
 public class LobbyController {
 
     private final LobbyService lobbyService;
-    private final UserService userService;
+    private final QuizMazeService quizMazeService;
 
     @GetMapping("/{lobbyId}")
     public ResponseEntity<LobbyResponseDTO> getLobby(@PathVariable Long lobbyId) {
@@ -58,6 +58,10 @@ public class LobbyController {
             @DestinationVariable Long lobbyId,
             @Payload Long userId) {
         lobbyService.changeLobbyUserStatus(lobbyId, userId);
+        List<Long> readyUsers = lobbyService.getReadyUsersInLobby(lobbyId);
+        if(readyUsers.size() > 1){
+            String gameId = quizMazeService.startNewGame(readyUsers.get(0),readyUsers.get(1));
+        }
         return lobbyService.getUsersInLobby(lobbyId);
     }
 }
