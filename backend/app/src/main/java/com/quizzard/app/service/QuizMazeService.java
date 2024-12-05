@@ -4,7 +4,6 @@ import com.quizzard.app.domain.dto.request.QuizMazeRequestDTO;
 import com.quizzard.app.domain.dto.response.QuestionResponseDTO;
 import com.quizzard.app.domain.dto.response.QuizMazeGameResponseDTO;
 import com.quizzard.app.domain.dto.response.QuizMazeGameResponseLightDTO;
-import com.quizzard.app.domain.enums.TimerEnum;
 
 public interface QuizMazeService {
     QuizMazeGameResponseDTO newGame(long player1Id, long player2Id);
@@ -13,9 +12,9 @@ public interface QuizMazeService {
 
     QuestionResponseDTO getRandomQuestion(String gameId);
 
-    void startTimer(String gameId, TimerEnum question);
+    int checkAnswer(String gameId, String submittedAnswer, int timeLeft);
 
-    void stopTimer(String gameId);
+    byte[] markPlayerMove(String gameId, byte x, byte y);
 
-    int checkAnswer(String submittedAnswer);
+    void questionAnswerCheck(String gameId, String response, byte x, byte y);
 }
