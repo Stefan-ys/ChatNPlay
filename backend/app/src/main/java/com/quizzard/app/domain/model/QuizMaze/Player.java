@@ -1,5 +1,6 @@
-package com.quizzard.app.domain.model;
+package com.quizzard.app.domain.model.QuizMaze;
 
+import com.quizzard.app.domain.model.QuizMaze.Perk.Perk;
 import lombok.*;
 
 import java.util.ArrayList;

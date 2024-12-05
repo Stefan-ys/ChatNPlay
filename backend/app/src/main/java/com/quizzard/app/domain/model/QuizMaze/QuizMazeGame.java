@@ -1,10 +1,12 @@
-package com.quizzard.app.domain.model;
+package com.quizzard.app.domain.model.QuizMaze;
 
 import com.quizzard.app.common.QuizMazeGameConstants;
 import com.quizzard.app.domain.entity.Question;
 import com.quizzard.app.domain.entity.QuizMazeResult;
 import com.quizzard.app.domain.entity.User;
 import com.quizzard.app.domain.enums.GameResultEnum;
+import com.quizzard.app.domain.model.Game;
+import com.quizzard.app.domain.model.QuizMaze.Perk.*;
 import com.quizzard.app.exception.IllegalMoveException;
 import lombok.*;
 import org.jetbrains.annotations.Contract;

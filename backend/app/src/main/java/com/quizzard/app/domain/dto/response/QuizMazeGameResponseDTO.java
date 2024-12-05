@@ -1,7 +1,6 @@
 package com.quizzard.app.domain.dto.response;
 
 import com.quizzard.app.common.QuizMazeGameConstants;
-import com.quizzard.app.domain.model.QuizMazeGame;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

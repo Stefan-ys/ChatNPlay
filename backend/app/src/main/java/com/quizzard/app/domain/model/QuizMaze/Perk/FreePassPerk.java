@@ -1,4 +1,4 @@
-package com.quizzard.app.domain.model;
+package com.quizzard.app.domain.model.QuizMaze.Perk;
 
 public class FreePassPerk extends Perk {
 
