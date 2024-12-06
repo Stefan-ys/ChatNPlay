@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import ChatBox from '../components/ChatBox';
 import LobbyUsersList from '../components/LobbyUsersList';
 import { LobbyResponse } from '../types/lobby.type';
@@ -16,6 +17,7 @@ const LobbyPage: React.FC<{ lobbyName: string }> = ({ lobbyName }) => {
 	const [usersInLobby, setUsersInLobby] = useState<UserLobbyResponse[]>([]);
 	const { user } = useAuth();
 	const stompClientRef = useRef<any>(null);
+	const navigate = useNavigate(); // Initialize useNavigate
 
 	useEffect(() => {
 		const fetchLobby = async () => {
@@ -76,6 +78,11 @@ const LobbyPage: React.FC<{ lobbyName: string }> = ({ lobbyName }) => {
 		} else if (Array.isArray(receivedData)) {
 			setUsersInLobby(receivedData as UserLobbyResponse[]);
 			setError('');
+		} else if (receivedData && typeof receivedData === 'object' && 'gameId' in receivedData) {
+			const { gameId } = receivedData as { gameId: string | null };
+			if (gameId) {
+				navigate(`/quiz-maze/${gameId}`); // Navigate to quiz-maze/{gameId}
+			}
 		}
 	};
 

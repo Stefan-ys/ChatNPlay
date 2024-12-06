@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useParams } from 'react';
 import { Box, Button } from '@mui/material';
 import Hexagon from '../components/Hexagon';
 import backgroundImage from '../img/quizMazeImage.png';
@@ -80,10 +80,18 @@ const gameData = {
 };
 
 const QuizMazePage: React.FC = () => {
+	const { gameId } = useParams<{ gameId: string }>();
+
 	const [currentPlayer, setCurrentPlayer] = useState(2);
 	const [legalMoves, setLegalMoves] = useState<number[][]>([]);
 	const [highlightedCells, setHighlightedCells] = useState<[number, number][]>([]);
 	const [openQuestionModal, setOpenQuestionModal] = useState(false);
+
+	useEffect(() => {
+		if (gameId) {
+			// TODO Fetch game data based on the gameId
+		}
+	}, [gameId]);
 
 	useEffect(() => {
 		setLegalMoves(getLegalMoves(boardData));
