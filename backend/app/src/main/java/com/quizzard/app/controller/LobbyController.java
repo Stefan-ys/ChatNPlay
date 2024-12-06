@@ -2,6 +2,7 @@ package com.quizzard.app.controller;
 
 import com.quizzard.app.domain.dto.response.LobbyResponseDTO;
 import com.quizzard.app.domain.dto.response.UserLobbyResponseDTO;
+import com.quizzard.app.security.CustomPrincipal;
 import com.quizzard.app.service.LobbyService;
 import com.quizzard.app.service.QuizMazeService;
 import lombok.RequiredArgsConstructor;
@@ -10,9 +11,13 @@ import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/lobbies")
@@ -54,14 +59,39 @@ public class LobbyController {
 
     @MessageMapping("/lobby/{lobbyId}/changeStatus")
     @SendTo("/topic/lobby/{lobbyId}")
-    public List<UserLobbyResponseDTO> changeUserStatus(
+    public Map<String, Object> changeUserStatus(
             @DestinationVariable Long lobbyId,
-            @Payload Long userId) {
+            @Payload Long userId,
+            SimpMessageHeaderAccessor headerAccessor) {
+
         lobbyService.changeLobbyUserStatus(lobbyId, userId);
+
         List<Long> readyUsers = lobbyService.getReadyUsersInLobby(lobbyId);
-        if(readyUsers.size() > 1){
-            String gameId = quizMazeService.startNewGame(readyUsers.get(0),readyUsers.get(1));
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("usersInLobby", lobbyService.getUsersInLobby(lobbyId));
+
+        if (readyUsers.size() > 1) {
+            long player1Id = readyUsers.get(0);
+            long player2Id = readyUsers.get(1);
+            String gameId = quizMazeService.startNewGame(player1Id, player2Id);
+
+            Principal principal = headerAccessor.getUser();
+            if (principal instanceof CustomPrincipal customPrincipal) {
+                long currentUserId = customPrincipal.getId();
+
+                if (currentUserId == player1Id || currentUserId == player2Id) {
+                    response.put("gameId", gameId);
+                } else {
+                    response.put("gameId", null);
+                }
+            } else {
+                response.put("gameId", null);
+            }
+        } else {
+            response.put("gameId", null);
         }
-        return lobbyService.getUsersInLobby(lobbyId);
+
+        return response;
     }
 }

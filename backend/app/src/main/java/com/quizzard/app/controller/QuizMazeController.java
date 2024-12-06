@@ -23,18 +23,16 @@ public class QuizMazeController {
     private final GameTimerService gameTimerService;
     private final SimpMessagingTemplate messagingTemplate;
 
-    @PostMapping("/join")
+    @PostMapping("/{gameId}/join")
     public ResponseEntity<QuizMazeGameResponseDTO> joinGame(@PathVariable String gameId, @RequestParam long playerId) {
         QuizMazeGameResponseDTO gameResponse = quizMazeService.joinGame(gameId, playerId);
         return ResponseEntity.ok(gameResponse);
     }
 
-
     @MessageMapping("/update-game/{gameId}")
     @SendTo("/topic/quiz-maze/{gameId}")
-    public QuizMazeGameResponseLightDTO updateGame(@PathVariable String gameId, @RequestParam QuizMazeRequestDTO quizMazeRequestDTO) {
-        QuizMazeGameResponseLightDTO gameResponse = quizMazeService.getGameData(quizMazeRequestDTO);
-        return gameResponse;
+    public QuizMazeGameResponseDTO updateGame(@RequestParam QuizMazeRequestDTO quizMazeRequestDTO) {
+        return quizMazeService.getGameData(quizMazeRequestDTO);
     }
 
     @MessageMapping("/{gameId}/get-question")
