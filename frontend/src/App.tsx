@@ -42,7 +42,8 @@ const App: React.FC = () => {
 								<Route path='/profile' element={<ProfilePage />} />
 								<Route path='/lobby' element={<LobbyPage lobbyName={'Quiz Maze Lobby'} />} />
 								<Route path='/quiz-factory' element={<QuizFactoryPage />} />
-								<Route path='/quiz-maze' element={<QuizMazePage />}/>
+								<Route path='/quiz-maze' element={<QuizMazePage />} />
+								<Route path='/quiz-maze/:gameId' element={<QuizMazePage />} />
 							</Route>
 						</Routes>
 					</Router>

@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useParams } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { Box, Button } from '@mui/material';
 import Hexagon from '../components/Hexagon';
 import backgroundImage from '../img/quizMazeImage.png';
