@@ -40,9 +40,7 @@ const UserStatusProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 		return () => {
 			if (stompClientRef.current && stompClientRef.current.connected) {
 				handleUserIsOffline();
-				stompClientRef.current.disconnect(() => {
-					console.log('WebSocket disconnected.');
-				});
+				stompClientRef.current.disconnect(() => {});
 			}
 		};
 	}, [user]);

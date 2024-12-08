@@ -1,21 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Box, Button } from '@mui/material';
+import { Box, Button, CircularProgress, Typography } from '@mui/material';
 import Hexagon from '../components/Hexagon';
 import backgroundImage from '../img/quizMazeImage.png';
 import { getLegalMoves } from '../assets/quizMazeLegalMoves';
 import ProgressBar from '../components/ProgressBar';
 import PlayerBox from '../components/PlayerBox';
-import { QuizMazePlayerResponse } from '../types/quiz-maze.type';
+import { QuizMazeGamesResponse, QuizMazePlayerResponse } from '../types/quiz-maze.type';
 import { QuestionResponse } from '../types/question.type';
 import QuestionModal from '../components/QuestionModal';
+import { useAuth } from '../hooks/useAuth';
+import { joinGame } from '../services/quiz-maze.service';
+import { transformField } from '../assets/decoder';
 
-const boardData = [
-	[3, 8, 3, 0],
-	[0, 16, 1, 8, 0],
-	[3, 1, 8, 0],
-	[8, 2, 2, 22, 0],
-	[3, 0, 3, 0],
+const defaultBoard = [
+	[0, 0, 0, 0],
+	[0, 1, 0, 0, 0],
+	[0, 0, 0, 0],
+	[0, 0, 0, 2, 0],
+	[0, 0, 0, 0],
 ];
 
 const topic = {
@@ -64,38 +67,61 @@ const player2: QuizMazePlayerResponse = {
 	],
 };
 
-const gameData = {
-	id: 'id',
-	title: 'Quiz Maze',
-	version: '1.0',
-	description: 'lorem ipsum... this is description',
-	rules: '1.rule 2.rule 3.rule',
-	timeToAnswer: 20,
-	totalMovesAllowed: 30,
-	timeToMove: 30,
-	player1: player1,
-	player2: player2,
-	isPlayer1Turn: true,
-	moves: 0,
-	field: boardData,
-};
+// const gameData = {
+// 	id: 'id',
+// 	title: 'Quiz Maze',
+// 	version: '1.0',
+// 	description: 'lorem ipsum... this is description',
+// 	rules: '1.rule 2.rule 3.rule',
+// 	timeToAnswer: 20,
+// 	totalMovesAllowed: 30,
+// 	timeToMove: 30,
+// 	player1: player1,
+// 	player2: player2,
+// 	isPlayer1Turn: true,
+// 	moves: 0,
+// 	field: boardData,
+// };
 
 const QuizMazePage: React.FC = () => {
 	const { gameId } = useParams<{ gameId: string }>();
+	const { user } = useAuth();
 
-	const [currentPlayer, setCurrentPlayer] = useState(2);
+	const [currentPlayer, setCurrentPlayer] = useState(-1);
 	const [legalMoves, setLegalMoves] = useState<number[][]>([]);
 	const [highlightedCells, setHighlightedCells] = useState<[number, number][]>([]);
 	const [openQuestionModal, setOpenQuestionModal] = useState(false);
+	const [gameData, setGameData] = useState<QuizMazeGamesResponse | null>(null);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState<string | null>(null);
 
 	useEffect(() => {
-		if (gameId) {
-			// TODO Fetch game data based on the gameId
-		}
-	}, [gameId]);
+		const fetchGameData = async () => {
+			try {
+				if (!gameId) {
+					throw new Error('Invalid game ID');
+				}
+				setLoading(true);
+				const response = await joinGame(gameId, user?.id || -1);
+				const decodedField = transformField(response.field);
+				setGameData({
+					...response,
+					field: decodedField,
+				});
+				setCurrentPlayer(response.player1.id === user?.id ? 1 : 2);
+			} catch (err) {
+				console.error('Failed to fetch game data:', err);
+				setError('Failed to load game. Please try again.');
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		fetchGameData();
+	}, [gameId, user]);
 
 	useEffect(() => {
-		setLegalMoves(getLegalMoves(boardData));
+		setLegalMoves(getLegalMoves(gameData?.field || defaultBoard));
 	}, []);
 
 	const isLegalMove = (row: number, col: number): boolean => {
@@ -123,6 +149,24 @@ const QuizMazePage: React.FC = () => {
 		setOpenQuestionModal(false);
 	};
 
+	if (loading) {
+		return (
+			<Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+				<CircularProgress />
+			</Box>
+		);
+	}
+
+	if (error) {
+		return (
+			<Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', flexDirection: 'column' }}>
+				<Typography variant='h6' color='error'>
+					{error}
+				</Typography>
+			</Box>
+		);
+	}
+
 	return (
 		<Box
 			sx={{
@@ -142,7 +186,7 @@ const QuizMazePage: React.FC = () => {
 			}}
 		>
 			{/* Progress bar */}
-			<ProgressBar boardData={boardData} />
+			<ProgressBar boardData={gameData?.field || defaultBoard} />
 
 			{/* Player boxes */}
 			<PlayerBox playerData={player1} position='left' currentPlayer={currentPlayer} />
@@ -150,7 +194,7 @@ const QuizMazePage: React.FC = () => {
 
 			{/* Game board */}
 			<Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-				{boardData.map((row, rowIndex) => (
+				{(gameData?.field || defaultBoard).map((row, rowIndex) => (
 					<Box key={rowIndex} sx={{ display: 'flex', justifyContent: 'center', gap: '5px' }}>
 						{row.map((value, colIndex) => (
 							<Hexagon
@@ -174,7 +218,7 @@ const QuizMazePage: React.FC = () => {
 			</Button>
 
 			{/* Question Modal */}
-			<QuestionModal open={openQuestionModal} question={question} onClose={handleCloseQuestion} timeLimit={gameData.timeToAnswer} />
+			<QuestionModal open={openQuestionModal} question={question} onClose={handleCloseQuestion} timeLimit={gameData?.timeToAnswer || 30} />
 		</Box>
 	);
 };
