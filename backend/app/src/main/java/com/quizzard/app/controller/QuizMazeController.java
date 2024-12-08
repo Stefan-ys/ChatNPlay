@@ -3,7 +3,6 @@ package com.quizzard.app.controller;
 import com.quizzard.app.domain.dto.request.QuizMazeRequestDTO;
 import com.quizzard.app.domain.dto.response.QuestionResponseDTO;
 import com.quizzard.app.domain.dto.response.QuizMazeGameResponseDTO;
-import com.quizzard.app.domain.dto.response.QuizMazeGameResponseLightDTO;
 import com.quizzard.app.domain.enums.TimerEnum;
 import com.quizzard.app.service.GameTimerService;
 import com.quizzard.app.service.QuizMazeService;
@@ -23,7 +22,7 @@ public class QuizMazeController {
     private final GameTimerService gameTimerService;
     private final SimpMessagingTemplate messagingTemplate;
 
-    @PostMapping("/{gameId}/join")
+    @GetMapping("/join/{gameId}")
     public ResponseEntity<QuizMazeGameResponseDTO> joinGame(@PathVariable String gameId, @RequestParam long playerId) {
         QuizMazeGameResponseDTO gameResponse = quizMazeService.joinGame(gameId, playerId);
         return ResponseEntity.ok(gameResponse);
