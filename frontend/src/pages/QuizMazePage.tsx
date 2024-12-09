@@ -67,29 +67,14 @@ const player2: QuizMazePlayerResponse = {
 	],
 };
 
-// const gameData = {
-// 	id: 'id',
-// 	title: 'Quiz Maze',
-// 	version: '1.0',
-// 	description: 'lorem ipsum... this is description',
-// 	rules: '1.rule 2.rule 3.rule',
-// 	timeToAnswer: 20,
-// 	totalMovesAllowed: 30,
-// 	timeToMove: 30,
-// 	player1: player1,
-// 	player2: player2,
-// 	isPlayer1Turn: true,
-// 	moves: 0,
-// 	field: boardData,
-// };
-
 const QuizMazePage: React.FC = () => {
 	const { gameId } = useParams<{ gameId: string }>();
 	const { user } = useAuth();
 
-	const [currentPlayer, setCurrentPlayer] = useState(-1);
+	const [userPlayerNum, setUserPlayerNum] = useState(-1);
 	const [legalMoves, setLegalMoves] = useState<number[][]>([]);
 	const [highlightedCells, setHighlightedCells] = useState<[number, number][]>([]);
+	const [selectedCell, setSelectedCell] = useState<[number, number] | null>(null);
 	const [openQuestionModal, setOpenQuestionModal] = useState(false);
 	const [gameData, setGameData] = useState<QuizMazeGamesResponse | null>(null);
 	const [loading, setLoading] = useState(true);
@@ -108,7 +93,7 @@ const QuizMazePage: React.FC = () => {
 					...response,
 					field: decodedField,
 				});
-				setCurrentPlayer(response.player1.id === user?.id ? 1 : 2);
+				setUserPlayerNum(response.player1.id === user?.id ? 1 : 2);
 			} catch (err) {
 				console.error('Failed to fetch game data:', err);
 				setError('Failed to load game. Please try again.');
@@ -125,7 +110,7 @@ const QuizMazePage: React.FC = () => {
 	}, []);
 
 	const isLegalMove = (row: number, col: number): boolean => {
-		const legalValue = currentPlayer === 1 ? 1 : 2;
+		const legalValue = userPlayerNum === 1 ? 1 : 2;
 		return legalMoves[row]?.[col] === legalValue || legalMoves[row]?.[col] === 3;
 	};
 
@@ -139,6 +124,12 @@ const QuizMazePage: React.FC = () => {
 
 	const handleLeave = () => {
 		setHighlightedCells([]);
+	};
+
+	const handleCellSelect = (row: number, col: number) => {
+		if ((gameData?.isPlayer1Turn && userPlayerNum === 1) || (!gameData?.isPlayer1Turn && userPlayerNum === 2)) {
+			setSelectedCell([row, col]);
+		}
 	};
 
 	const handleOpenQuestion = () => {
@@ -189,8 +180,8 @@ const QuizMazePage: React.FC = () => {
 			<ProgressBar boardData={gameData?.field || defaultBoard} />
 
 			{/* Player boxes */}
-			<PlayerBox playerData={player1} position='left' currentPlayer={currentPlayer} />
-			<PlayerBox playerData={player2} position='right' currentPlayer={currentPlayer} />
+			<PlayerBox playerData={player1} position='left' currentPlayer={userPlayerNum} />
+			<PlayerBox playerData={player2} position='right' currentPlayer={userPlayerNum} />
 
 			{/* Game board */}
 			<Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -203,9 +194,11 @@ const QuizMazePage: React.FC = () => {
 								col={colIndex}
 								key={`${rowIndex}-${colIndex}`}
 								isHighlighted={highlightedCells.some(([r, c]) => r === rowIndex && c === colIndex)}
+								isSelected={selectedCell?.[0] === rowIndex && selectedCell?.[1] === colIndex}
 								onHover={handleHover}
 								onLeave={handleLeave}
-								currentPlayer={currentPlayer}
+								onSelect={handleCellSelect}
+								currentPlayer={userPlayerNum}
 							/>
 						))}
 					</Box>

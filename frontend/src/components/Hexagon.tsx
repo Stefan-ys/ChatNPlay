@@ -13,12 +13,14 @@ interface HexagonProps {
 	row: number;
 	col: number;
 	isHighlighted: boolean;
+	isSelected: boolean;
 	onHover: (row: number, col: number) => void;
 	onLeave: () => void;
+	onSelect: (row: number, col: number) => void;
 	currentPlayer: number;
 }
 
-const Hexagon: React.FC<HexagonProps> = ({ value, row, col, isHighlighted, onHover, onLeave, currentPlayer }) => {
+const Hexagon: React.FC<HexagonProps> = ({ value, row, col, isHighlighted, isSelected, onHover, onLeave, onSelect, currentPlayer }) => {
 	const getColor = () => {
 		if (value === 1 || (value >= 10 && value <= 19)) return PLAYER_1_COLOR;
 		if (value === 2 || (value >= 20 && value <= 29)) return PLAYER_2_COLOR;
@@ -72,27 +74,32 @@ const Hexagon: React.FC<HexagonProps> = ({ value, row, col, isHighlighted, onHov
 	return (
 		<Box
 			sx={{
-				'position': 'relative',
-				'width': 95,
-				'height': 95,
-				'clipPath': 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)',
-				'margin': '6px',
-				'marginBottom': '-16px',
-				'display': 'flex',
-				'justifyContent': 'center',
-				'alignItems': 'center',
-				'transition': 'transform 0.2s ease, box-shadow 0.2s ease',
-				'background': `linear-gradient(to top, ${
-					isHighlighted ? `rgba(0, 0, 0, 0.3), ${getHighlightColor()}` : 'rgba(0, 0, 0, 0.3), rgba(255, 255, 255, 0.1)'
+				position: 'relative',
+				width: 95,
+				height: 95,
+				clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)',
+				margin: '6px',
+				marginBottom: '-16px',
+				display: 'flex',
+				justifyContent: 'center',
+				alignItems: 'center',
+				transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+				background: `linear-gradient(to top, ${
+					isSelected
+						? `rgba(0, 0, 0, 0.3), ${getHighlightColor()}`
+						: isHighlighted
+							? `rgba(0, 0, 0, 0.3), ${getHighlightColor()}`
+							: 'rgba(0, 0, 0, 0.3), rgba(255, 255, 255, 0.1)'
 				})`,
-				'boxShadow': value === 8 ? 'none' : isHighlighted ? '0 0 15px 4px rgba(255, 255, 255, 0.8)' : '0 4px 8px rgba(0, 0, 0, 0.2)',
-				'&:hover': {
-					transform: value === 8 ? 'none' : 'scale(1.15)',
-					boxShadow: value === 8 ? 'none' : '0 0 20px 5px rgba(255, 255, 255, 0.6)',
-				},
+				boxShadow: isSelected
+					? '0 0 15px 4px rgba(255, 255, 255, 0.8)'
+					: isHighlighted
+						? '0 0 15px 4px rgba(255, 255, 255, 0.8)'
+						: '0 4px 8px rgba(0, 0, 0, 0.2)',
 			}}
 			onMouseEnter={() => value !== 8 && onHover(row, col)}
 			onMouseLeave={() => value !== 8 && onLeave()}
+			onClick={() => isHighlighted && onSelect(row, col)}
 		>
 			<Box
 				sx={{
