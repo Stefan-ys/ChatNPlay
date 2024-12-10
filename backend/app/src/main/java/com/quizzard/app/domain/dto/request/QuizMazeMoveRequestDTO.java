@@ -5,12 +5,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class QuizMazeRequestDTO {
+public class QuizMazeMoveRequestDTO {
 
-    private String id;
-    private byte[] playerPosition;
+    private long playerId;
+    private byte row;
+    private byte col;
 }
 
 

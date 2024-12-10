@@ -5,7 +5,7 @@ public class QuizMazeGameResponseLightDTO {
     private String id;
     private QuizMazePlayerResponseDTO player1;
     private QuizMazePlayerResponseDTO player2;
-    private boolean isPlayer1Turn;
+    private long playerTurnId;
     private byte moves;
     private byte[][] field;
     private byte[] playerPosition;

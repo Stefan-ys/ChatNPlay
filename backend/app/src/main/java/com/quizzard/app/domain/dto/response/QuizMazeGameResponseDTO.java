@@ -1,9 +1,14 @@
 package com.quizzard.app.domain.dto.response;
 
 import com.quizzard.app.common.QuizMazeGameConstants;
+import com.quizzard.app.domain.entity.Question;
+import com.quizzard.app.domain.model.QuizMaze.Perk.Perk;
+import com.quizzard.app.domain.model.QuizMaze.Player;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -20,7 +25,7 @@ public class QuizMazeGameResponseDTO {
     private byte timeToMove = QuizMazeGameConstants.TIME_FOR_MOVE;
     private QuizMazePlayerResponseDTO player1;
     private QuizMazePlayerResponseDTO player2;
-    private boolean isPlayer1Turn;
+    private long playerTurnId;
     private byte moves;
     private byte[][] field;
 }
