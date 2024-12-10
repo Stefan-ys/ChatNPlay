@@ -21,40 +21,37 @@ import java.util.concurrent.ThreadLocalRandom;
 @Getter
 public class QuizMazeGame extends Game {
 
-
     private Player player1;
     private Player player2;
     private boolean player1Present;
     private boolean player2present;
     private byte moves;
-    private boolean isPlayer1Turn;
-    private byte[] currentPlayerPosition;
+    private long playerTurnId;
     private Question curentQuestion;
 
     private byte[][] field;
     private List<Perk> perks;
 
     public QuizMazeGame(@NotNull Player player1, @NotNull Player player2) {
-        super.setId("<*" + QuizMazeGameConstants.TITLE + "*> " + player1.getUsername() + "-vs-" + player2.getUsername());
+        super.setId(QuizMazeGameConstants.TITLE, player1.getUsername(), player2.getUsername());
         setPlayer1(player1);
         setPlayer2(player2);
-        setPlayer1Turn(true);
+        setPlayerTurnId(player1.getId());
         setMoves((byte) 0);
-        setCurrentPlayerPosition(new byte[]{-1, 1});
         this.field = this.initializeField();
         this.perks = this.initializePerks();
     }
 
 
     public void playerAttemptMove(byte x, byte y) {
-        if (!isLegalMove((byte) (isPlayer1Turn ? 1 : 2), x, y)) {
-            throw new IllegalMoveException((byte) (isPlayer1Turn ? 1 : 2));
+        byte playerNum = (byte) (playerTurnId == player1.getId() ? 1 : 2);
+        if (!isLegalMove(playerNum, x, y)) {
+            throw new IllegalMoveException(playerNum);
         }
-        setCurrentPlayerPosition(new byte[]{x, y});
     }
 
     private void conquerFiled(byte x, byte y) {
-        if (isPlayer1Turn) {
+        if (playerTurnId == player1.getId()) {
             field[x][y] = 1;
         } else {
             field[x][y] = 2;
@@ -64,6 +61,8 @@ public class QuizMazeGame extends Game {
 
 
     public byte[][] playerSuccessfulAnswer(byte x, byte y) {
+        byte playerNum = (byte) (playerTurnId == player1.getId() ? 1 : 2);
+
         if (field[x][y] == 10) {
             field[x][y] = 1;
         } else if (field[x][y] == 20) {
@@ -73,13 +72,13 @@ public class QuizMazeGame extends Game {
         } else {
             if (field[x][y] == 3) {
                 Perk perk = getPerk();
-                if (isPlayer1Turn) {
+                if (playerNum == 1) {
                     player1.addPerk(perk);
                 } else {
                     player2.addPerk(perk);
                 }
             }
-            field[x][y] = (byte) (isPlayer1Turn ? 1 : 2);
+            field[x][y] = playerNum;
             addScore();
         }
         conquerFiled(x, y);
@@ -87,7 +86,11 @@ public class QuizMazeGame extends Game {
     }
 
     public void switchPlayers() {
-        this.isPlayer1Turn = !isPlayer1Turn;
+        if(this.playerTurnId == player1.getId()) {
+            setPlayerTurnId(player2.getId());
+        }else {
+            setPlayerTurnId(player1.getId());
+        }
         this.moves++;
     }
 
@@ -137,7 +140,7 @@ public class QuizMazeGame extends Game {
     }
 
     private void addScore() {
-        if (isPlayer1Turn) {
+        if (playerTurnId == player1.getId()) {
             player1.setScore(player1.getScore() + 1);
         } else {
             player2.setScore(player2.getScore() + 1);
@@ -183,7 +186,6 @@ public class QuizMazeGame extends Game {
                 }
             }
         }
-
         return false;
     }
 }

@@ -1,9 +1,10 @@
 package com.quizzard.app.service;
 
 import com.quizzard.app.common.QuizMazeGameConstants;
-import com.quizzard.app.domain.dto.request.QuizMazeRequestDTO;
+import com.quizzard.app.domain.dto.request.QuizMazeMoveRequestDTO;
 import com.quizzard.app.domain.dto.response.*;
 import com.quizzard.app.domain.entity.Question;
+import com.quizzard.app.domain.enums.GameActionEnum;
 import com.quizzard.app.domain.model.QuizMaze.Player;
 import com.quizzard.app.domain.model.QuizMaze.QuizMazeGame;
 import com.quizzard.app.repository.QuestionRepository;
@@ -48,10 +49,13 @@ public class QuizMazeServiceImpl implements QuizMazeService {
         return quizMazeGame.getId();
     }
 
-
     @Override
-    public QuizMazeGameResponseLightDTO updateGame(QuizMazeRequestDTO quizMazeRequestDTO) {
-        return null;
+    public QuizMazeMoveResponseDTO processMove(String gameId, QuizMazeMoveRequestDTO quizMazeRequestDTO) {
+        QuizMazeGame game = (QuizMazeGame) gameTracker.getGame(gameId);
+        game.playerAttemptMove(quizMazeRequestDTO.getRow(), quizMazeRequestDTO.getCol());
+        QuizMazeMoveResponseDTO responseDTO = modelMapper.map(quizMazeRequestDTO, QuizMazeMoveResponseDTO.class);
+        responseDTO.setActionType(GameActionEnum.MOVE.toString());
+        return responseDTO;
     }
 
     @Override
@@ -111,13 +115,6 @@ public class QuizMazeServiceImpl implements QuizMazeService {
         }
     }
 
-    @Override
-    public QuizMazeGameResponseDTO getGameData(QuizMazeRequestDTO quizMazeRequestDTO) {
-        QuizMazeGame game = (QuizMazeGame) gameTracker.getGame(quizMazeRequestDTO.getId());
-        game.setCurrentPlayerPosition(quizMazeRequestDTO.getPlayerPosition());
-        return getGameResponseDTO(game);
-    }
-
     private QuizMazeGameResponseDTO getGameResponseDTO(QuizMazeGame quizMazeGame) {
         QuizMazeGameResponseDTO quizMazeGameResponseDTO = new QuizMazeGameResponseDTO();
 
@@ -130,7 +127,7 @@ public class QuizMazeServiceImpl implements QuizMazeService {
         quizMazeGameResponseDTO.setTotalMovesAllowed(QuizMazeGameConstants.TOTAL_MOVES);
         quizMazeGameResponseDTO.setMoves(quizMazeGame.getMoves());
         quizMazeGameResponseDTO.setField(quizMazeGame.getField());
-        quizMazeGameResponseDTO.setPlayer1Turn(quizMazeGame.isPlayer1Turn());
+        quizMazeGameResponseDTO.setPlayerTurnId(quizMazeGame.getPlayerTurnId());
         quizMazeGameResponseDTO.setPlayer1(modelMapper.map(quizMazeGame.getPlayer1(), QuizMazePlayerResponseDTO.class));
         quizMazeGameResponseDTO.setPlayer2(modelMapper.map(quizMazeGame.getPlayer2(), QuizMazePlayerResponseDTO.class));
         quizMazeGameResponseDTO.getPlayer1().setPerks(quizMazeGame.getPlayer1().getPerks().stream().map(perk -> modelMapper.map(perk, QuizMazePerkResponseDTO.class)).toList());

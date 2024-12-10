@@ -1,14 +1,14 @@
 package com.quizzard.app.service;
 
-import com.quizzard.app.domain.dto.request.QuizMazeRequestDTO;
+import com.quizzard.app.domain.dto.request.QuizMazeMoveRequestDTO;
 import com.quizzard.app.domain.dto.response.QuestionResponseDTO;
 import com.quizzard.app.domain.dto.response.QuizMazeGameResponseDTO;
-import com.quizzard.app.domain.dto.response.QuizMazeGameResponseLightDTO;
+import com.quizzard.app.domain.dto.response.QuizMazeMoveResponseDTO;
 
 public interface QuizMazeService {
     String startNewGame(long player1Id, long player2Id);
 
-    QuizMazeGameResponseLightDTO updateGame(QuizMazeRequestDTO quizMazeRequestDTO);
+    QuizMazeMoveResponseDTO processMove(String gameId, QuizMazeMoveRequestDTO quizMazeRequestDTO);
 
     QuestionResponseDTO getRandomQuestion(String gameId);
 
@@ -17,6 +17,4 @@ public interface QuizMazeService {
     void questionAnswerCheck(String gameId, String response, byte x, byte y);
 
     QuizMazeGameResponseDTO joinGame(String gameId, long playerId);
-
-    QuizMazeGameResponseDTO getGameData(QuizMazeRequestDTO quizMazeRequestDTO);
 }
