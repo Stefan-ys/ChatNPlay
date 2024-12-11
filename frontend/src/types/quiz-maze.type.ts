@@ -1,3 +1,13 @@
+export interface QuizMazeResponse{
+    actionType: string
+}
+
+export interface QuizMazeMoveResponse extends QuizMazeResponse{
+    playerId: number;
+    row: number;
+    col: number;
+}
+
 export interface QuizMazePlayerResponse{
     id: number;
     playerNumber: number;
@@ -19,7 +29,7 @@ export interface QuizMazeGamesResponse{
     timeToMove: number;
     player1: QuizMazePlayerResponse;
     player2: QuizMazePlayerResponse;
-    isPlayer1Turn: boolean;
+    playerTurnId: number;
     moves: number;
     field: number[][];
 }
@@ -36,7 +46,7 @@ export interface QuizMazeGameResponseInit {
     timeToMove: number;
     player1: QuizMazePlayerResponse;
     player2: QuizMazePlayerResponse;
-    isPlayer1Turn: boolean;
+    playerTurnId: number;
     moves: number;
 }
 
@@ -44,7 +54,7 @@ export interface QuizMazeGamesResponseLight{
     id: string;
     player1: QuizMazePlayerResponse;
     player2: QuizMazePlayerResponse;
-    isPlayer1Turn: boolean;
+    playerTurnId: number;
     moves: number;
     field: number[][];
 }

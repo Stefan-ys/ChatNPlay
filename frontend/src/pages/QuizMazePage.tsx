@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { Box, Button, CircularProgress, Typography } from '@mui/material';
 import Hexagon from '../components/Hexagon';
@@ -6,12 +6,14 @@ import backgroundImage from '../img/quizMazeImage.png';
 import { getLegalMoves } from '../assets/quizMazeLegalMoves';
 import ProgressBar from '../components/ProgressBar';
 import PlayerBox from '../components/PlayerBox';
-import { QuizMazeGamesResponse, QuizMazePlayerResponse } from '../types/quiz-maze.type';
+import { QuizMazeGamesResponse, QuizMazePlayerResponse, QuizMazeResponse } from '../types/quiz-maze.type';
 import { QuestionResponse } from '../types/question.type';
 import QuestionModal from '../components/QuestionModal';
 import { useAuth } from '../hooks/useAuth';
 import { joinGame } from '../services/quiz-maze.service';
 import { transformField } from '../assets/decoder';
+import { createWebSocketClient } from '../utils/websocketUtil';
+import { WebSocketReceivedData } from '../types/websocket.type';
 
 const defaultBoard = [
 	[0, 0, 0, 0],
@@ -70,6 +72,7 @@ const player2: QuizMazePlayerResponse = {
 const QuizMazePage: React.FC = () => {
 	const { gameId } = useParams<{ gameId: string }>();
 	const { user } = useAuth();
+	const stompClientRef = useRef<any>(null);
 
 	const [userPlayerNum, setUserPlayerNum] = useState(-1);
 	const [legalMoves, setLegalMoves] = useState<number[][]>([]);
@@ -106,8 +109,45 @@ const QuizMazePage: React.FC = () => {
 	}, [gameId, user]);
 
 	useEffect(() => {
+		const setupWebSocket = async () => {
+			if (!gameData || !user) return;
+
+			const topic = `/topic/quiz-maze/${gameId}`;
+			try {
+				const client = await createWebSocketClient(
+					topic,
+					(receivedData: any) => handleWebSocketMessage(receivedData),
+					(error) => {
+						console.error('WebSocket connection error:', error.message);
+						setError('WebSocket connection failed.');
+					},
+				);
+				stompClientRef.current = client;
+			} catch (error) {
+				console.error('Failed to connect WebSocket:', error.message);
+				setError('Failed to establish WebSocket connection.');
+			}
+		};
+
+		setupWebSocket();
+
+		return () => {
+			if (stompClientRef.current && stompClientRef.current.connected) {
+				stompClientRef.current.disconnect(() => {});
+			}
+		};
+	}, [gameId, user]);
+
+	const handleWebSocketMessage = (receivedData: QuizMazeResponse) => {
+		console.log('xoxoxoxox');
+		if (receivedData.actionType === 'MOVE') {
+			console.log('move ' + receivedData);
+		}
+	};
+
+	useEffect(() => {
 		setLegalMoves(getLegalMoves(gameData?.field || defaultBoard));
-	}, []);
+	}, [gameData?.field]);
 
 	const isLegalMove = (row: number, col: number): boolean => {
 		const legalValue = userPlayerNum === 1 ? 1 : 2;
@@ -127,8 +167,13 @@ const QuizMazePage: React.FC = () => {
 	};
 
 	const handleCellSelect = (row: number, col: number) => {
-		if ((gameData?.isPlayer1Turn && userPlayerNum === 1) || (!gameData?.isPlayer1Turn && userPlayerNum === 2)) {
+		console.log('1');
+		if (gameData?.playerTurnId === user?.id) {
+			console.log('2');
 			setSelectedCell([row, col]);
+			if (stompClientRef.current?.connected && user && gameData) {
+				stompClientRef.current.send(`/app/game/${gameId}/move`, {}, JSON.stringify({ row, col }));
+			}
 		}
 	};
 
