@@ -30,7 +30,6 @@ export const createWebSocketClient = async (
 					const receivedData: WebSocketReceivedData = JSON.parse(message.body);
 					onMessage(receivedData);
 				});
-				console.log('WebSocket connected and subscribed to topic.');
 				resolve(client);
 			},
 			(error) => {

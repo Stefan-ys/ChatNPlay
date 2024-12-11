@@ -51,7 +51,6 @@ const LobbyPage: React.FC<{ lobbyName: string }> = ({ lobbyName }) => {
 						setError('WebSocket connection failed.');
 					},
 				);
-
 				stompClientRef.current = client;
 				handleAddUserToLobby();
 			} catch (error: any) {
@@ -65,24 +64,27 @@ const LobbyPage: React.FC<{ lobbyName: string }> = ({ lobbyName }) => {
 		return () => {
 			if (stompClientRef.current && stompClientRef.current.connected) {
 				handleRemoveUserFromLobby();
-				stompClientRef.current.disconnect(() => {
-					console.log('WebSocket disconnected.');
-				});
+				stompClientRef.current.disconnect(() => {});
 			}
 		};
 	}, [lobby, user]);
 
-	const handleWebSocketMessage = (receivedData: WebSocketReceivedData) => {
-		if (typeof receivedData === 'string') {
-			setError(receivedData);
-		} else if (Array.isArray(receivedData)) {
-			setUsersInLobby(receivedData as UserLobbyResponse[]);
-			setError('');
-		} else if (receivedData && typeof receivedData === 'object' && 'gameId' in receivedData) {
-			const { gameId } = receivedData as { gameId: string | null };
+	const handleWebSocketMessage = (receivedData: any) => {
+		if (receivedData.USERS_UPDATE) {
+			const usersUpdate = receivedData.USERS_UPDATE;
+			setUsersInLobby(usersUpdate);
+			setError(null);
+		} else if (receivedData.GAME_START) {
+			const { gameId, usersInLobby: updatedUsers } = receivedData.GAME_START;
+			setUsersInLobby(updatedUsers);
+			setError(null);
+
 			if (gameId) {
 				navigate(`/quiz-maze/${gameId}`);
 			}
+		} else {
+			console.error('Unknown WebSocket message type:', receivedData);
+			setError('Received unknown WebSocket message.');
 		}
 	};
 
@@ -127,11 +129,11 @@ const LobbyPage: React.FC<{ lobbyName: string }> = ({ lobbyName }) => {
 						<Box display='flex' justifyContent='center' alignItems='center' mt={2}>
 							<Button
 								variant='contained'
-								color={usersInLobby.find((u) => u.id === user.id)?.ready ? 'info' : 'success'}
+								color={usersInLobby.find((u) => u.id === user?.id)?.ready ? 'info' : 'success'}
 								onClick={handleChangeUserStatus}
 								sx={{ width: '150px' }}
 							>
-								{usersInLobby.find((u) => u.id === user.id)?.ready ? 'Idle' : 'Ready'}
+								{usersInLobby.find((u) => u.id === user?.id)?.ready ? 'Idle' : 'Ready'}
 							</Button>
 						</Box>
 					</Grid>

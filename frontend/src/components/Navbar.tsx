@@ -55,7 +55,6 @@ const Navbar: React.FC = () => {
 
 					{user && (
 						<>
-							<ToggleFlag />
 							<Typography variant='h6' component='div' sx={{ marginLeft: 'auto' }}>
 								Welcome, {user.username}!
 							</Typography>
